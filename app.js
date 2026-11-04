@@ -1410,7 +1410,7 @@ chAdd({id:'chest_mitico',type:'cofre',tier:'mitico',name:'Cofre mítico',icon:'�
 ].forEach(([id,name,rarity,desc])=>chAdd({id,type:'marco',name,icon:'🖼️',rarity,desc}));
 // fondos
 [['fd_arena','Arena del Coliseo','raro','Atardecer de arena caliente para toda la página.'],
- ['fd_bosque','Bosque de Araucarias','raro','Araucarias recortadas contra la cordillera.'],
+ ['fd_bosque','Bosque de Bambú','raro','Tallos de bambú y neblina de montaña.'],
  ['fd_dojo','Dojo de Madera','épico','Tablones oscuros y la luz cálida de los faroles.'],
  ['fd_fiordo','Fiordo del Norte','épico','Montañas nevadas que caen a un mar helado.'],
  ['fd_dunas','Dunas del Nilo','épico','Arena dorada, pirámides y un sol enorme.'],
@@ -1449,8 +1449,8 @@ chAdd({id:'chest_mitico',type:'cofre',tier:'mitico',name:'Cofre mítico',icon:'�
  ['tc_emperador','Emperador de los Cofres','mítico'],['tc_semidios','Semidiós del Empuje','mítico']
 ].forEach(([id,name,rarity])=>chAdd({id,type:'titulo',name,icon:'🏷️',rarity,desc:'Título equipable, exclusivo de cofres.'}));
 // íconos de perfil
-[['ic_lobo','Lobo Gris','🐺','común'],['ic_zorro','Zorro Culpeo','🦊','común'],['ic_jabali','Jabalí','🐗','común'],
- ['ic_condor','Cóndor de los Andes','🦅','raro'],['ic_toro','Toro de Creta','🐂','raro'],['ic_buho','Búho de Atenea','🦉','raro'],
+[['ic_lobo','Lobo Gris','🐺','común'],['ic_zorro','Zorro de Fuego','🦊','común'],['ic_jabali','Jabalí','🐗','común'],
+ ['ic_condor','Águila Imperial','🦅','raro'],['ic_toro','Toro de Creta','🐂','raro'],['ic_buho','Búho de Atenea','🦉','raro'],
  ['ic_leon','León de Nemea','🦁','épico'],['ic_oso','Oso Pardo','🐻','épico'],['ic_escorpion','Escorpión del Desierto','🦂','épico'],
  ['ic_dragon','Dragón Dorado','🐉','legendario'],['ic_elefante','Elefante de Guerra','🐘','legendario'],
  ['ic_sol','Sol Invicto','☀️','mítico'],['ic_cometa','Cometa','☄️','mítico']
@@ -1464,65 +1464,65 @@ chAdd({id:'chest_mitico',type:'cofre',tier:'mitico',name:'Cofre mítico',icon:'�
  ['bg_ojo','Ojo del Vacío','🌀','mítico','Miraste dentro de un cofre mítico y el cofre te miró a ti.']
 ].forEach(([id,name,icon,rarity,desc])=>chAdd({id,type:'insignia',name,icon,rarity,desc}));
 
-/* ---------- 50 compañeros animados ---------- */
-const ORIGINS=[['roma','Roma antigua'],['grecia','Grecia y Macedonia'],['mitogriega','Mitología griega'],['egipto','Egipto'],['cartago','Cartago'],['europa','Pueblos de Europa'],['estepa','Estepas de Asia'],['japon','Japón feudal'],['china','China'],['america','América originaria'],['medieval','Europa medieval y moderna'],['bestiario','Bestiario mítico'],['liga','Originales de la Liga']];
+/* ---------- 50 compañeros animados: generales, guerreros, héroes y dioses de Europa y Asia ---------- */
+const ORIGINS=[['olimpo','Dioses del Olimpo'],['heroes','Héroes griegos'],['nordicos','Dioses nórdicos'],['egipcios','Dioses de Egipto'],['japoneses','Dioses de Japón'],['roma','Roma antigua'],['grecia','Grecia y Macedonia'],['egipto','Egipto faraónico'],['cartago','Cartago'],['japon','Japón feudal'],['china','China imperial'],['estepa','Estepas de Asia'],['barbaros','Galos, britanos y vikingos'],['europa','Europa medieval y moderna']];
 const ORIGIN_NAME=Object.fromEntries(ORIGINS);
-const SK={l:'#f1c9a5',lw:'#f4d8bc',m:'#e0ac7e',mt:'#d9a477',t:'#c48a5a',b:'#a86b42',e:'#b07a4a'};
+const SK={l:'#f6d2b0',lw:'#f8dcc4',m:'#f0c49c',mt:'#e8b890',t:'#d49a6a',e:'#b8804e',d:'#a8703f'};
 const PETS=[
- // ---- raros (salen en cualquier parte)
- {id:'pet_recluta',name:'Recluta de la Liga',rarity:'raro',origin:'liga',act:'pushup',icon:'💪',look:{sk:SK.m,hair:['short','#2b1d14'],hd:['headband','#ff5a5f'],tu:'#3a7bd5',ar:['tank'],pa:'#2a2f45',bo:'#e8e8e8'},desc:'El primer compañero de todo jugador. Hace flexiones en cualquier rincón de tu pantalla.',feats:['Nunca se salta el calentamiento','Cuenta las repeticiones en voz alta','Se sabe tu racha de memoria']},
- {id:'pet_pesista',name:'Pesista de Barrio',rarity:'raro',origin:'liga',act:'lift',icon:'🏋️',look:{sk:SK.t,hair:['short','#111111'],beard:['stache','#111111'],tu:'#d95926',ar:['tank'],pa:'#333a55',bo:'#222222',it:'dumbbell',it2:'dumbbell'},desc:'Entrena en la plaza con mancuernas oxidadas y una fe inquebrantable.',feats:['Récord del barrio en press militar','Presta las pesas a quien las necesite']},
- {id:'pet_kaito',name:'Kaito, Puño del Alba',rarity:'raro',origin:'liga',act:'punch',icon:'👊',look:{sk:SK.l,hair:['short','#1b1b2a'],hd:['headband','#f4f4f4'],tu:'#2f6b4f',ar:['gi','#f4f4f4'],belt:'#f4f4f4',pa:'#2f6b4f',bo:'#1a1a1a',it:'wraps',it2:'wraps'},desc:'Personaje original de la liga. Entrena desde que sale el sol y jura que su puño se calienta con cada serie.',feats:['Mil golpes antes del desayuno','Le ganó a su propia flojera en un duelo a tres asaltos']},
- {id:'pet_rin',name:'Rin, Filo del Viento',rarity:'raro',origin:'liga',act:'swing',icon:'🍃',look:{sk:SK.l,hair:['bob','#3fb7a8'],tu:'#1f2f57',ar:['haori','#f2f2f2'],pa:'#1f2f57',bo:'#222222',it:'katana'},desc:'Personaje original de la liga. Espadachina errante que corta las hojas que caen sin tocar el árbol.',feats:['Corta el viento en tres direcciones','Nunca desenvaina dos veces para lo mismo']},
- {id:'pet_sora',name:'Sora, Arquero Celeste',rarity:'raro',origin:'liga',act:'bow',icon:'🏹',look:{sk:SK.l,hair:['pony','#d7dbe6'],tu:'#6aa7e8',cape:'#2b4f8a',ar:['leather','#8a5a2b'],pa:'#2b3550',bo:'#5a3a22',it:'bow'},desc:'Personaje original de la liga. Dicen que apunta a las nubes y le acierta a las estrellas.',feats:['La flecha más lejana del torneo celeste','Le acierta a una moneda a cien pasos']},
- {id:'pet_shaolin',name:'Monje Shaolin',rarity:'raro',origin:'china',act:'spin',icon:'🥋',look:{sk:SK.m,hair:['bald'],tu:'#e8892b',ar:['robe','#c0392b'],pa:'#e8892b',bo:'#3a2a1a',it:'staff'},desc:'Guardián de un templo de montaña donde el kung-fu se entrena desde hace siglos.',feats:['El templo Shaolin fue fundado hacia el año 495','Su entrenamiento une meditación y artes marciales','El bastón es una de sus armas clásicas']},
- {id:'pet_chasqui',name:'Chasqui del Tahuantinsuyo',rarity:'raro',origin:'america',act:'run',icon:'🏃',look:{sk:SK.b,hair:['short','#111111'],hd:['plume','#f4f4f4','#c0392b'],tu:'#c0392b',ar:['unku','#c0392b','#f0c24a'],pa:SK.b,bo:'#7a4e2e'},desc:'Mensajero del Imperio inca que corría en relevos por el Qhapaq Ñan, la red de caminos andinos.',feats:['Con relevos, un mensaje podía avanzar más de 200 km en un día','Llevaba quipus, cuerdas con nudos que guardaban información','Anunciaba su llegada con una trompeta de caracola, el pututu']},
- {id:'pet_sumo',name:'Luchador de Sumo',rarity:'raro',origin:'japon',act:'stomp',icon:'🤼',look:{sk:'#e8b48a',hair:['topknot','#111111'],tu:'#e8b48a',ar:['bare'],bulk:1,skirt:['mawashi','#2c3e7a'],pa:'#e8b48a',bo:'#e8b48a'},desc:'Lucha ritual japonesa sobre un círculo de arcilla llamado dohyō.',feats:['Tiene raíces en antiguos rituales sintoístas','Gana quien saca al rival del círculo o le hace tocar el suelo','El rango máximo es yokozuna']},
- // ---- épicos (salen en cualquier parte)
- {id:'pet_centurion',name:'Centurión',rarity:'épico',origin:'roma',act:'salute',icon:'🦅',look:{sk:SK.mt,hair:['short','#2b1d14'],hd:['galea_t','#c9ced6','#c0392b'],tu:'#b0302a',ar:['chain','#aab2bd'],skirt:['pteruges','#7a3b1f'],pa:SK.mt,bo:'#6b4423',cape:'#a52a2a',it:'vitis',acc:['phalerae']},desc:'Oficial romano que mandaba una centuria, unos 80 legionarios.',feats:['Llevaba una vara de vid, la vitis, como símbolo de mando','El más veterano, el primus pilus, dirigía la primera cohorte','Era la columna vertebral de la disciplina romana']},
- {id:'pet_hoplita',name:'Hoplita Espartano',rarity:'épico',origin:'grecia',act:'thrust',icon:'🛡️',look:{sk:SK.mt,hd:['corinthian','#c58b3a','#1a1a1a'],tu:'#a52a2a',ar:['musc','#c58b3a'],skirt:['pteruges','#e9dcc0'],pa:SK.mt,bo:'#6b4423',it:'spear',sh:['aspis','#c58b3a','#7a4a14']},desc:'Soldado de infantería pesada que combatía en falange.',feats:['Los espartanos entrenaban desde los 7 años en la agogé','Su escudo protegía también al compañero de al lado','«Vuelve con tu escudo o sobre él»']},
- {id:'pet_murmillo',name:'Gladiador Murmillo',rarity:'épico',origin:'roma',act:'swing',icon:'🐟',look:{sk:SK.t,hd:['fish','#b9c0c8','#c0392b'],tu:SK.t,ar:['bare'],skirt:['kilt','#e9dcc0'],belt:'#c9a24a',pa:SK.t,bo:'#6b4423',it:'gladius',sh:['scutum','#c0392b','#e8c45a'],acc:['manica']},desc:'Gladiador de armamento pesado con un casco de cresta en forma de pez.',feats:['Solía enfrentarse al tracio o al hoplomachus','Usaba escudo grande y espada corta, como un legionario','Los gladiadores famosos tenían fans y grafitis en Pompeya']},
- {id:'pet_samurai',name:'Samurái',rarity:'épico',origin:'japon',act:'swing',icon:'⛩️',look:{sk:SK.l,hd:['kabuto','#2a2f45','#e8c45a'],tu:'#2a3f8f',ar:['lamellar','#2a3f8f'],skirt:['kilt','#1f2a5c'],pa:'#1f2a5c',bo:'#2a2a2a',it:'katana'},desc:'Guerrero de la clase militar del Japón feudal.',feats:['Seguía un código de honor llamado bushidō','La katana era considerada el alma del samurái','Dominaba también el arco a caballo']},
- {id:'pet_vikingo',name:'Vikingo',rarity:'épico',origin:'europa',act:'swing',icon:'🪓',look:{sk:SK.l,hair:['long','#d9a441'],beard:['full','#d9a441'],hd:['nasal','#9aa3ad'],tu:'#4a6b3a',ar:['leather','#6b4b2a'],pa:'#5a4a3a',bo:'#4a3020',it:'axe',sh:['round','#c0392b','#e8e2d0']},desc:'Navegante y guerrero escandinavo de los siglos VIII al XI.',feats:['Llegaron a Norteamérica cerca del año 1000','Sus barcos navegaban en mar abierto y por ríos','Fundaron asentamientos desde Islandia hasta Kiev']},
- {id:'pet_ninja',name:'Ninja',rarity:'épico',origin:'japon',act:'throw',icon:'🥷',look:{sk:SK.l,hd:['ninja','#1c1f2b'],tu:'#1c1f2b',ar:['robe','#2b3040'],pa:'#1c1f2b',bo:'#111111',it:'shuriken'},desc:'Espía y agente del Japón feudal, experto en sigilo.',feats:['Las escuelas más famosas eran las de Iga y Kōga','Trabajaba en espionaje, sabotaje e infiltración','Usaba shuriken, garfios y mucha paciencia']},
- {id:'pet_caballero',name:'Caballero Medieval',rarity:'épico',origin:'medieval',act:'swing',icon:'⚔️',look:{sk:SK.l,hd:['helm_full','#b9c0c8','#c0392b'],tu:'#b9c0c8',ar:['plate','#b9c0c8'],pa:'#9aa3ad',bo:'#7a828c',it:'longsword',sh:['kite','#1f4fa8','#e8c45a']},desc:'Guerrero montado de la Europa medieval, cubierto de acero.',feats:['Una armadura completa pesaba entre 20 y 25 kg','Se formaba desde niño como paje y luego escudero','Las justas eran su deporte de competencia']},
- {id:'pet_weichafe',name:'Weichafe Mapuche',rarity:'épico',origin:'america',act:'thrust',icon:'🌿',look:{sk:SK.b,hair:['long','#111111'],hd:['trarilonco','#c0392b'],tu:'#2c2c2c',ar:['poncho','#2c2c2c','#c0392b'],pa:SK.b,bo:SK.b,it:'lance'},desc:'Guerrero mapuche. Weichafe significa «el que lucha» en mapudungun.',feats:['El pueblo mapuche resistió primero a los incas y luego a los españoles','Combatía con largas lanzas de colihue','La frontera del Biobío se reconoció en parlamentos con la Corona']},
- {id:'pet_jaguar',name:'Guerrero Jaguar',rarity:'épico',origin:'america',act:'swing',icon:'🐆',look:{sk:SK.b,hd:['jaguar','#e3a63a','#3a2a10'],tu:'#e3a63a',ar:['jaguarsuit','#e3a63a','#3a2a10'],pa:'#e3a63a',bo:SK.b,it:'macuahuitl',sh:['chimalli','#2a7bd5','#e8c45a']},desc:'Guerrero de élite del ejército mexica.',feats:['Ascendía capturando prisioneros en batalla','Usaba el macuahuitl, un mazo con filos de obsidiana','Era una de las dos grandes órdenes de élite, junto a los guerreros águila']},
- {id:'pet_marea',name:'Capitana Marea',rarity:'épico',origin:'liga',act:'swing',icon:'🏴‍☠️',look:{sk:SK.l,hair:['long','#1f6f78'],hd:['tricorn','#2a1f1a','#e2b54a'],tu:'#9b2335',ar:['coat','#9b2335','#efe2bf'],pa:'#2a2f45',bo:'#1a1a1a',it:'cutlass',acc:['sash']},desc:'Personaje original de la liga. Capitana que navega buscando la isla donde no existe la gravedad, y mientras tanto entrena en cubierta.',feats:['Le ganó un duelo a una tormenta de tres días','Su tripulación hace flexiones al amanecer, sin excepción']},
- {id:'pet_kraken',name:'Kraken de Bolsillo',rarity:'épico',origin:'bestiario',act:'wave',cr:'kraken',icon:'🐙',look:{c1:'#8e5bd6',c2:'#f2b4ff'},desc:'El monstruo marino de las leyendas escandinavas, en versión miniatura y amistosa.',feats:['Las leyendas lo describían tan grande como una isla','Inspiró historias de marinos durante siglos','Esta versión solo hunde la flojera']},
- {id:'pet_minotauro',name:'Minotauro Gimnasta',rarity:'épico',origin:'bestiario',act:'lift',icon:'🐂',look:{head:'bull',hcol:'#6b4423',sk:'#b07a4a',ar:['bare'],tu:'#b07a4a',bulk:1,skirt:['kilt','#c0392b'],pa:'#b07a4a',bo:'#4a3020',it:'dumbbell',it2:'dumbbell'},desc:'La criatura con cabeza de toro del laberinto de Creta, ahora dedicada al press de hombros.',feats:['Según el mito, vivía en el laberinto de Dédalo','Teseo lo venció con ayuda del hilo de Ariadna','Hoy solo persigue récords personales']},
- // ---- legendarios (solo cofres)
- {id:'pet_legionario',name:'Legionario Romano',rarity:'legendario',origin:'roma',act:'swing',icon:'🏛️',look:{sk:SK.mt,hair:['short','#2b1d14'],hd:['galea','#c9ced6','#c0392b'],tu:'#b0302a',ar:['seg','#c9ced6'],skirt:['pteruges','#7a3b1f'],pa:SK.mt,bo:'#6b4423',it:'gladius',sh:['scutum','#b0302a','#e8c45a']},desc:'Soldado de infantería pesada de Roma. Entrena con su espada sin descanso.',feats:['Marchaba unos 30 km al día con todo su equipo','Levantaba un campamento fortificado cada noche','Su formación testudo lo cubría como una tortuga']},
- {id:'pet_marcoaurelio',name:'Marco Aurelio',rarity:'legendario',origin:'roma',act:'read',icon:'📜',look:{sk:'#e0b48a',hair:['curly','#5a3a22'],beard:['full','#5a3a22'],hd:['laurel','#5f9a3a'],tu:'#ece3cf',ar:['toga','#ece3cf','#6a2c8a'],pa:'#e0b48a',bo:'#6b4423',it:'scroll'},desc:'Emperador romano (121–180) y filósofo estoico.',feats:['Escribió las «Meditaciones», que se siguen leyendo hoy','Fue el último de los llamados Cinco Buenos Emperadores','Defendió la frontera del Danubio en las guerras marcomanas']},
- {id:'pet_agripa',name:'Marco Vipsanio Agripa',rarity:'legendario',origin:'roma',act:'swing',icon:'⚓',look:{sk:SK.mt,hair:['short','#3a2a1a'],hd:['rostrata','#e8c45a'],tu:'#2a4f8a',ar:['musc','#c9a24a'],skirt:['pteruges','#2a4f8a'],pa:SK.mt,bo:'#6b4423',cape:'#1f3a6b',it:'gladius'},desc:'General, almirante y mano derecha de Augusto (c. 63–12 a. C.).',feats:['Ganó la batalla naval de Actium (31 a. C.)','Construyó el primer Panteón de Roma','Amplió los acueductos y abrió grandes termas públicas']},
- {id:'pet_espartaco',name:'Espartaco',rarity:'legendario',origin:'roma',act:'swing',icon:'⛓️',look:{sk:SK.t,hd:['thraex','#9aa3ad','#c0392b'],tu:SK.t,ar:['bare'],skirt:['kilt','#e9dcc0'],belt:'#6b4423',pa:SK.t,bo:'#6b4423',it:'sica',sh:['parmula','#8a5a2b','#c9a24a'],acc:['chains']},desc:'Gladiador tracio que desafió a Roma (c. 103–71 a. C.).',feats:['Encabezó la mayor rebelión de esclavos contra Roma (73–71 a. C.)','Su ejército llegó a reunir a decenas de miles de personas','Derrotó a varias legiones antes de caer ante Craso']},
- {id:'pet_escipion',name:'Escipión el Africano',rarity:'legendario',origin:'roma',act:'salute',icon:'🐘',look:{sk:SK.mt,hair:['short','#3a2a1a'],hd:['galea','#e0c27a','#f4f4f4'],tu:'#7a1f2a',ar:['musc','#d4b06a'],skirt:['pteruges','#7a1f2a'],pa:SK.mt,bo:'#6b4423',cape:'#7a1f2a',it:'gladius',sh:['scutum','#7a1f2a','#e8c45a']},desc:'General romano (236–183 a. C.), el hombre que venció a Aníbal.',feats:['Derrotó a Aníbal en Zama (202 a. C.)','Puso fin a la Segunda Guerra Púnica','Tomó Cartago Nova, en Hispania, con un ataque audaz']},
- {id:'pet_vercingetorix',name:'Vercingétorix',rarity:'legendario',origin:'europa',act:'swing',icon:'🗡️',look:{sk:SK.l,hair:['long','#d9a441'],beard:['stache','#d9a441'],hd:['winged','#c58b3a','#f4f4f4'],tu:'#2f6b3a',ar:['chain','#9aa3ad'],pa:'#8a3a2a',bo:'#4a3020',cape:'#2f6b3a',it:'longsword',sh:['oval','#2f6b3a','#c9a24a'],acc:['torc']},desc:'Caudillo de los arvernos que unió a la Galia contra César (c. 82–46 a. C.).',feats:['Unió por primera vez a decenas de tribus galas','Venció a César en Gergovia (52 a. C.)','Resistió el asedio de Alesia hasta el final']},
- {id:'pet_boudica',name:'Boudica',rarity:'legendario',origin:'europa',act:'thrust',icon:'🔥',look:{sk:'#f4d0b0',hair:['long','#c8471f'],tu:'#2f6b3a',ar:['dress','#2f6b3a','#c9a24a'],skirt:['long','#2f6b3a'],cape:'#8a3a2a',pa:'#f4d0b0',bo:'#4a3020',it:'spear',sh:['oval','#8a3a2a','#c9a24a'],acc:['torc']},desc:'Reina de los icenos de Britania (m. c. 61 d. C.).',feats:['Lideró una gran revuelta contra Roma','Arrasó Camulodunum, Londinium y Verulamium','Tiene una estatua junto al puente de Westminster']},
- {id:'pet_ramses',name:'Ramsés II',rarity:'legendario',origin:'egipto',act:'swing',icon:'𓂀',look:{sk:SK.e,hd:['khepresh','#2346a8','#e8c45a'],tu:'#f4ecd8',ar:['linen','#f4ecd8','#e8c45a'],skirt:['kilt','#f4ecd8'],belt:'#e8c45a',pa:SK.e,bo:'#c9a24a',it:'khopesh',acc:['collar']},desc:'Faraón de Egipto (c. 1303–1213 a. C.), llamado Ramsés el Grande.',feats:['Reinó cerca de 66 años','Mandó construir los templos de Abu Simbel','Firmó con los hititas uno de los primeros tratados de paz conocidos']},
- {id:'pet_atila',name:'Atila',rarity:'legendario',origin:'estepa',act:'bow',icon:'🐎',look:{sk:SK.mt,hd:['furhat','#6b4423','#c9a27a'],beard:['fu','#1a1a1a'],tu:'#7a2f1f',ar:['lamellar','#8a6a3a'],pa:'#5a3a2a',bo:'#3a2a1a',it:'recurve'},desc:'Rey de los hunos (c. 406–453), llamado «el azote de Dios».',feats:['Gobernó un imperio desde el Rin hasta el mar Negro','Puso en jaque a Roma de Oriente y de Occidente','Sus arqueros a caballo eran temidos en toda Europa']},
- {id:'pet_musashi',name:'Miyamoto Musashi',rarity:'legendario',origin:'japon',act:'swing',icon:'⚔️',look:{sk:SK.l,hair:['topknot','#1a1a1a'],beard:['short','#1a1a1a'],tu:'#5a5f6a',ar:['kimono','#2a2a2a'],skirt:['hakama','#3a3f4a'],pa:'#3a3f4a',bo:'#2a2a2a',it:'katana',it2:'wakizashi'},desc:'Espadachín japonés (c. 1584–1645), maestro de las dos espadas.',feats:['Dijo no haber perdido ninguno de sus más de 60 duelos','Fundó el estilo de dos espadas Niten Ichi-ryū','Escribió «El libro de los cinco anillos»']},
- {id:'pet_nobunaga',name:'Oda Nobunaga',rarity:'legendario',origin:'japon',act:'aim',icon:'🏯',look:{sk:SK.l,hd:['kabuto','#1a1a1a','#e8c45a'],tu:'#7a1f1f',ar:['lamellar','#1a1a1a','#c0392b'],cape:'#7a1f1f',skirt:['kilt','#2a2a2a'],pa:'#2a2a2a',bo:'#1a1a1a',it:'musket'},desc:'Daimio japonés (1534–1582) que inició la unificación de Japón.',feats:['Venció a un ejército mucho mayor en Okehazama (1560)','Usó arcabuces de forma masiva en Nagashino (1575)','Abrió el camino a la unificación del país']},
- {id:'pet_tomoe',name:'Tomoe Gozen',rarity:'legendario',origin:'japon',act:'thrust',icon:'🌸',look:{sk:SK.lw,hair:['long','#111111'],hd:['headband','#f4f4f4'],tu:'#a52a2a',ar:['lamellar','#a52a2a','#f4f4f4'],skirt:['hakama','#2a2f45'],pa:'#2a2f45',bo:'#2a2a2a',it:'naginata'},desc:'Guerrera onna-musha del siglo XII, en las guerras Genpei.',feats:['El «Cantar de Heike» la describe como arquera y jinete formidable','Según el relato, valía por mil guerreros','Es símbolo de las mujeres samurái']},
- {id:'pet_ragnar',name:'Ragnar Lodbrok',rarity:'legendario',origin:'europa',act:'swing',icon:'⛵',look:{sk:SK.l,hair:['braid','#c9a061'],beard:['long','#c9a061'],tu:'#3a3f4a',ar:['leather','#5a4030'],cape:'#6b5a46',pa:'#4a3a2a',bo:'#3a2a1a',it:'axe',sh:['round','#2a4f8a','#e8e2d0']},desc:'Héroe vikingo de las sagas nórdicas del siglo IX.',feats:['Las sagas le atribuyen incursiones en Francia e Inglaterra','Es el padre legendario de grandes caudillos vikingos','Su historia mezcla hechos y leyenda']},
- {id:'pet_juana',name:'Juana de Arco',rarity:'legendario',origin:'medieval',act:'banner',icon:'⚜️',look:{sk:SK.lw,hair:['bob','#5a3a22'],tu:'#c9ced6',ar:['plate','#c9ced6'],pa:'#9aa3ad',bo:'#7a828c',it:'banner'},desc:'Heroína francesa (c. 1412–1431) de la Guerra de los Cien Años.',feats:['Con 17 años ayudó a levantar el asedio de Orleans (1429)','Llevó a Carlos VII a coronarse en Reims','Es patrona de Francia']},
- {id:'pet_pachacutec',name:'Pachacútec',rarity:'legendario',origin:'america',act:'swing',icon:'☀️',look:{sk:SK.b,hair:['short','#111111'],hd:['mascapaycha','#c0392b','#e8c45a'],tu:'#c0392b',ar:['unku','#c0392b','#e8c45a'],pa:SK.b,bo:SK.b,cape:'#2346a8',it:'macestar',acc:['earspool']},desc:'Sapa Inca del siglo XV que transformó el reino del Cusco en un imperio.',feats:['Convirtió el reino del Cusco en el Tahuantinsuyo','Se le atribuye la construcción de Machu Picchu','Reorganizó el imperio y su red de caminos']},
- {id:'pet_aquiles',name:'Aquiles',rarity:'legendario',origin:'mitogriega',act:'thrust',icon:'🏺',look:{sk:'#e0b48a',hair:['curly','#c9a061'],hd:['corinthian','#e8c45a','#1a1a1a'],tu:'#f4ecd8',ar:['musc','#e8c45a'],skirt:['pteruges','#f4ecd8'],pa:'#e0b48a',bo:'#6b4423',it:'spear',sh:['aspis','#e8c45a','#9a6a1a']},desc:'El mayor guerrero aqueo de la guerra de Troya.',feats:['Es el protagonista de la «Ilíada» de Homero','Venció a Héctor frente a las murallas de Troya','Era casi invulnerable, salvo por el talón']},
- {id:'pet_heracles',name:'Heracles',rarity:'legendario',origin:'mitogriega',act:'flex',icon:'🦁',look:{sk:SK.mt,beard:['full','#3a2a1a'],hd:['lion','#d9a441','#8a5a1a'],tu:SK.mt,ar:['bare'],bulk:1,skirt:['kilt','#d9a441'],pa:SK.mt,bo:'#6b4423',it:'club'},desc:'Semidiós hijo de Zeus, el más fuerte de los héroes griegos.',feats:['Completó los doce trabajos','Venció al león de Nemea y a la Hidra de Lerna','Sostuvo el cielo en lugar de Atlas']},
- {id:'pet_dragon',name:'Dragón de Bolsillo',rarity:'legendario',origin:'bestiario',act:'fire',cr:'dragon',icon:'🐉',look:{c1:'#2f9e6a',c2:'#f2d36b'},desc:'Un dragón en miniatura que vigila tu inventario como si fuera su tesoro.',feats:['Los dragones aparecen en mitos desde China hasta Europa','En China simbolizan fuerza y buena fortuna','Este escupe fuego cada vez que rompes un récord']},
- {id:'pet_kitsune',name:'Kitsune de Nueve Colas',rarity:'legendario',origin:'bestiario',act:'orbs',cr:'kitsune',icon:'🦊',look:{c1:'#f6f3ee',c2:'#e8592a'},desc:'El zorro espíritu del folclor japonés.',feats:['Según la leyenda, gana una cola cada cien años','Con nueve colas alcanza su máximo poder','Domina las ilusiones y el fuego zorro, el kitsunebi']},
- {id:'pet_akane',name:'Akane, Llama Carmesí',rarity:'legendario',origin:'liga',act:'punch',icon:'🔥',look:{sk:SK.l,hair:['pony','#a8262a'],tu:'#1c1f2b',ar:['gi','#a8262a'],belt:'#c0392b',pa:'#1c1f2b',bo:'#111111',it:'firefist',it2:'firefist'},desc:'Personaje original de la liga. Peleadora que convierte cada serie en fuego: sus puños arden cuando supera un récord.',feats:['Invicta en el torneo de la Fragua','Su racha más larga duró un año entero']},
- // ---- míticos (solo cofres)
- {id:'pet_cesar',name:'Julio César',rarity:'mítico',origin:'roma',act:'salute',icon:'👑',look:{sk:'#e0b48a',hair:['short','#3a2a1a'],hd:['laurel','#e8c45a'],tu:'#b0302a',ar:['musc','#d4b06a'],skirt:['pteruges','#b0302a'],pa:'#e0b48a',bo:'#6b4423',cape:'#8a1a2a',it:'gladius'},desc:'General y dictador romano (100–44 a. C.).',feats:['Conquistó la Galia y venció en Alesia (52 a. C.)','Cruzó el Rubicón en el 49 a. C.: «Alea iacta est»','Su calendario juliano es la base del que usamos hoy','Dijo «Veni, vidi, vici» tras su victoria en Zela']},
- {id:'pet_alejandro',name:'Alejandro Magno',rarity:'mítico',origin:'grecia',act:'thrust',icon:'🐴',look:{sk:SK.l,hair:['curly','#e8b84e'],hd:['boeotian','#9c6a22','#f4f4f4'],tu:'#f4ecd8',ar:['linen','#f4ecd8','#e8c45a'],skirt:['pteruges','#f4ecd8'],pa:SK.l,bo:'#6b4423',cape:'#6a2c8a',it:'spear'},desc:'Rey de Macedonia (356–323 a. C.).',feats:['No perdió ninguna de sus grandes batallas','Derrotó al Imperio persa en Gránico, Isos y Gaugamela','Fundó más de 20 ciudades, entre ellas Alejandría','Llegó hasta la India antes de cumplir 30 años']},
- {id:'pet_napoleon',name:'Napoleón Bonaparte',rarity:'mítico',origin:'medieval',act:'point',icon:'🎖️',look:{sk:SK.lw,hair:['short','#3a2a1a'],hd:['bicorne','#1a1a1a','#e8c45a'],tu:'#1f3a8a',ar:['coat','#1f3a8a','#f4f4f4'],pa:'#f4f4f4',bo:'#111111',it:'spyglass',acc:['epaul']},desc:'Emperador de los franceses (1769–1821).',feats:['Su gran victoria fue Austerlitz (1805)','Su Código Civil inspiró leyes en muchos países, también el Código Civil chileno','Llegó a dominar gran parte de Europa']},
- {id:'pet_augusto',name:'Octavio Augusto',rarity:'mítico',origin:'roma',act:'salute',icon:'🏺',look:{sk:SK.l,hair:['short','#5a3a22'],hd:['laurel','#5f9a3a'],tu:'#ece3cf',ar:['toga','#ece3cf','#6a2c8a'],pa:SK.l,bo:'#6b4423'},desc:'Primer emperador de Roma (63 a. C.–14 d. C.).',feats:['Venció a Marco Antonio y Cleopatra en Actium (31 a. C.)','Inició la Pax Romana, cerca de dos siglos de relativa paz','Gobernó como emperador más de 40 años','«Encontré una Roma de ladrillo y la dejé de mármol»']},
- {id:'pet_anibal',name:'Aníbal Barca',rarity:'mítico',origin:'cartago',act:'thrust',icon:'🐘',look:{sk:SK.t,beard:['full','#1a1a1a'],hd:['pilos','#c58b3a','#c0392b'],tu:'#6a2c8a',ar:['linen','#e9dcc0','#c9a24a'],skirt:['pteruges','#6a2c8a'],pa:SK.t,bo:'#6b4423',cape:'#6a2c8a',it:'spear',extra:'elephant'},desc:'General cartaginés (247–c. 183 a. C.), la pesadilla de Roma.',feats:['Cruzó los Alpes con elefantes de guerra (218 a. C.)','Aniquiló a un ejército romano mucho mayor en Cannas (216 a. C.)','Su táctica de Cannas se estudia hasta hoy']},
- {id:'pet_leonidas',name:'Leónidas I',rarity:'mítico',origin:'grecia',act:'thrust',icon:'🛡️',look:{sk:SK.mt,beard:['full','#2b1d14'],hd:['corinthian','#c58b3a','#b0302a'],tu:'#a52a2a',ar:['musc','#c58b3a'],skirt:['pteruges','#a52a2a'],pa:SK.mt,bo:'#6b4423',cape:'#a52a2a',it:'spear',sh:['aspis','#c58b3a','#7a1f14'],lambda:1},desc:'Rey de Esparta, caído en las Termópilas (480 a. C.).',feats:['Con 300 espartanos y aliados griegos frenó al ejército persa','Resistió tres días en el paso de las Termópilas','Su sacrificio inspiró a toda Grecia']},
- {id:'pet_cleopatra',name:'Cleopatra VII',rarity:'mítico',origin:'egipto',act:'salute',icon:'🐍',look:{sk:'#c99067',hair:['bob','#111111'],hd:['diadem','#e8c45a'],tu:'#f4ecd8',ar:['dress','#f4ecd8','#e8c45a'],skirt:['long','#f4ecd8'],pa:'#c99067',bo:'#c9a24a',it:'ankh',acc:['collar']},desc:'Última reina del Egipto ptolemaico (69–30 a. C.).',feats:['Gobernó Egipto cerca de 21 años','Fue la primera de su dinastía en aprender egipcio y hablaba varios idiomas','Se alió con Julio César y con Marco Antonio']},
- {id:'pet_gengis',name:'Gengis Kan',rarity:'mítico',origin:'estepa',act:'bow',icon:'🏹',look:{sk:SK.mt,beard:['fu','#1a1a1a'],hd:['furcone','#2346a8','#8a6a3a'],tu:'#2346a8',ar:['deel','#2346a8','#e8a33a'],pa:'#3a2a1a',bo:'#5a3a22',it:'recurve'},desc:'Fundador del Imperio mongol (c. 1162–1227).',feats:['Unificó a las tribus mongolas en 1206','Su imperio llegó a ser el mayor imperio terrestre continuo de la historia','Creó el yam, un sistema de postas a caballo']},
- {id:'pet_lautaro',name:'Lautaro',rarity:'mítico',origin:'america',act:'thrust',icon:'🌄',look:{sk:SK.b,hair:['long','#111111'],hd:['trarilonco','#c0392b'],tu:'#1c1c1c',ar:['poncho','#1c1c1c','#c0392b'],pa:SK.b,bo:SK.b,cape:'#3a2a1a',it:'lance'},desc:'Toqui mapuche (c. 1534–1557), héroe de la Guerra de Arauco.',feats:['Venció a Pedro de Valdivia en la batalla de Tucapel (1553)','Aprendió las tácticas españolas y las usó en su contra','Es símbolo de la resistencia mapuche']},
- {id:'pet_fenix',name:'Fénix',rarity:'mítico',origin:'bestiario',act:'flare',cr:'phoenix',icon:'🐦‍🔥',look:{c1:'#ff6a2a',c2:'#ffd35a'},desc:'El ave mítica que renace de sus propias cenizas.',feats:['Heródoto ya la describía en el siglo V a. C.','Según la tradición, renace cada 500 años','Es símbolo de renacimiento desde Egipto hasta Roma']}
+ // ===== MÍTICOS =====
+ {id:'pet_zeus',name:'Zeus',rarity:'mítico',origin:'olimpo',act:'bolt',icon:'⚡',glow:'#ffe27a',look:{sk:SK.m,hair:['wild','#f2f2f6'],beard:['long','#f2f2f6'],hd:['laurel','#e8c45a'],tu:'#f6f0e2',ar:['toga','#f6f0e2','#4a7bd0'],skirt:['long','#f6f0e2'],shoe:['sandal','#b07a3a'],cape:'#4a7bd0',it:'bolt',mood:'grin',eye:'#3a6ad0'},desc:'Rey de los dioses del Olimpo, señor del cielo y del rayo.',feats:['Venció a los titanes junto a sus hermanos','Gobierna el Olimpo desde su trono','Su arma es el rayo que forjaron los cíclopes'],say:['¡Que caiga el rayo sobre tu flojera!','Desde el Olimpo te estoy mirando.','Una serie más y te regalo un trueno.']},
+ {id:'pet_poseidon',name:'Poseidón',rarity:'mítico',origin:'olimpo',act:'thrust',icon:'🔱',glow:'#6fe3ff',look:{sk:SK.mt,hair:['long','#3c6e8f'],beard:['long','#3c6e8f'],hd:['spikecrown','#e8c45a','#3ecf8e'],tu:'#2f8fa0',ar:['toga','#e9f6f4','#2f8fa0'],skirt:['long','#2f8fa0'],shoe:['sandal','#b07a3a'],it:'trident',mood:'calm',eye:'#1f8a9a'},desc:'Dios de los mares, de los terremotos y de los caballos.',feats:['Recibió los océanos cuando se repartió el mundo con Zeus y Hades','Con su tridente hacía temblar la tierra','Disputó con Atenea el patronazgo de Atenas'],say:['Las olas no descansan, y tú tampoco.','¡Que tiemble el suelo con tus flexiones!']},
+ {id:'pet_hades',name:'Hades',rarity:'mítico',origin:'olimpo',act:'cast',icon:'💀',glow:'#9b7bff',look:{sk:'#e2d2c6',hair:['long','#1f1a2e'],beard:['short','#1f1a2e'],hd:['spikecrown','#4a4460','#9b7bff'],tu:'#2a2238',ar:['robe','#2a2238','#9b7bff'],skirt:['long','#2a2238'],shoe:['sandal','#3a2a1a'],cape:'#4a2a6a',it:'bident',mood:'smirk',eye:'#7a5cff'},desc:'Señor del inframundo, guardián de las almas y de las riquezas de la tierra.',feats:['Gobierna el reino de los muertos junto a Perséfone','Su perro Cerbero, de tres cabezas, vigila la entrada','Tiene un casco que lo vuelve invisible'],say:['Nadie escapa del inframundo… ni de esta serie.','Hasta las sombras entrenan.']},
+ {id:'pet_odin',name:'Odín',rarity:'mítico',origin:'nordicos',act:'cast',icon:'🐦‍⬛',glow:'#9fc4ff',look:{sk:SK.m,hair:['long','#b9bec6'],beard:['long','#b9bec6'],hd:['wanderer','#3a3f4a'],acc:['eyepatch'],tu:'#3b4a6b',ar:['robe','#3b4a6b','#c9a24a'],skirt:['long','#3b4a6b'],cape:'#2a2f45',shoe:['boot','#3a2a1a'],it:'spear',extra:'raven',mood:'calm',eye:'#3a5a8a'},desc:'Padre de todos los dioses nórdicos, dios de la sabiduría y de la guerra.',feats:['Entregó un ojo para beber del pozo de la sabiduría','Sus cuervos Hugin y Munin le cuentan todo lo que pasa en el mundo','Su lanza Gungnir nunca falla'],say:['Di un ojo por sabiduría; tú da una serie más.','Hugin me contó que hoy todavía no entrenas…']},
+ {id:'pet_thor',name:'Thor',rarity:'mítico',origin:'nordicos',act:'slam',icon:'🔨',glow:'#9fd4ff',look:{sk:SK.l,hair:['long','#c0472a'],beard:['full','#c0472a'],tu:'#4a5a3a',ar:['chain','#9aa3ad'],skirt:['kilt','#5a4030'],leg:'#5a4a3a',shoe:['boot','#3a2a1a'],mantle:'#8a6a4a',belt:'#c9a24a',it:'hammer',acc:['gauntlets'],mood:'grin',eye:'#3a7ad0'},desc:'Dios nórdico del trueno, protector de los humanos.',feats:['Su martillo Mjölnir siempre vuelve a su mano','Defiende a dioses y humanos de los gigantes','El jueves lleva su nombre en inglés: Thursday'],say:['¡Una más, por Asgard!','¡Que retumbe el trueno!']},
+ {id:'pet_amaterasu',name:'Amaterasu',rarity:'mítico',origin:'japoneses',act:'cast',icon:'☀️',glow:'#ffd35a',look:{sk:SK.lw,hair:['long','#151520'],hd:['sunhalo','#ffcf4a','#e8592a'],tu:'#f7f2ea',ar:['kimono','#c0392b','#e8c45a'],skirt:['long','#c0392b'],shoe:['zori','#c0392b'],it:'mirror',acc:['magatama'],mood:'smile',eye:'#8a3a1a'},desc:'Diosa del sol en el sintoísmo; según la tradición, de ella desciende la familia imperial japonesa.',feats:['Cuando se escondió en una cueva, el mundo quedó a oscuras','La sacaron de ahí con risas, música y un espejo','El espejo Yata no Kagami es uno de los tres tesoros imperiales'],say:['Que tu esfuerzo brille como el sol.','Sin luz no hay sombra; sin serie no hay progreso.']},
+ {id:'pet_ra',name:'Ra',rarity:'mítico',origin:'egipcios',act:'cast',icon:'🌞',glow:'#ffb02e',look:{head:'falcon',sk:SK.e,hb:['nemes','#2346a8','#e8c45a'],hd:['sundisk','#ff6a2a','#e8c45a'],tu:SK.e,ar:['bare'],skirt:['kilt','#f4ecd8'],belt:'#e8c45a',shoe:['sandal','#c9a24a'],it:'was',acc:['collar']},desc:'Dios egipcio del sol, que cruzaba el cielo en su barca cada día.',feats:['Cada noche navegaba por el inframundo y renacía al amanecer','Cada noche vencía a la serpiente Apofis','Fue uno de los dioses más venerados de Egipto'],say:['Cada amanecer es una nueva serie.','El sol no se salta ningún día. ¿Y tú?']},
+ {id:'pet_cesar',name:'Julio César',rarity:'mítico',origin:'roma',act:'salute',icon:'👑',look:{sk:SK.mt,hair:['short','#4a3020'],hd:['laurel','#e8c45a'],tu:'#b0302a',ar:['musc','#d9a441'],skirt:['pteruges','#b0302a'],shoe:['sandal','#8a5a2b'],cape:'#a61e2a',it:'gladius',mood:'smile'},desc:'General y dictador romano (100–44 a. C.).',feats:['Conquistó la Galia y venció en Alesia (52 a. C.)','Cruzó el Rubicón en el 49 a. C.: «Alea iacta est»','Su calendario juliano es la base del que usamos hoy','Dijo «Veni, vidi, vici» tras su victoria en Zela'],say:['Veni, vidi, vici.','Alea iacta est: hoy se entrena.']},
+ {id:'pet_alejandro',name:'Alejandro Magno',rarity:'mítico',origin:'grecia',act:'thrust',icon:'🐴',look:{sk:SK.l,hair:['curly','#e8b84e'],hd:['boeotian','#c9a24a','#f4f4f4'],tu:'#f4ecd8',ar:['linen','#f4ecd8','#d9a441'],skirt:['pteruges','#f4ecd8'],shoe:['sandal','#8a5a2b'],cape:'#6a2c8a',it:'spear',mood:'grin',eye:'#4a7a3a'},desc:'Rey de Macedonia (356–323 a. C.).',feats:['No perdió ninguna de sus grandes batallas','Derrotó al Imperio persa en Gránico, Isos y Gaugamela','Fundó más de 20 ciudades, entre ellas Alejandría','Llegó hasta la India antes de cumplir 30 años'],say:['Nada es imposible para quien lo intenta.','¡Hasta el fin del mundo, una serie a la vez!']},
+ {id:'pet_napoleon',name:'Napoleón Bonaparte',rarity:'mítico',origin:'europa',act:'point',icon:'🎖️',look:{sk:SK.lw,hair:['short','#3a2a1a'],hd:['bicorne','#1a1a22','#e8c45a'],tu:'#1f3a8a',ar:['coat','#1f3a8a','#f4f4f4'],leg:'#f4f4f4',shoe:['boot','#15151c'],it:'spyglass',acc:['epaul'],mood:'calm',eye:'#3a5a8a'},desc:'Emperador de los franceses (1769–1821).',feats:['Su gran victoria fue Austerlitz (1805)','Su Código Civil inspiró leyes en muchos países, también el Código Civil chileno','Llegó a dominar gran parte de Europa'],say:['Imposible no es una palabra francesa.','La victoria es del más perseverante.']},
+ // ===== LEGENDARIOS =====
+ {id:'pet_ares',name:'Ares',rarity:'legendario',origin:'olimpo',act:'thrust',icon:'🗡️',glow:'#ff5a5a',look:{sk:SK.mt,hair:['short','#2a1a1a'],beard:['short','#2a1a1a'],hd:['corup','#8a5a2a','#1a1a22'],tu:'#7a1f1f',ar:['musc','#9a6a2a'],skirt:['pteruges','#7a1f1f'],shoe:['sandal','#5a3a1a'],cape:'#5a1010',it:'spear',sh:['aspis','#8a5a2a','#c0392b'],mood:'serious',eye:'#a01f1f'},desc:'Dios griego de la guerra, del valor y de la furia del combate.',feats:['Hijo de Zeus y Hera','Lo acompañaban Fobos y Deimos, el miedo y el terror','Los romanos lo veneraron como Marte'],say:['¡A la batalla contra la flojera!','El dolor de hoy es la fuerza de mañana.']},
+ {id:'pet_afrodita',name:'Afrodita',rarity:'legendario',origin:'olimpo',act:'cast',icon:'🐚',glow:'#ff9ec4',look:{sk:SK.lw,hair:['wavy','#f2c04a'],hd:['shell','#ffd1dd','#ff9ec4'],tu:'#ffc2d4',ar:['chiton','#ffd1dd','#e8c45a'],skirt:['long','#ffc2d4'],shoe:['sandal','#e8c45a'],it:'apple',acc:['pearls'],mood:'smile',eye:'#3a8aa8'},desc:'Diosa griega del amor y la belleza, nacida de la espuma del mar.',feats:['Ganó la manzana de oro en el juicio de Paris','Su favor desató la guerra de Troya','Los romanos la llamaron Venus'],say:['Quiérete lo suficiente para entrenar hoy.','La constancia también es belleza.']},
+ {id:'pet_persefone',name:'Perséfone',rarity:'legendario',origin:'olimpo',act:'cast',icon:'🌺',glow:'#ff9ec4',look:{sk:SK.lw,hair:['swept','#3a1f2a'],hd:['flowers','#ff7aa8','#f4f4f4'],tu:'#2f5a3a',ar:['chiton','#2f5a3a','#e8c45a'],skirt:['long','#2a4a32'],shoe:['sandal','#8a5a2b'],it:'pomegranate',mood:'smile',eye:'#6a2a4a'},desc:'Diosa de la primavera y reina del inframundo.',feats:['Pasa medio año en el inframundo y medio año en la tierra','Su regreso cada año trae la primavera','Comió semillas de granada en el reino de Hades'],say:['Después del invierno siempre vuelve la primavera.','Cada semilla de esfuerzo florece.']},
+ {id:'pet_freya',name:'Freya',rarity:'legendario',origin:'nordicos',act:'swing',icon:'🪶',glow:'#ffd88a',look:{sk:SK.lw,hair:['braids','#f2d06a'],hd:['circlet','#e8c45a','#ff9a2a'],tu:'#5a7a8f',ar:['robe','#5a7a8f','#e8c45a'],mantle:'#f0e6d8',skirt:['long','#4a6a7f'],shoe:['boot','#5a3a22'],it:'longsword',acc:['brisingamen'],mood:'smile',eye:'#3a7ab0'},desc:'Diosa nórdica del amor, la magia y la guerra, líder de las valquirias.',feats:['Recibe a la mitad de los guerreros caídos en su salón, Fólkvangr','Tiene un manto de plumas de halcón para volar','Viaja en un carro tirado por gatos'],say:['Hasta las valquirias calientan antes de pelear.','¡Que tu fuerza vuele alto!']},
+ {id:'pet_anubis',name:'Anubis',rarity:'legendario',origin:'egipcios',act:'cast',icon:'⚖️',glow:'#e8c45a',look:{head:'jackal',sk:SK.d,hb:['nemes','#1f1d26','#e8c45a'],tu:SK.d,ar:['bare'],skirt:['kilt','#f4ecd8'],belt:'#e8c45a',shoe:['sandal','#c9a24a'],it:'scales',acc:['collar']},desc:'Dios egipcio con cabeza de chacal, guía de las almas y protector de los muertos.',feats:['Pesaba el corazón de los muertos contra la pluma de Maat','Era el patrón de los embalsamadores','Guiaba a las almas por el inframundo'],say:['Tu corazón pesa poco: sigue así.','Vigilo tus récords desde el Duat.']},
+ {id:'pet_susanoo',name:'Susanoo',rarity:'legendario',origin:'japoneses',act:'swing',icon:'🌪️',glow:'#6fb8ff',look:{sk:SK.m,hair:['wild','#151520'],beard:['short','#151520'],hd:['headband','#2a7bd5'],tu:'#2a3a5a',ar:['lamellar','#3a4a6a','#c0392b'],skirt:['hakama','#1f2a44'],shoe:['boot','#2a2a2a'],it:'tsurugi',mood:'grin',eye:'#2a5aa8'},desc:'Dios sintoísta de las tormentas y del mar, hermano de Amaterasu.',feats:['Venció a Yamata no Orochi, la serpiente de ocho cabezas','Dentro de la serpiente encontró la espada Kusanagi','Su travesura hizo que Amaterasu se escondiera en una cueva'],say:['¡Que venga la tormenta, que yo sigo!','La serpiente tenía ocho cabezas; tú solo tienes que hacer ocho repeticiones.']},
+ {id:'pet_tsukuyomi',name:'Tsukuyomi',rarity:'legendario',origin:'japoneses',act:'cast',icon:'🌙',glow:'#a8c4ff',look:{sk:'#f4e8de',hair:['long','#d8dce8'],hd:['moonhalo','#cfe0ff','#8aa8ff'],tu:'#1f2a5c',ar:['kimono','#3a4a8f','#cfe0ff'],skirt:['long','#1f2a5c'],shoe:['zori','#3a4a8f'],it:'moonorb',mood:'calm',eye:'#5a6aa8'},desc:'Dios sintoísta de la luna, hermano de Amaterasu y Susanoo.',feats:['Nació del ojo derecho de Izanagi','Gobierna la noche mientras su hermana gobierna el día','Por eso, dice el mito, el sol y la luna nunca se encuentran'],say:['Hasta la luna tiene fases: tú no te rindas.','La noche también sirve para entrenar.']},
+ {id:'pet_izanagi',name:'Izanagi',rarity:'legendario',origin:'japoneses',act:'thrust',icon:'🗾',glow:'#ffe2a8',look:{sk:SK.l,hair:['mizura','#151520'],tu:'#f4f1ea',ar:['kofun','#f4f1ea','#c0392b'],skirt:['hakama','#f4f1ea'],shoe:['zori','#8a5a2b'],it:'jewelspear',acc:['magatama'],mood:'smile'},desc:'Dios creador del sintoísmo, que formó las islas de Japón junto a Izanami.',feats:['Agitó el océano con la lanza enjoyada y nacieron las primeras islas','De su purificación nacieron Amaterasu, Tsukuyomi y Susanoo','Bajó al inframundo, Yomi, a buscar a Izanami'],say:['Con un poco de esfuerzo se crean islas enteras.','Construye tu propia isla de constancia.']},
+ {id:'pet_izanami',name:'Izanami',rarity:'legendario',origin:'japoneses',act:'cast',icon:'🌸',glow:'#ff9ec4',look:{sk:'#f6e6da',hair:['swept','#151520'],hd:['comb','#e8c45a','#ff7aa8'],tu:'#f4f1ea',ar:['kofun','#f4f1ea','#8a2a5a'],skirt:['long','#8a2a5a'],shoe:['zori','#f4f4f4'],it:'magatama',mood:'smile',eye:'#5a2a4a'},desc:'Diosa creadora del sintoísmo, compañera de Izanagi y luego reina de Yomi.',feats:['Dio a luz a las islas y a muchos dioses de Japón','Se convirtió en la señora del inframundo, Yomi','Su historia explica el ciclo de la vida y la muerte'],say:['Todo lo que nace, crece. Tus músculos también.','Desde Yomi aplaudo tu racha.']},
+ {id:'pet_aquiles',name:'Aquiles',rarity:'legendario',origin:'heroes',act:'thrust',icon:'🏺',look:{sk:SK.m,hair:['curly','#e8b84e'],hd:['corup','#e8c45a','#1a1a22'],tu:'#f4ecd8',ar:['musc','#e8c45a'],skirt:['pteruges','#f4ecd8'],shoe:['sandal','#8a5a2b'],cape:'#2a4f8a',it:'spear',sh:['aspis','#e8c45a','#9a6a1a','sun'],mood:'grin',eye:'#3a7a3a'},desc:'El mayor guerrero aqueo de la guerra de Troya.',feats:['Es el protagonista de la «Ilíada» de Homero','Venció a Héctor frente a las murallas de Troya','Era casi invulnerable, salvo por el talón'],say:['¡Cuidado con el talón, que lo demás aguanta!','Mi gloria se construye serie a serie.']},
+ {id:'pet_hector',name:'Héctor',rarity:'legendario',origin:'heroes',act:'thrust',icon:'🐎',look:{sk:SK.mt,hair:['short','#3a2a1a'],beard:['short','#3a2a1a'],hd:['corup','#d8dde4','#2a5aa8'],tu:'#2a4f8a',ar:['musc','#c9ced6'],skirt:['pteruges','#2a4f8a'],shoe:['sandal','#5a3a1a'],cape:'#1f3a6b',it:'spear',sh:['aspis','#c9ced6','#2a5aa8','horse'],mood:'calm'},desc:'Príncipe de Troya y su mayor defensor en la «Ilíada».',feats:['Lideró la defensa de Troya durante diez años','Llegó a incendiar las naves de los griegos','Homero lo llama «Héctor, el del casco brillante»'],say:['Defiendo mi racha como a Troya.','El deber primero, el sillón después.']},
+ {id:'pet_heracles',name:'Heracles',rarity:'legendario',origin:'heroes',act:'flex',icon:'🦁',look:{sk:SK.t,hair:['curly','#3a2a1a'],beard:['full','#3a2a1a'],hd:['lionpelt','#d9a441','#a8702a'],tu:SK.t,ar:['bare'],bulk:1,skirt:['kilt','#d9a441'],shoe:['sandal','#6b4423'],it:'club',mood:'grin'},desc:'Semidiós hijo de Zeus, el más fuerte de los héroes griegos.',feats:['Completó los doce trabajos','Venció al león de Nemea y a la Hidra de Lerna','Sostuvo el cielo en lugar de Atlas'],say:['¿Doce trabajos? Dame doce series.','El león de Nemea entrenaba menos que tú.']},
+ {id:'pet_odiseo',name:'Odiseo',rarity:'legendario',origin:'heroes',act:'bow',icon:'⛵',look:{sk:SK.mt,hair:['curly','#4a3020'],beard:['short','#4a3020'],hd:['pilos','#a8794a'],tu:'#3a6a8a',ar:['chiton','#e9dcc0','#3a6a8a'],skirt:['kilt','#e9dcc0'],shoe:['sandal','#6b4423'],cape:'#8a3a2a',it:'bow',mood:'smirk'},desc:'Rey de Ítaca, el más astuto de los héroes griegos.',feats:['Ideó el caballo de Troya','Su viaje de regreso a casa duró diez años, según la «Odisea»','Tensó el arco que nadie más pudo tensar'],say:['Diez años para volver a casa; tú solo vuelve a la barra.','La astucia gana guerras; la constancia, rangos.']},
+ {id:'pet_augusto',name:'Octavio Augusto',rarity:'legendario',origin:'roma',act:'salute',icon:'🏛️',look:{sk:SK.l,hair:['short','#6a4a2a'],hd:['laurel','#5f9a3a'],tu:'#f4ecd8',ar:['toga','#f4ecd8','#6a2c8a'],skirt:['long','#f4ecd8'],shoe:['sandal','#8a5a2b'],mood:'calm'},desc:'Primer emperador de Roma (63 a. C.–14 d. C.).',feats:['Venció a Marco Antonio y Cleopatra en Actium (31 a. C.)','Inició la Pax Romana, cerca de dos siglos de relativa paz','Gobernó como emperador más de 40 años','«Encontré una Roma de ladrillo y la dejé de mármol»'],say:['Festina lente: apresúrate despacio.','Encontré una rutina de ladrillo y la dejaré de mármol.']},
+ {id:'pet_anibal',name:'Aníbal Barca',rarity:'legendario',origin:'cartago',act:'thrust',icon:'🐘',look:{sk:SK.t,hair:['curly','#1a1a1a'],beard:['full','#1a1a1a'],hd:['carthage','#c58b3a','#c0392b'],tu:'#6a2c8a',ar:['linen','#e9dcc0','#c9a24a'],skirt:['pteruges','#6a2c8a'],shoe:['sandal','#6b4423'],cape:'#6a2c8a',it:'spear',extra:'elephant',mood:'grin'},desc:'General cartaginés (247–c. 183 a. C.), la pesadilla de Roma.',feats:['Cruzó los Alpes con elefantes de guerra (218 a. C.)','Aniquiló a un ejército romano mucho mayor en Cannas (216 a. C.)','Su táctica de Cannas se estudia hasta hoy'],say:['Encontraré un camino, o lo haré.','Crucé los Alpes con elefantes; tú puedes con una serie.']},
+ {id:'pet_leonidas',name:'Leónidas I',rarity:'legendario',origin:'grecia',act:'thrust',icon:'🛡️',look:{sk:SK.mt,hair:['short','#2b1d14'],beard:['full','#2b1d14'],hd:['corup','#c58b3a','#b0302a'],tu:'#a52a2a',ar:['musc','#c58b3a'],skirt:['pteruges','#a52a2a'],shoe:['sandal','#6b4423'],cape:'#a52a2a',it:'spear',sh:['aspis','#c58b3a','#7a1f14','lambda'],mood:'serious'},desc:'Rey de Esparta, caído en las Termópilas (480 a. C.).',feats:['Con 300 espartanos y aliados griegos frenó al ejército persa','Resistió tres días en el paso de las Termópilas','Su sacrificio inspiró a toda Grecia'],say:['Molṑn labé: ven a buscarlas.','Una serie más, por Esparta.']},
+ {id:'pet_gengis',name:'Gengis Kan',rarity:'legendario',origin:'estepa',act:'bow',icon:'🏹',look:{sk:SK.mt,hair:['short','#1a1a1a'],beard:['fu','#1a1a1a'],hd:['furcone','#2346a8','#8a6a3a'],tu:'#2346a8',ar:['deel','#2346a8','#e8a33a'],skirt:['kilt','#2346a8'],leg:'#3a2a1a',shoe:['boot','#5a3a22'],it:'recurve',mood:'grin'},desc:'Fundador del Imperio mongol (c. 1162–1227).',feats:['Unificó a las tribus mongolas en 1206','Su imperio llegó a ser el mayor imperio terrestre continuo de la historia','Creó el yam, un sistema de postas a caballo'],say:['Un arquero a caballo no descansa.','La estepa es larga; tu racha también puede serlo.']},
+ {id:'pet_ramses',name:'Ramsés II',rarity:'legendario',origin:'egipto',act:'swing',icon:'𓂀',look:{sk:SK.e,hd:['khepresh','#2346a8','#e8c45a'],tu:'#f4ecd8',ar:['linen','#f4ecd8','#e8c45a'],skirt:['kilt','#f4ecd8'],belt:'#e8c45a',shoe:['sandal','#c9a24a'],it:'khopesh',acc:['collar'],mood:'smirk'},desc:'Faraón de Egipto (c. 1303–1213 a. C.), llamado Ramsés el Grande.',feats:['Reinó cerca de 66 años','Mandó construir los templos de Abu Simbel','Firmó con los hititas uno de los primeros tratados de paz conocidos'],say:['Reiné 66 años sin saltarme un entrenamiento.','Construye tu Abu Simbel, repetición a repetición.']},
+ {id:'pet_cleopatra',name:'Cleopatra VII',rarity:'legendario',origin:'egipto',act:'salute',icon:'🐍',look:{sk:'#d9a07a',hair:['bob','#111118'],hd:['diadem','#e8c45a'],tu:'#f4ecd8',ar:['linen','#f4ecd8','#e8c45a'],skirt:['long','#f4ecd8'],shoe:['sandal','#c9a24a'],it:'ankh',acc:['collar'],mood:'smile',eye:'#2a6a4a'},desc:'Última reina del Egipto ptolemaico (69–30 a. C.).',feats:['Gobernó Egipto cerca de 21 años','Fue la primera de su dinastía en aprender egipcio y hablaba varios idiomas','Se alió con Julio César y con Marco Antonio'],say:['Hablo muchos idiomas, y en todos te digo: entrena.','Una reina no se rinde.']},
+ {id:'pet_musashi',name:'Miyamoto Musashi',rarity:'legendario',origin:'japon',act:'swing',icon:'⚔️',look:{sk:SK.l,hair:['bun','#1a1a1a'],beard:['short','#1a1a1a'],tu:'#5a5f6a',ar:['kimono','#2a2a32'],skirt:['hakama','#3a3f4a'],shoe:['zori','#3a2a1a'],it:'katana',it2:'wakizashi',mood:'serious'},desc:'Espadachín japonés (c. 1584–1645), maestro de las dos espadas.',feats:['Dijo no haber perdido ninguno de sus más de 60 duelos','Fundó el estilo de dos espadas Niten Ichi-ryū','Escribió «El libro de los cinco anillos»'],say:['Hoy vence a quien fuiste ayer.','El camino está en el entrenamiento.']},
+ // ===== ÉPICOS =====
+ {id:'pet_marcoaurelio',name:'Marco Aurelio',rarity:'épico',origin:'roma',act:'read',icon:'📜',look:{sk:SK.m,hair:['curly','#5a3a22'],beard:['full','#5a3a22'],hd:['laurel','#5f9a3a'],tu:'#ece3cf',ar:['toga','#ece3cf','#6a2c8a'],skirt:['long','#ece3cf'],shoe:['sandal','#6b4423'],it:'scroll',mood:'calm'},desc:'Emperador romano (121–180) y filósofo estoico.',feats:['Escribió las «Meditaciones», que se siguen leyendo hoy','Fue el último de los llamados Cinco Buenos Emperadores','Defendió la frontera del Danubio en las guerras marcomanas'],say:['Tienes poder sobre tu mente, no sobre lo que pasa afuera.','Lo que se interpone en el camino se vuelve el camino.']},
+ {id:'pet_agripa',name:'Marco Vipsanio Agripa',rarity:'épico',origin:'roma',act:'swing',icon:'⚓',look:{sk:SK.mt,hair:['short','#3a2a1a'],hd:['crown','#e8c45a','#2a7bd5'],tu:'#2a4f8a',ar:['musc','#c9a24a'],skirt:['pteruges','#2a4f8a'],shoe:['sandal','#6b4423'],cape:'#1f3a6b',it:'gladius',mood:'serious'},desc:'General, almirante y mano derecha de Augusto (c. 63–12 a. C.).',feats:['Ganó la batalla naval de Actium (31 a. C.)','Construyó el primer Panteón de Roma','Amplió los acueductos y abrió grandes termas públicas'],say:['Gané Actium; tú gana el día de hoy.','Un buen almirante no abandona el barco.']},
+ {id:'pet_escipion',name:'Escipión el Africano',rarity:'épico',origin:'roma',act:'salute',icon:'🦅',look:{sk:SK.mt,hair:['short','#3a2a1a'],hd:['galea','#e0c27a','#f4f4f4'],tu:'#7a1f2a',ar:['musc','#d4b06a'],skirt:['pteruges','#7a1f2a'],shoe:['sandal','#6b4423'],cape:'#7a1f2a',it:'gladius',sh:['scutum','#7a1f2a','#e8c45a'],mood:'smile'},desc:'General romano (236–183 a. C.), el hombre que venció a Aníbal.',feats:['Derrotó a Aníbal en Zama (202 a. C.)','Puso fin a la Segunda Guerra Púnica','Tomó Cartago Nova, en Hispania, con un ataque audaz'],say:['Estudié a mi rival hasta vencerlo.','Zama empezó con un buen entrenamiento.']},
+ {id:'pet_espartaco',name:'Espartaco',rarity:'épico',origin:'roma',act:'swing',icon:'⛓️',look:{sk:SK.t,hair:['short','#3a2414'],beard:['short','#3a2414'],hd:['gladhelm','#9aa3ad','#c0392b'],tu:SK.t,ar:['bare'],skirt:['kilt','#e9dcc0'],belt:'#6b4423',shoe:['sandal','#6b4423'],it:'sica',sh:['parmula','#8a5a2b','#c9a24a'],acc:['chains'],mood:'grin'},desc:'Gladiador tracio que desafió a Roma (c. 103–71 a. C.).',feats:['Encabezó la mayor rebelión de esclavos contra Roma (73–71 a. C.)','Su ejército llegó a reunir a decenas de miles de personas','Derrotó a varias legiones antes de caer ante Craso'],say:['Rompe tus cadenas: la primera es la flojera.','¡Libertad o una serie más!']},
+ {id:'pet_atila',name:'Atila',rarity:'épico',origin:'estepa',act:'bow',icon:'🐎',look:{sk:SK.mt,hair:['short','#1a1a1a'],beard:['fu','#1a1a1a'],hd:['furhat','#6b4423','#c9a27a'],tu:'#7a2f1f',ar:['lamellar','#8a6a3a'],skirt:['kilt','#5a3a2a'],leg:'#5a3a2a',shoe:['boot','#3a2a1a'],it:'recurve',mood:'grin'},desc:'Rey de los hunos (c. 406–453), llamado «el azote de Dios».',feats:['Gobernó un imperio desde el Rin hasta el mar Negro','Puso en jaque a Roma de Oriente y de Occidente','Sus arqueros a caballo eran temidos en toda Europa'],say:['Por donde paso no crece la flojera.','Mi caballo y yo no conocemos el descanso.']},
+ {id:'pet_nobunaga',name:'Oda Nobunaga',rarity:'épico',origin:'japon',act:'aim',icon:'🏯',look:{sk:SK.l,hd:['kabuto','#1a1a22','#e8c45a','horns'],tu:'#7a1f1f',ar:['lamellar','#1a1a22','#c0392b'],cape:'#7a1f1f',skirt:['kilt','#2a2a32'],leg:'#2a2a32',shoe:['boot','#1a1a22'],it:'musket',mood:'smirk'},desc:'Daimio japonés (1534–1582) que inició la unificación de Japón.',feats:['Venció a un ejército mucho mayor en Okehazama (1560)','Usó arcabuces de forma masiva en Nagashino (1575)','Abrió el camino a la unificación del país'],say:['Si el cuco no canta, que haga flexiones.','La unificación empieza por tu rutina.']},
+ {id:'pet_tomoe',name:'Tomoe Gozen',rarity:'épico',origin:'japon',act:'thrust',icon:'🌸',look:{sk:SK.lw,hair:['pony','#111118'],hd:['headband','#f4f4f4'],tu:'#a52a2a',ar:['lamellar','#a52a2a','#f4f4f4'],skirt:['hakama','#2a2f45'],shoe:['zori','#2a2a2a'],it:'naginata',mood:'grin'},desc:'Guerrera onna-musha del siglo XII, en las guerras Genpei.',feats:['El «Cantar de Heike» la describe como arquera y jinete formidable','Según el relato, valía por mil guerreros','Es símbolo de las mujeres samurái'],say:['Vale por mil quien no falta a entrenar.','Mi naginata y yo estamos listas.']},
+ {id:'pet_guanyu',name:'Guan Yu',rarity:'épico',origin:'china',act:'swing',icon:'🐉',look:{sk:'#c8473a',hair:['bun','#111118'],beard:['guan','#111118'],hd:['futou','#2f6b4a','#c0392b'],tu:'#2f8a5a',ar:['robe','#2f8a5a','#e8c45a'],skirt:['long','#2f6b4a'],shoe:['boot','#1a1a22'],it:'guandao',mood:'calm'},desc:'General chino de la época de los Tres Reinos (m. 220), símbolo de lealtad.',feats:['Fue uno de los generales más leales de Liu Bei','Su larga barba le valió el apodo de «Señor de la hermosa barba»','Con los siglos fue venerado como dios de la guerra y de la lealtad'],say:['La lealtad a tu rutina es lo primero.','Mi guja pesa más que tu excusa.']},
+ {id:'pet_juana',name:'Juana de Arco',rarity:'épico',origin:'europa',act:'banner',icon:'⚜️',look:{sk:SK.lw,hair:['bob','#5a3a22'],tu:'#c9ced6',ar:['plate','#c9ced6'],leg:'#9aa3ad',shoe:['boot','#7a828c'],it:'banner',mood:'grin',eye:'#3a6aa8'},desc:'Heroína francesa (c. 1412–1431) de la Guerra de los Cien Años.',feats:['Con 17 años ayudó a levantar el asedio de Orleans (1429)','Llevó a Carlos VII a coronarse en Reims','Es patrona de Francia'],say:['No tengo miedo: nací para esto.','¡Adelante, que el asedio no se levanta solo!']},
+ {id:'pet_ricardo',name:'Ricardo Corazón de León',rarity:'épico',origin:'europa',act:'swing',icon:'🦁',look:{sk:SK.l,hair:['short','#c9822a'],beard:['short','#c9822a'],hd:['coifcrown','#c9ced6','#e8c45a'],tu:'#b0302a',ar:['surcoat','#b0302a','#e8c45a'],skirt:['kilt','#b0302a'],leg:'#9aa3ad',shoe:['boot','#7a828c'],it:'longsword',sh:['kite','#b0302a','#e8c45a'],mood:'grin',eye:'#3a6aa8'},desc:'Rey de Inglaterra (1157–1199), famoso guerrero de la Tercera Cruzada.',feats:['Ganó la batalla de Arsuf (1191)','Pasó casi todo su reinado lejos de Inglaterra, combatiendo','Su apodo viene de su valentía en batalla'],say:['Corazón de león, piernas de acero.','¡A la carga!']},
+ {id:'pet_perseo',name:'Perseo',rarity:'épico',origin:'heroes',act:'swing',icon:'🪞',look:{sk:SK.l,hair:['curly','#5a3a22'],hd:['wingcap','#c9ced6','#f4f4f4'],tu:'#c0392b',ar:['chiton','#f4ecd8','#c0392b'],skirt:['kilt','#f4ecd8'],shoe:['wingsandal','#c9a24a'],it:'harpe',sh:['mirror','#e8eef4','#c9a24a'],mood:'grin'},desc:'Héroe griego que venció a la gorgona Medusa.',feats:['Venció a Medusa mirándola solo en el reflejo de su escudo','Usó sandalias aladas y un casco de invisibilidad','Rescató a Andrómeda del monstruo marino'],say:['No mires a la flojera a los ojos.','Con sandalias aladas, hasta la trotadora es fácil.']},
+ {id:'pet_orion',name:'Orión',rarity:'épico',origin:'heroes',act:'swing',icon:'✨',glow:'#cfe0ff',look:{sk:SK.t,hair:['long','#2a1f1a'],beard:['short','#2a1f1a'],tu:'#6b4b2a',ar:['leather','#8a5a2b'],belt:'#2a2f45',acc:['starbelt'],skirt:['kilt','#8a6a3a'],shoe:['boot','#5a3a22'],it:'club',sh:['pelt','#c9a27a','#8a6a3a'],mood:'grin'},desc:'Gigante cazador de la mitología griega, convertido en constelación.',feats:['Fue el cazador más famoso de los mitos griegos','Zeus lo puso en el cielo como constelación','Su cinturón, las Tres Marías, se ve en el cielo de Chile en verano'],say:['Las Tres Marías te miran: no aflojes.','A la caza del próximo récord.']},
+ // ===== RAROS =====
+ {id:'pet_teseo',name:'Teseo',rarity:'raro',origin:'heroes',act:'swing',icon:'🧶',look:{sk:SK.l,hair:['curly','#3a2a1a'],hd:['headband','#2a7bd5'],tu:'#2a7bd5',ar:['chiton','#f4ecd8','#2a7bd5'],skirt:['kilt','#f4ecd8'],shoe:['sandal','#8a5a2b'],it:'gladius',it2:'thread',mood:'grin'},desc:'Héroe ateniense que venció al Minotauro.',feats:['Entró al laberinto de Creta y venció al Minotauro','Salió gracias al hilo que le dio Ariadna','Llegó a ser rey de Atenas'],say:['Siempre hay una salida del laberinto.','Sigue el hilo de tu racha.']},
+ {id:'pet_vercingetorix',name:'Vercingétorix',rarity:'raro',origin:'barbaros',act:'swing',icon:'🗡️',look:{sk:SK.l,hair:['long','#d9a441'],beard:['stache','#d9a441'],hd:['winged','#c58b3a','#f4f4f4'],tu:'#2f6b3a',ar:['chain','#9aa3ad'],leg:'#8a3a2a',shoe:['boot','#4a3020'],cape:'#2f6b3a',it:'longsword',sh:['oval','#2f6b3a','#c9a24a'],acc:['torc'],mood:'grin'},desc:'Caudillo de los arvernos que unió a la Galia contra César (c. 82–46 a. C.).',feats:['Unió por primera vez a decenas de tribus galas','Venció a César en Gergovia (52 a. C.)','Resistió el asedio de Alesia hasta el final'],say:['¡Por la Galia y por una serie más!','Gergovia se ganó con piernas fuertes.']},
+ {id:'pet_boudica',name:'Boudica',rarity:'raro',origin:'barbaros',act:'thrust',icon:'🔥',look:{sk:'#f8dcc8',hair:['wavy','#c8471f'],tu:'#2f6b3a',ar:['chiton','#2f6b3a','#c9a24a'],skirt:['long','#2f6b3a'],cape:'#8a3a2a',shoe:['boot','#4a3020'],it:'spear',sh:['oval','#8a3a2a','#c9a24a'],acc:['torc'],mood:'grin',eye:'#3a7a3a'},desc:'Reina de los icenos de Britania (m. c. 61 d. C.).',feats:['Lideró una gran revuelta contra Roma','Arrasó Camulodunum, Londinium y Verulamium','Tiene una estatua junto al puente de Westminster'],say:['¡Ni Roma me detuvo, menos la flojera!','A la carga, sin miedo.']},
+ {id:'pet_ragnar',name:'Ragnar Lodbrok',rarity:'raro',origin:'barbaros',act:'swing',icon:'⛵',look:{sk:SK.l,hair:['braids','#c9a061'],beard:['long','#c9a061'],tu:'#3a3f4a',ar:['leather','#5a4030'],mantle:'#7a6a56',skirt:['kilt','#4a3a2a'],leg:'#4a3a2a',shoe:['boot','#3a2a1a'],it:'axe',sh:['round','#2a4f8a','#e8e2d0'],mood:'grin',eye:'#3a7ab0'},desc:'Héroe vikingo de las sagas nórdicas del siglo IX.',feats:['Las sagas le atribuyen incursiones en Francia e Inglaterra','Es el padre legendario de grandes caudillos vikingos','Su historia mezcla hechos y leyenda'],say:['¡Al barco, que se va la marea!','Un vikingo no se salta el remo.']},
+ {id:'pet_carlomagno',name:'Carlomagno',rarity:'raro',origin:'europa',act:'salute',icon:'👑',look:{sk:SK.l,hair:['long','#ececf0'],beard:['long','#ececf0'],hd:['crown','#e8c45a','#c0392b'],tu:'#2346a8',ar:['robe','#2346a8','#e8c45a'],skirt:['long','#2346a8'],cape:'#b0302a',shoe:['boot','#3a2a1a'],it:'longsword',it2:'globe',mood:'calm'},desc:'Rey de los francos y emperador (c. 742–814), llamado «padre de Europa».',feats:['Unió gran parte de Europa occidental bajo su reino','Fue coronado emperador en Roma el año 800','Impulsó escuelas y la copia de libros antiguos'],say:['Un imperio se construye día a día.','La constancia también se corona.']},
+ {id:'pet_date',name:'Date Masamune',rarity:'raro',origin:'japon',act:'swing',icon:'🌙',look:{sk:SK.l,hd:['kabuto','#1a1a22','#e8c45a','crescent'],acc:['eyepatchR'],tu:'#1a1a22',ar:['lamellar','#1a1a22','#e8c45a'],skirt:['kilt','#1a1a22'],leg:'#2a2a32',shoe:['boot','#1a1a22'],it:'katana',mood:'smirk'},desc:'Daimio japonés (1567–1636), conocido como el «dragón de un ojo».',feats:['Perdió el ojo derecho de niño por la viruela','Su casco con una gran media luna es de los más famosos de Japón','Fundó la ciudad de Sendai'],say:['Con un ojo me basta para ver tu progreso.','El dragón de un ojo no se salta días.']},
+ {id:'pet_suntzu',name:'Sun Tzu',rarity:'raro',origin:'china',act:'read',icon:'🎋',look:{sk:SK.l,hair:['bun','#2a2a32'],beard:['long','#3a3a42'],hd:['guan','#1a1a22','#e8c45a'],tu:'#8a2a2a',ar:['robe','#8a2a2a','#e8c45a'],skirt:['long','#6a1f1f'],shoe:['boot','#1a1a22'],it:'bamboo',mood:'calm'},desc:'General y estratega chino, autor de «El arte de la guerra» (s. VI–V a. C.).',feats:['Escribió «El arte de la guerra», que se lee hasta hoy','Enseñó que la mejor victoria es vencer sin combatir','Sus ideas se usan en deportes, negocios y estrategia'],say:['La victoria se prepara antes del combate.','Conoce a tu rival… y a tu flojera.']},
+ {id:'pet_qin',name:'Qin Shi Huang',rarity:'raro',origin:'china',act:'salute',icon:'🏯',look:{sk:SK.l,hair:['bun','#111118'],beard:['stache','#111118'],hd:['mianguan','#1a1a22','#e8c45a'],tu:'#1a1a22',ar:['robe','#1a1a22','#c0392b'],skirt:['long','#1a1a22'],shoe:['boot','#1a1a22'],it:'longsword',mood:'serious'},desc:'Primer emperador de la China unificada (259–210 a. C.).',feats:['Unificó China en el 221 a. C.','Unificó la escritura, las monedas y las medidas','En su tumba lo acompañan miles de guerreros de terracota'],say:['Unifica tu rutina como yo unifiqué China.','Ni la Gran Muralla se hizo en un día.']}
 ];
 for(const p of PETS){p.type='companero';if(p.rarity==='legendario'||p.rarity==='mítico'){p.only=true;p.chest=true}}
 const PET_BY=Object.fromEntries(PETS.map(p=>[p.id,p]));
@@ -1533,8 +1533,25 @@ const CH_DROPS=CH_CATALOG.filter(c=>!c.noDrop).concat(PETS);
 /* ================= motor de sprites (estilo anime chibi) ================= */
 function shd(hex,f){if(!hex||hex[0]!=='#'||hex.length!==7)return hex;const n=parseInt(hex.slice(1),16);let r=n>>16,g=(n>>8)&255,b=n&255;const t=f<0?0:255,p=Math.abs(f);r=Math.round((t-r)*p+r);g=Math.round((t-g)*p+g);b=Math.round((t-b)*p+b);return'#'+((1<<24)|(r<<16)|(g<<8)|b).toString(16).slice(1)}
 const STEEL='#dde2e8',GOLD='#e2b54a',WOOD='#8a5a2b';
-const REST_ROT={spear:25,lance:25,naginata:25,banner:30,musket:25,longsword:16,katana:16,macestar:12,macuahuitl:12};
 function itemArt(k){switch(k){
+ case'trident':return`<rect x="-.5" y="-18" width="1" height="26" rx=".5" fill="#c9a24a" stroke="#2b1e35" stroke-width=".35"/><path d="M-3.4-18.4H3.4M-3.4-18.4V-23.2M0-18.4V-25.4M3.4-18.4V-23.2" stroke="#e8d28a" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M-3.4-24.6l.9 1.6h-1.8ZM0-26.8l.9 1.6h-1.8ZM3.4-24.6l.9 1.6h-1.8Z" fill="#f4e6a8"/>`;
+ case'bident':return`<rect x="-.5" y="-18" width="1" height="26" rx=".5" fill="#3a3550" stroke="#9b7bff" stroke-width=".3"/><path d="M-2.4-18.2H2.4M-2.4-18.2V-24M2.4-18.2V-24" stroke="#b9b4d8" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M-2.4-25.6l.9 1.8h-1.8ZM2.4-25.6l.9 1.8h-1.8Z" fill="#d8d4f4"/><circle cy="-18.2" r=".9" fill="#9b7bff"/>`;
+ case'bolt':return`<path d="M1.6-15L-3-5.6H.6L-2.2 3L4-7.6H.4L3-15Z" fill="#ffe24a" stroke="#e89a20" stroke-width=".6" stroke-linejoin="round"/>`;
+ case'hammer':return`<rect x="-.75" y="-6" width="1.5" height="9" rx=".5" fill="#6b4423" stroke="#2b1e35" stroke-width=".35"/><path d="M-.75-2.4h1.5M-.75-.4h1.5" stroke="#3a2a1a" stroke-width=".4"/><rect x="-4.8" y="-11.6" width="9.6" height="5.8" rx="1" fill="#9aa3ad" stroke="#2b1e35" stroke-width=".5"/><path d="M-3.4-10.2h6.8M-3.4-7.2h6.8" stroke="#c9d0d8" stroke-width=".5"/><circle cy="3.6" r=".9" fill="none" stroke="#6b4423" stroke-width=".5"/>`;
+ case'mirror':return`<rect x="-.55" y="-2.6" width="1.1" height="4" fill="#8a5a2b"/><circle cy="-6.4" r="4" fill="#e8c45a" stroke="#2b1e35" stroke-width=".5"/><circle cy="-6.4" r="3" fill="#fff6d8"/><path d="M-1.4-8.2q1.2-1 2.4-.4" stroke="#fff" stroke-width=".7" fill="none"/>`;
+ case'moonorb':return`<circle cy="-4.4" r="3.6" fill="#cfe0ff" stroke="#2b1e35" stroke-width=".45"/><path d="M1-7.2a3 3 0 1 0 0 5.6a2.4 2.4 0 1 1 0-5.6Z" fill="#8aa8ff"/>`;
+ case'jewelspear':return`<rect x="-.45" y="-18" width=".9" height="26" rx=".45" fill="#b0302a" stroke="#2b1e35" stroke-width=".3"/><path d="M0-22.6l1.4 4-1.4.8-1.4-.8Z" fill="#e8eef4"/><circle cy="-16.4" r="1" fill="#3ecf8e"/><circle cy="-14.2" r=".8" fill="#55a6ff"/><circle cy="-12.2" r=".8" fill="#e8c45a"/>`;
+ case'magatama':return`<path d="M-1-6.6a2.6 2.6 0 1 1 1.2 4.8q-2.4.4-2.2 2.8q-1.4-3.6 1-7.6Z" fill="#3ecf8e" stroke="#2b1e35" stroke-width=".45"/><circle cx=".4" cy="-4.6" r=".55" fill="#eafff4"/>`;
+ case'apple':return`<circle cy="-2.6" r="2.7" fill="#f2c94a" stroke="#2b1e35" stroke-width=".45"/><path d="M0-5.2q.6-1.6 2-1.8q-.4 1.4-2 1.8Z" fill="#5f9a3a"/><circle cx="-.9" cy="-3.4" r=".6" fill="#fff6c8"/>`;
+ case'pomegranate':return`<circle cy="-2.8" r="2.8" fill="#c0283a" stroke="#2b1e35" stroke-width=".45"/><path d="M-1-5.4l.4-1.2.6.8.6-.8.4 1.2Z" fill="#8a1a28"/><circle cx="-.9" cy="-3.6" r=".55" fill="#ff8a9a"/>`;
+ case'scales':return`<rect x="-.4" y="-12" width=".8" height="14" fill="#e2b54a"/><path d="M-5-11.4H5" stroke="#e2b54a" stroke-width=".8"/><path d="M-5-11.4l-1.6 4.2M-5-11.4l1.6 4.2M5-11.4l-1.6 4.2M5-11.4l1.6 4.2" stroke="#e2b54a" stroke-width=".35"/><path d="M-7-7.2q2 1.8 4 0ZM3-7.2q2 1.8 4 0Z" fill="#e2b54a" stroke="#2b1e35" stroke-width=".3"/><path d="M5.6-8.6q.6-1.2 1.4 0q-.6.8-1.4 0Z" fill="#fff"/>`;
+ case'was':return`<rect x="-.45" y="-17" width=".9" height="23" fill="#e2b54a" stroke="#2b1e35" stroke-width=".3"/><path d="M-.45-17l3.2-1.8.4 1.4-3.2 1.6Z" fill="#e2b54a" stroke="#2b1e35" stroke-width=".3"/><path d="M-.45 6l-1 1.6M.45 6l1 1.6" stroke="#e2b54a" stroke-width=".6"/>`;
+ case'guandao':return`<rect x="-.55" y="-17" width="1.1" height="26" rx=".5" fill="#7a1f1f" stroke="#2b1e35" stroke-width=".3"/><path d="M-.6-16.6Q5.2-18.4 6.2-26.4Q2.4-24.4-.6-22.4Z" fill="#dde2e8" stroke="#2b1e35" stroke-width=".45"/><path d="M-.6-17.2l-1.6-1 1.6-1.4" fill="#e2b54a"/><path d="M-.4-16q-2 1.6-1.8 4.4" stroke="#c0392b" stroke-width=".9" fill="none"/>`;
+ case'harpe':return`<path d="M-.7-1.2V-11.4Q-.7-14.4 2.4-14.4Q4.4-14.2 4-12Q2.6-13 1.4-12.2Q.7-11.6.7-10.4V-1.2Z" fill="#dde2e8" stroke="#2b1e35" stroke-width=".35"/><rect x="-1.8" y="-1.6" width="3.6" height="1" fill="#e2b54a"/><rect x="-.5" y="-.6" width="1" height="2.4" fill="#6b4423"/>`;
+ case'thread':return`<circle r="2.4" fill="#d43a3a" stroke="#2b1e35" stroke-width=".4"/><path d="M-1.8-.6q1.8-1 3.6.2M-1.6.8q1.6-.8 3.2.2" stroke="#ff8a8a" stroke-width=".35" fill="none"/>`;
+ case'globe':return`<circle cy="-2.8" r="2.8" fill="#e2b54a" stroke="#2b1e35" stroke-width=".45"/><path d="M-2.8-2.8h5.6M0-5.6v5.6" stroke="#b0302a" stroke-width=".5"/><circle cy="-6.2" r=".7" fill="#e2b54a"/>`;
+ case'bamboo':return`<rect x="-3.4" y="-3" width="6.8" height="5" rx=".6" fill="#d8c48a" stroke="#2b1e35" stroke-width=".4"/><path d="M-2.2-3v5M-1-3v5M.2-3v5M1.4-3v5M2.6-3v5" stroke="#9a8450" stroke-width=".3"/><path d="M-3.4-1h6.8M-3.4 1h6.8" stroke="#7a3a1a" stroke-width=".3"/>`;
+ case'tsurugi':return`<path d="M-.9-1.4V-14.4L0-16.4l.9 2V-1.4Z" fill="#e8eef4" stroke="#2b1e35" stroke-width=".3"/><path d="M0-15V-1.6" stroke="#aab2bd" stroke-width=".3"/><rect x="-2.4" y="-1.8" width="4.8" height="1" fill="#e2b54a"/><rect x="-.55" y="-.8" width="1.1" height="3" fill="#2a2a3a"/><circle cy="3.2" r="1" fill="none" stroke="#e2b54a" stroke-width=".6"/>`;
  case'gladius':return`<path d="M-.95-1.3V-9.6L0-11.4l.95 1.8V-1.3Z" fill="${STEEL}"/><path d="M0-10.4V-1.6" stroke="#aab2bd" stroke-width=".35"/><rect x="-2.3" y="-1.7" width="4.6" height="1.15" rx=".5" fill="${GOLD}"/><rect x="-.6" y="-.6" width="1.2" height="2.2" fill="#6b4423"/><circle cy="1.9" r=".85" fill="${GOLD}"/>`;
  case'longsword':return`<path d="M-.85-1.4V-13.4L0-15.4l.85 2V-1.4Z" fill="${STEEL}"/><path d="M0-14V-1.6" stroke="#aab2bd" stroke-width=".3"/><rect x="-2.8" y="-1.8" width="5.6" height="1.1" rx=".5" fill="#8a8f96"/><rect x="-.6" y="-.7" width="1.2" height="3.2" fill="#3a2a1a"/><circle cy="2.9" r=".9" fill="#8a8f96"/>`;
  case'katana':return`<path d="M-.6-1.2C-1.2-6-.6-10.6 1.6-14.6l.7.3C.4-10.4-.1-6 .5-1.2Z" fill="#eef2f6"/><ellipse cy="-.9" rx="1.6" ry=".55" fill="#2a2a2a"/><rect x="-.55" y="-.5" width="1.1" height="3.4" fill="#2b2b3a"/>`;
@@ -1564,209 +1581,6 @@ function itemArt(k){switch(k){
  case'macuahuitl':{let s=`<rect x="-1.4" y="-11.6" width="2.8" height="12.2" rx="1" fill="#7a5230"/>`;for(let y=-10.8;y<-1;y+=2.2)s+=`<path d="M-1.4 ${y.toFixed(1)}l-1 .6 1 .6ZM1.4 ${y.toFixed(1)}l1 .6-1 .6Z" fill="#1a1a1a"/>`;return s+`<rect x="-.6" y=".4" width="1.2" height="2.4" fill="#5a3a20"/>`}
  case'macestar':return`<rect x="-.5" y="-9" width="1" height="12" fill="${WOOD}"/><path d="M0-12.6l1 1.6 1.8-.2-.8 1.6.8 1.6-1.8-.2-1 1.6-1-1.6-1.8.2.8-1.6-.8-1.6 1.8.2Z" fill="${GOLD}"/>`;
 }return''}
-function shieldArt(t,c1,c2,L){switch(t){
- case'scutum':return`<rect x="11" y="19.4" width="7.6" height="13.6" rx="1.8" fill="${c1}" stroke="${c2}" stroke-width=".7"/><path d="M12.6 21.6h4.4M12.6 30.8h4.4" stroke="${c2}" stroke-width=".6"/><circle cx="14.8" cy="26.2" r="1.7" fill="${c2}"/>`;
- case'aspis':return`<circle cx="14.6" cy="25.8" r="6.5" fill="${c1}" stroke="${c2}" stroke-width="1"/>${L.lambda?`<path d="M12.2 28.8 14.6 22.4 17 28.8" stroke="${c2}" stroke-width="1.2" fill="none"/>`:`<circle cx="14.6" cy="25.8" r="2" fill="${shd(c1,-.2)}"/>`}`;
- case'round':return`<circle cx="14.6" cy="26" r="6.2" fill="${c1}" stroke="#6b4423" stroke-width=".8"/><path d="M8.6 26h12M14.6 20v12" stroke="${c2}" stroke-width=".9"/><circle cx="14.6" cy="26" r="1.5" fill="#9aa3ad"/>`;
- case'kite':return`<path d="M11 19.8h7.6v7.4Q18.6 31 14.8 34.6 11 31 11 27.2Z" fill="${c1}" stroke="${c2}" stroke-width=".7"/><path d="M14.8 20.4v13M11.6 24.4h6.4" stroke="${c2}" stroke-width="1"/>`;
- case'oval':return`<ellipse cx="14.6" cy="26.2" rx="4.4" ry="7.4" fill="${c1}" stroke="${c2}" stroke-width=".7"/><ellipse cx="14.6" cy="26.2" rx="1.3" ry="2" fill="${c2}"/>`;
- case'parmula':return`<rect x="11.6" y="22" width="6.4" height="7.4" rx="1" fill="${c1}" stroke="${c2}" stroke-width=".7"/><circle cx="14.8" cy="25.7" r="1.1" fill="${c2}"/>`;
- case'chimalli':return`<circle cx="14.6" cy="25.4" r="5.6" fill="${c1}" stroke="${c2}" stroke-width=".9"/><circle cx="14.6" cy="25.4" r="2.6" fill="none" stroke="${c2}" stroke-width=".7"/><path d="M11 30.4l-.6 3.6M13 31.2l-.2 3.8M15 31.4v3.8M17 31l.4 3.6" stroke="#4cc38a" stroke-width=".9"/>`;
-}return''}
-function armorArt(L,x,w,sk){const a=L.ar||[];const t=a[0],c=a[1]||L.tu,c2=a[2]||GOLD;const dk=shd(c,-.32);switch(t){
- case'musc':return`<rect x="${x+.5}" y="18.8" width="${w-1}" height="10.4" rx="3" fill="${c}"/><path d="M${x+1.6} 22.2q${w/4-.4} 1.8 ${w/2-1.6} 0q${w/4-.4} 1.8 ${w/2-1.6} 0M${x+w/2} 23.4v4" stroke="${dk}" stroke-width=".5" fill="none"/>`;
- case'seg':return`<rect x="${x+.4}" y="18.8" width="${w-.8}" height="10.8" rx="2.6" fill="${c}"/>${[21.2,23.6,26,28.2].map(y=>`<path d="M${x+.6} ${y}h${w-1.2}" stroke="${dk}" stroke-width=".55"/>`).join('')}<path d="M${x+w/2} 18.8v2.4" stroke="${dk}" stroke-width=".5"/>`;
- case'chain':{let s=`<rect x="${x+.3}" y="18.7" width="${w-.6}" height="11.4" rx="2.8" fill="${c}"/>`;for(let yy=20;yy<29.5;yy+=1.6)for(let xx=x+1.2;xx<x+w-.6;xx+=1.6)s+=`<circle cx="${xx.toFixed(1)}" cy="${yy.toFixed(1)}" r=".33" fill="${dk}"/>`;return s}
- case'plate':return`<rect x="${x+.3}" y="18.7" width="${w-.6}" height="11.6" rx="3" fill="${c}"/><rect x="${x+1.2}" y="19.6" width="1.6" height="8" rx=".8" fill="${shd(c,.35)}"/><path d="M${x+.4} 25h${w-.8}" stroke="${dk}" stroke-width=".5"/>`;
- case'leather':return`<rect x="${x+.6}" y="19.2" width="${w-1.2}" height="9.8" rx="2.6" fill="${c}"/><path d="M${x+1} 19.6L${x+w-1} 28.6" stroke="${shd(c,-.35)}" stroke-width="1"/>`;
- case'lamellar':{let s=`<rect x="${x+.3}" y="18.7" width="${w-.6}" height="11.2" rx="2.6" fill="${c}"/>`;for(let yy=20.4;yy<29.5;yy+=1.8)s+=`<path d="M${x+.5} ${yy.toFixed(1)}h${w-1}" stroke="${shd(c,.3)}" stroke-width=".45" stroke-dasharray="1.2 .5"/>`;return s+`<path d="M${x+.5} 20.2h${w-1}" stroke="${c2}" stroke-width=".7"/>`}
- case'linen':case'dress':return`<rect x="${x+.4}" y="18.8" width="${w-.8}" height="10.8" rx="2.8" fill="${c}"/><rect x="${x+.4}" y="24.2" width="${w-.8}" height="1.3" fill="${c2}"/><path d="M${x+1.4} 19.4v3.4M${x+w-1.4} 19.4v3.4" stroke="${shd(c,-.18)}" stroke-width=".5"/>`;
- case'robe':return`<path d="M${x+w/2-2.4} 18.6l2.4 4.2 2.4-4.2" stroke="${c}" stroke-width="1.2" fill="none"/>`;
- case'kimono':case'gi':return`<path d="M${x+w-2.4} 18.6L${x+2} 28.6" stroke="${c}" stroke-width="1.4"/><path d="M${x+2.2} 18.6L${x+w/2+.6} 23.4" stroke="${shd(L.tu,-.2)}" stroke-width="1"/>`;
- case'haori':return`<rect x="${x-.4}" y="18.6" width="3" height="12.6" rx="1.2" fill="${c}"/><rect x="${x+w-2.6}" y="18.6" width="3" height="12.6" rx="1.2" fill="${c}"/>`;
- case'toga':return`<path d="M${x+w-1} 18.6L${x+.4} 29.2L${x+.4} 32H${x+3}L${x+w} 21Z" fill="${c}"/><path d="M${x+w-1} 18.6L${x+.4} 29.2" stroke="${c2}" stroke-width=".9"/>`;
- case'coat':return`<rect x="${x+w/2-1.8}" y="18.6" width="3.6" height="10.8" fill="${c2}"/><path d="M${x+w/2-1.8} 18.6l-1.2 4 1.2 1.2M${x+w/2+1.8} 18.6l1.2 4-1.2 1.2" stroke="${shd(c,-.2)}" stroke-width=".7" fill="none"/>${[21,23.4,25.8].map(y=>`<circle cx="${x+w/2+2.6}" cy="${y}" r=".4" fill="${GOLD}"/>`).join('')}<path d="M${x} 29.6h${w}l-.4 6.4h-${w-.8}Z" fill="${c}"/>`;
- case'tabard':return`<rect x="${x+1}" y="18.8" width="${w-2}" height="13" rx="1" fill="${c}"/><path d="M${x+w/2} 20.4v7M${x+w/2-2.6} 23h5.2" stroke="${c2}" stroke-width="1"/>`;
- case'bare':return`<path d="M${x+1.6} 22.4q${w/4-.4} 1.6 ${w/2-1.6} 0q${w/4-.4} 1.6 ${w/2-1.6} 0" stroke="${shd(sk,-.25)}" stroke-width=".5" fill="none"/>`;
- case'tank':return`<rect x="${x+.6}" y="18.6" width="${w-1.2}" height="11" rx="2.6" fill="${L.tu}"/>`;
- case'poncho':return`<path d="M${x-1.4} 18.8H${x+w+1.4}L${x+w+2.4} 29.6H${x-2.4}Z" fill="${c}"/><path d="M${x-1.8} 25.4H${x+w+1.8}" stroke="${c2}" stroke-width="1.2" stroke-dasharray="1.2 .8"/><path d="M${x-2.1} 27.6H${x+w+2.1}" stroke="${c2}" stroke-width=".6"/>`;
- case'unku':{let s=`<rect x="${x+.2}" y="18.6" width="${w-.4}" height="13" rx="2.6" fill="${c}"/>`;for(let i=0;i<4;i++)for(let j=0;j<2;j++)s+=`<rect x="${(x+1+i*2.1).toFixed(1)}" y="${22+j*1.6}" width="1.5" height="1.3" fill="${(i+j)%2?c2:'#1a1a1a'}"/>`;return s}
- case'deel':return`<path d="M${x+w/2+.4} 18.6Q${x+w-1} 22 ${x+w-.6} 27.2" stroke="${c2}" stroke-width="1.3" fill="none"/><rect x="${x}" y="27.6" width="${w}" height="1.8" fill="${c2}"/>`;
- case'jaguarsuit':return[[2,21],[5,20.2],[7.6,22],[3.4,24.6],[6.4,25.6],[2,27.6],[7.4,28]].map(([a,b])=>`<circle cx="${(x+a).toFixed(1)}" cy="${b}" r=".75" fill="${c2}"/>`).join('');
-}return''}
-function skirtArt(L,x,w){if(!L.skirt)return'';const[t,c]=L.skirt;switch(t){
- case'pteruges':{let s='';const n=Math.floor(w/2);for(let i=0;i<n;i++)s+=`<rect x="${(x+.3+i*2).toFixed(1)}" y="30.2" width="1.7" height="4.8" rx=".5" fill="${c}"/>`;return s}
- case'kilt':return`<path d="M${x} 29.8H${x+w}l.9 5.2H${x-.9}Z" fill="${c}"/>`;
- case'long':return`<path d="M${x} 28.4H${x+w}l2.6 15.2H${x-2.6}Z" fill="${c}"/><path d="M${x+w/2} 30v13" stroke="${shd(c,-.15)}" stroke-width=".4"/>`;
- case'hakama':return`<path d="M${x-.2} 29.4H${x+w+.2}l1.4 13H${x-1.6}Z" fill="${c}"/><path d="M${x+w/2} 31v11" stroke="${shd(c,-.25)}" stroke-width=".4"/>`;
- case'mawashi':return`<rect x="${x-.2}" y="28" width="${w+.4}" height="3.8" rx="1" fill="${c}"/><path d="M${x+w-2} 31.6v3.4" stroke="${c}" stroke-width="1.6"/>`;
-}return''}
-/* cabeza anime: ojos grandes con brillo, mechones, rubor. Se dibuja a escala normal y se agranda 1,25× desde el cuello */
-function eyeArt(L){const ir=L.eye||'#2b1a12';return`<ellipse cx="22.8" cy="11.55" rx="1.12" ry="1.55" fill="${ir}"/><ellipse cx="22.8" cy="12.2" rx=".8" ry=".7" fill="${shd(ir,.25)}"/><circle cx="23.2" cy="10.9" r=".46" fill="#fff"/><circle cx="22.5" cy="12.3" r=".22" fill="#fff" opacity=".85"/><path d="M21.45 10.05Q22.8 9.3 24.3 9.9" stroke="#1a1010" stroke-width=".65" fill="none" stroke-linecap="round"/>`}
-function hairBack(h){if(!h)return'';const[s,c]=h;switch(s){
- case'long':return`<path d="M14.6 9.4Q12.6 15.6 13.8 21.4L15.6 20 16.4 21.8 18.4 20.6Q17.2 15.4 18.4 10Z" fill="${c}"/>`;
- case'pony':return`<path d="M15.2 8.8Q10.6 9.4 10.4 15.4L11.8 14.4 11.6 17.6 13 16.2 13.6 19.4Q14.2 13.8 16 11.6Z" fill="${c}"/><circle cx="15.2" cy="9.6" r=".8" fill="#c0392b"/>`;
- case'braid':return[12,14.6,17.2,19.8].map(y=>`<ellipse cx="15.2" cy="${y}" rx="1.4" ry="1.5" fill="${c}"/>`).join('');
- case'bob':return`<path d="M14 15.6Q13.4 8 16 7Q15.6 12 17.6 16.2Z" fill="${c}"/>`;
- case'curly':return`<circle cx="15.6" cy="13.8" r="1.8" fill="${c}"/>`;
-}return''}
-function hairTop(h){if(!h)return'';const[s,c]=h;if(s==='bald')return'';
- const bangs=`<path d="M21.2 7.2L22.6 10.4 22.4 7.4ZM23 7.6L25 10 24.2 7.6ZM19.4 7.4L20.4 10 20.8 7.4Z" fill="${c}"/>`;
- const base=`<path d="M14.6 12.6Q13.8 5.8 20 5.6Q25 5.6 25.6 9.4Q22.8 7.6 19.8 8.6Q18.4 10.2 17.8 13.6Q15.4 14.8 14.6 12.6Z" fill="${c}"/><path d="M14.8 11.6L13.6 14.6 15.6 13.2ZM15.4 8L13.4 8.6 15 9.8Z" fill="${c}"/>${bangs}<path d="M18.2 10.4Q18.4 13.2 19.2 14.4L18.2 14.2Z" fill="${c}"/>`;
- switch(s){
-  case'curly':return base+[[15.4,8.8],[17.2,6.6],[19.8,5.6],[22.6,5.8],[24.6,7.4],[14.8,11.4]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.7" fill="${c}"/>`).join('');
-  case'topknot':return base+`<ellipse cx="18.4" cy="5.2" rx="1.7" ry="1.2" fill="${c}"/><rect x="17.6" y="5.6" width="1.6" height="1" fill="${c}"/>`;
-  case'bob':return`<path d="M14.2 13Q13.6 5.4 20 5.2Q25.6 5.4 26 9.8L25 9.4 24.6 10.6 23.6 9 22.8 10.4 22.2 8.8Q19.6 9.6 18.8 13.4Z" fill="${c}"/>`;
-  default:return base;
- }}
-function beardArt(b){if(!b)return'';const[s,c]=b;switch(s){
- case'full':return`<path d="M18.8 13.2Q19 17.8 22.6 17.8Q25.6 17.4 25.6 14.2Q23.6 15.4 21.4 14.8Q20 14.2 18.8 13.2Z" fill="${c}"/>`;
- case'long':return`<path d="M18.8 13.2Q18.6 20.6 22.2 21.4Q25.6 19.6 25.6 14.2Q23.6 15.4 21.4 14.8Q20 14.2 18.8 13.2Z" fill="${c}"/>`;
- case'stache':return`<path d="M22 14Q23.8 13 25.8 14Q24.6 15 22 14.6Z" fill="${c}"/>`;
- case'fu':return`<path d="M22 14Q23.8 13 25.8 14Q24.6 15 22 14.6Z" fill="${c}"/><path d="M22.4 14.4Q21.8 16.4 22.4 18M25.2 14.6Q25.6 16.6 25 18" stroke="${c}" stroke-width=".6" fill="none"/>`;
- case'goatee':return`<path d="M22.6 14Q24 13.2 25.6 14Q24.6 14.8 22.6 14.4ZM23.6 15.4Q24.2 17.6 25 15.6Z" fill="${c}"/>`;
- case'short':return`<path d="M19 13.4Q19.6 17 22.6 17.2Q25.4 16.8 25.6 14.4Q23 15.6 19 13.4Z" fill="${c}" opacity=".5"/>`;
-}return''}
-function gearArt(g,c1,c2,sk,L){const E=eyeArt(L||{});switch(g){
- case'headband':return`<path d="M14.7 9.4Q20 7.4 25.4 8.8l-.1 1.5Q20 9 14.8 11Z" fill="${c1}"/><path d="M15 10.2q-3 .4-4.6 2.6 2.6-.6 4.6-1.2M15 10.6q-2.4 1.6-3 4 2-1.8 3.2-3" fill="${c1}"/>`;
- case'trarilonco':return`<path d="M14.6 9.6Q20 8 25.4 9.2l-.1 1.3Q20 9.4 14.7 11Z" fill="${c1}"/><circle cx="21.6" cy="9.4" r=".55" fill="#e8e2d0"/><circle cx="18.4" cy="9.8" r=".55" fill="#e8e2d0"/>`;
- case'plume':return gearArt('headband',c2,c2,sk,L)+`<path d="M16.6 9.6Q14.8 4.6 16.2 1.6Q17.8 5.2 17.8 9.4Z" fill="${c1}"/><path d="M18.6 9.2Q18.4 4.4 20.4 2.2Q20.8 5.8 19.8 9.2Z" fill="${c1}"/>`;
- case'galea':return`<path d="M14.3 12.4Q14.1 5.2 20 5Q25.8 5.2 25.7 9.6H24.7V9.4Q20 8.6 15.7 10.4V15.4H14.3Z" fill="${c1}"/><path d="M14.4 9.9Q20 8.6 25.6 9.6" stroke="${shd(c1,-.3)}" stroke-width=".6" fill="none"/><path d="M20.6 9.8H21.8L21.6 16H20.6Z" fill="${shd(c1,-.12)}"/><path d="M15 6.6Q19.8.2 25.2 5.8L23.8 6.9Q19.8 2.8 16.3 7.6Z" fill="${c2}"/>`;
- case'galea_t':return`<path d="M14.3 12.4Q14.1 5.2 20 5Q25.8 5.2 25.7 9.6H24.7V9.4Q20 8.6 15.7 10.4V15.4H14.3Z" fill="${c1}"/><path d="M14.4 9.9Q20 8.6 25.6 9.6" stroke="${shd(c1,-.3)}" stroke-width=".6" fill="none"/><path d="M20.6 9.8H21.8L21.6 16H20.6Z" fill="${shd(c1,-.12)}"/><path d="M16.2 6.2Q19.8-3.4 23.8 6Z" fill="${c2}"/><path d="M17.4 5.8Q19.8-1 22.6 5.6" stroke="${shd(c2,-.25)}" stroke-width=".4" fill="none"/>`;
- case'corinthian':return`<path d="M14.2 13.4Q13.8 5 20.2 4.8Q26.2 5 26.2 11.6V15L24.4 17.2 19.2 17.2 14.8 16.6Z" fill="${c1}"/><path d="M21.3 9.9H26V12.9H24.7V15.6H23.3V12.9H21.3Z" fill="${sk}"/>${E}<path d="M14.2 8.8Q15.6 1.2 21.6 1.8Q26.6 2.6 25.8 6.8Q21.4 3.8 17 7.2Q15.6 8.4 15.6 10.6Z" fill="${c2}"/><path d="M14.6 13.6Q16.6 12.6 18.4 13.8" stroke="${shd(c1,-.3)}" stroke-width=".5" fill="none"/>`;
- case'fish':case'thraex':{const gr=[21.6,22.6,23.6,24.6].map(x=>`<path d="M${x} 9.4V13.8" stroke="${shd(c1,.3)}" stroke-width=".35"/>`).join('');const crest=g==='fish'?`<path d="M15.2 6.4Q18.6-1 25 4.6Q21 3.2 18.6 6.2Z" fill="${c2}"/>`:`<path d="M16 6.2Q16.4.4 21.6.6Q25.8 1 25.8 4.8Q23.4 2.6 20.8 3.6Q18.8 4.4 18.4 6.6Z" fill="${c2}"/>`;return`<path d="M14.2 14.8Q13.8 5.6 20 5.4Q26.4 5.6 26.4 12.2V15.4H14.2Z" fill="${c1}"/><path d="M12.8 14.6H27.2" stroke="${shd(c1,-.25)}" stroke-width="1.2"/><circle cx="23" cy="11.5" r="2.4" fill="#2a2f3a"/>${gr}${crest}`}
- case'kabuto':return`<path d="M14.6 10.4Q14.8 4.4 20 4.2Q25.2 4.4 25.4 9.4L24.4 9.4Z" fill="${c1}"/><path d="M14.4 9.6H24.6L24.2 10.6 16.6 11.8 12.6 15.8 11.8 13.4Z" fill="${shd(c1,-.18)}"/><path d="M13.6 12.2 16.8 10.8M12.6 14 16.4 11.6" stroke="${c2}" stroke-width=".4"/><path d="M23.6 5.6Q25.2 1.2 28 .4Q26 2.8 24.8 6.4ZM22.4 5Q22.2.2 24.4-1.2Q23.6 2.4 23.6 5.6Z" fill="${c2}"/>`;
- case'nasal':return`<path d="M14.6 10.6Q14.8 4.4 20 3.8Q25.2 4.4 25.4 9.6Z" fill="${c1}"/><path d="M14.6 9.6Q20 8.6 25.4 9.6V10.6Q20 9.6 14.6 11.2Z" fill="${shd(c1,-.22)}"/><rect x="24.4" y="9.6" width="1.1" height="3.8" rx=".4" fill="${c1}"/>`;
- case'winged':return gearArt('nasal',c1,c2,sk,L)+`<path d="M16.4 7.6Q11.2 4.4 10.6-.6Q14.4 1.8 17.8 6.2Z" fill="${c2}"/><path d="M15.6 6.4Q12.6 3.8 12.4.8" stroke="${shd(c2,-.2)}" stroke-width=".4" fill="none"/>`;
- case'pilos':return`<path d="M14.6 10Q15.6 2.4 20 1.2Q24.4 2.4 25.4 9.4Z" fill="${c1}"/><path d="M14.4 9.8Q20 8.6 25.6 9.4" stroke="${shd(c1,-.3)}" stroke-width=".9" fill="none"/><path d="M20 1.4Q17.6-1.6 14.6-.4Q17.6.6 19.6 2Z" fill="${c2}"/>`;
- case'ninja':return`<circle cx="20" cy="11.6" r="5.6" fill="${c1}"/><rect x="20.8" y="9.8" width="5.4" height="3.2" rx="1.4" fill="${sk}"/>${E}<path d="M14.6 9.8 10.8 8.2 11.4 10.8 14.4 11.4ZM14.6 10.8 11.6 13.8 14.8 12.4Z" fill="${c1}"/>`;
- case'helm_full':return`<rect x="14.1" y="5.2" width="12" height="12" rx="2.8" fill="${c1}"/><path d="M14.1 9.4H26.1" stroke="${shd(c1,-.22)}" stroke-width=".5"/><rect x="20.8" y="10.6" width="5.3" height="1.2" rx=".5" fill="#141414"/>${[22,23.4,24.8].map(x=>`<circle cx="${x}" cy="14" r=".35" fill="#141414"/>`).join('')}${c2?`<path d="M17 5.4Q15.6 1.4 19.4.6Q18 2.6 18.8 5.2Z" fill="${c2}"/>`:''}`;
- case'jaguar':return`<path d="M13.6 15.4Q13 4.4 20 3.8Q26.8 4.2 26.8 9L28 9.6 25.8 10.2Q22.6 7.8 19.6 9.4L18 16.8Z" fill="${c1}"/>${[[16,7],[18.6,5.6],[21.6,5.4],[15,11],[16.4,14],[24.2,7]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r=".75" fill="${c2}"/>`).join('')}<path d="M25.6 10l.4 1.1.5-1.2M24 9.8l.4 1.1.5-1.2" fill="#fff"/><path d="M16.8 4.6l-.6-2.6 2.2 1.8Z" fill="${c1}"/>`;
- case'tricorn':return`<path d="M12.8 9.2Q14 4 20 3.8Q26.2 4 27.6 8.6Q24 7.2 20.6 8Q16 7 12.8 9.2Z" fill="${c1}"/><path d="M13.2 9Q16.2 7.2 20.6 8.2Q24 7.4 27.4 8.6" stroke="${c2}" stroke-width=".6" fill="none"/>`;
- case'musketeer':return`<ellipse cx="20" cy="8.2" rx="8.6" ry="1.7" fill="${c1}"/><path d="M15.6 8.2Q16 3.4 20.4 3.4Q24.2 3.4 24.4 8.2Z" fill="${c1}"/><path d="M16.2 5.6Q9.6 1.2 8.2 6.4Q12 4.4 16.6 7.4Z" fill="${c2}"/>`;
- case'laurel':return`<path d="M15 10.8Q19.6 5.2 24.8 8.2" stroke="${shd(c1,-.3)}" stroke-width=".4" fill="none"/>${[[15.2,10.6,-60],[15.8,8.6,-35],[17.2,7,-15],[19,6.2,0],[21,6.1,10],[22.8,6.6,25],[24.4,7.8,45]].map(([x,y,r])=>`<ellipse cx="${x}" cy="${y}" rx="1.4" ry=".65" transform="rotate(${r} ${x} ${y})" fill="${c1}"/>`).join('')}`;
- case'rostrata':return`<path d="M14.8 9.6Q20 6.6 25.2 8.4V9.6Q20 8.4 14.8 11Z" fill="${c1}"/>${[16.2,18.6,21,23.4].map((x,i)=>`<path d="M${x} ${(9.4-i*.5).toFixed(1)}l.9-2.2.9 2Z" fill="${c1}"/>`).join('')}`;
- case'khepresh':return`<path d="M14.6 10.8Q13.6 3.6 17.4 2.2Q22.8 1 25.4 5.4Q26 7.8 25.4 9.4L24.6 9.6Z" fill="${c1}"/>${[[17,4.4],[19,3.6],[21.4,3.4],[23.4,4.4],[16.4,6.8],[18.6,6],[21,5.8],[23.4,6.8],[17.6,8.8],[20.2,8.2]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r=".38" fill="${c2}"/>`).join('')}<path d="M25 6.6q1.6-.4 1.4 1.6-.4-.8-1.2-.6Z" fill="${c2}"/>`;
- case'furhat':return`<path d="M14.6 10Q14.6 3.4 20 3.2Q25.4 3.4 25.4 9.4Z" fill="${c1}"/><rect x="13.8" y="7.8" width="12.4" height="2.6" rx="1.3" fill="${c2}"/>`;
- case'furcone':return`<path d="M14.8 10Q15.6 4.2 20 1.6Q24.4 4.2 25.2 9.4Z" fill="${c1}"/><rect x="13.8" y="7.8" width="12.4" height="2.6" rx="1.3" fill="${c2}"/><circle cx="20" cy="1.6" r=".8" fill="#c0392b"/>`;
- case'boeotian':return`<path d="M14.4 11.6Q14.2 4.6 19.6 4.4Q24.2 4.2 25.4 7.4Q23.6 7 22.6 8Q25.2 8.4 25.8 9.8L24.2 9.8Q20 9.2 15.6 11.6Z" fill="${c1}"/><path d="M16.8 5.2Q12.6-1.2 11-.8Q13.6 2.6 15.8 6.4Z" fill="${c2}"/><path d="M20.4 4.6Q21.2-2 24.2-.8Q22 1.8 21.8 4.8Z" fill="${c2}"/>`;
- case'lion':return`<path d="M12.6 18.6Q11.6 8 15 5.6L16.8 12 16.4 19.4Z" fill="${c2}"/><path d="M13.6 14Q13 4 20 3.6Q26.6 3.8 26.6 8.6L24.4 9Q20.4 7.2 16.8 10.2L16.4 16.6 13.2 17Z" fill="${c1}"/><ellipse cx="24" cy="7" rx="2.8" ry="1.6" fill="${shd(c1,-.12)}"/><circle cx="25.8" cy="6.6" r=".5" fill="#2a1a10"/><path d="M16.2 4.2l-.4-2.2 1.9 1.4Z" fill="${c1}"/><path d="M24.2 8.6l.4.9.5-.9M22.8 8.6l.4.9.5-.9" fill="#fff"/>`;
- case'mascapaycha':return`<path d="M14.7 9.2Q20 7.4 25.3 8.6v1.4Q20 9 14.8 10.8Z" fill="${c2}"/><rect x="23.8" y="8.4" width="2.4" height="1.6" fill="${c1}"/>${[24,24.7,25.4,26.1].map(x=>`<path d="M${x} 10v.7" stroke="${c1}" stroke-width=".5"/>`).join('')}<path d="M19.4 8.4 18.8 2.4 20.6 8.2Z" fill="#f4f4f4"/><path d="M20.4 8.4l1.4-5.4.4 5.4Z" fill="#1a1a1a"/>`;
- case'bicorne':return`<path d="M11.4 9.2Q20-2.4 28.8 9.2Q20 6.8 11.4 9.2Z" fill="${c1}"/><path d="M11.8 9Q20 7 28.4 9" stroke="${c2}" stroke-width=".5" fill="none"/><circle cx="21.6" cy="5" r="1.1" fill="#2a4bd0"/><circle cx="21.6" cy="5" r=".65" fill="#f4f4f4"/><circle cx="21.6" cy="5" r=".3" fill="#d0312d"/>`;
- case'diadem':return`<path d="M14.6 9.2Q20 7.6 25.4 8.6v1.1Q20 8.8 14.6 10.4Z" fill="${c1}"/><path d="M25 8q1.4-1.4 1.6.2-.6 1.2-1.4.8Z" fill="${c1}"/><circle cx="20" cy="8.5" r=".5" fill="#2a7bd5"/>`;
-}return''}
-function bullHead(L){const h=L.hcol||'#6b4423';return`<rect x="18.6" y="15" width="2.8" height="4" fill="${h}"/><ellipse cx="20.4" cy="11.4" rx="5.4" ry="5" fill="${h}"/><ellipse cx="24.8" cy="13.6" rx="3.1" ry="2.5" fill="${shd(h,.3)}"/><circle cx="26.2" cy="13.2" r=".45" fill="#2a1a10"/><circle cx="24.6" cy="13.4" r=".45" fill="#2a1a10"/><path d="M25.6 15.2a1.3 1.3 0 1 1-1.9.2" stroke="${GOLD}" stroke-width=".55" fill="none"/><path d="M17.8 7.6Q14.8 3 17.6.8Q16.8 3.8 19.6 6.6ZM21.6 6.8Q22.8 1.8 26.6 1.6Q23.6 3.6 23.4 7.4Z" fill="#efe6d2"/><ellipse cx="17" cy="10.4" rx="1.8" ry="1" fill="${shd(h,-.2)}" transform="rotate(-20 17 10.4)"/><ellipse cx="22.4" cy="10.4" rx=".85" ry="1.1" fill="#111"/><circle cx="22.7" cy="10" r=".3" fill="#fff"/><path d="M21.4 9l2.2-.5" stroke="#111" stroke-width=".55"/>`}
-function headArt(L){
- if(L.head==='bull')return bullHead(L);
- const sk=L.sk||'#e0ac7e';const hd=L.hd||[];
- const full=['corinthian','ninja','helm_full','fish','thraex'].includes(hd[0]);
- let s=hairBack(L.hair)+`<rect x="18.7" y="14.6" width="2.8" height="4.4" fill="${sk}"/><circle cx="20" cy="11.6" r="5.3" fill="${sk}"/><ellipse cx="18.4" cy="12.2" rx=".95" ry="1.25" fill="${shd(sk,-.15)}"/>`;
- if((L.acc||[]).includes('earspool'))s+=`<circle cx="18.4" cy="12.6" r=".9" fill="${GOLD}"/>`;
- if(!full)s+=`<path d="M25.1 11.8q.9.8.1 1.4" fill="${sk}" stroke="${shd(sk,-.25)}" stroke-width=".3"/>${eyeArt(L)}<ellipse cx="23.6" cy="13.7" rx="1" ry=".45" fill="#ff7a7a" opacity=".35"/><path d="M23.3 14.8q.6.3 1.2 0" stroke="${shd(sk,-.45)}" stroke-width=".4" fill="none" stroke-linecap="round"/>`;
- s+=beardArt(L.beard);
- if(L.hair&&!full)s+=hairTop(L.hair);
- if((L.acc||[]).includes('paint'))s+=`<path d="M21.6 12.8l2.6-.4" stroke="#2a5bd6" stroke-width=".5"/>`;
- if(hd[0])s+=gearArt(hd[0],hd[1],hd[2],sk,L);
- return`<g transform="translate(20 18) scale(1.25) translate(-20 -18)">${s}</g>`;
-}
-function accArt(L){let s='';for(const a of L.acc||[]){
- if(a==='torc')s+=`<path d="M17.6 18.6Q20.4 20.4 23.2 18.4" stroke="${GOLD}" stroke-width=".9" fill="none"/>`;
- if(a==='collar')s+=`<path d="M15.8 18.6Q20.2 24.2 24.6 18.6Z" fill="${GOLD}"/><path d="M17 19.4Q20.2 22.6 23.4 19.4" stroke="#2a7bd5" stroke-width=".7" fill="none"/>`;
- if(a==='sash')s+=`<path d="M15.6 28.4h8.8l1.8 4.4-1.4.4-1.2-3.2h-8Z" fill="#e2b54a"/>`;
- if(a==='phalerae')s+=[[18,22],[20.6,22],[19.3,24.6]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r=".75" fill="${GOLD}"/>`).join('');
-}return s}
-function projArt(act){switch(act){
- case'bow':return`<g class="pj"><path d="M33 20.2h7" stroke="#7a4a22" stroke-width=".7"/><path d="M40.6 20.2l-1.6-.9v1.8Z" fill="${STEEL}"/><path d="M33 20.2l-.8-.8M33 20.2l-.8.8" stroke="#c0392b" stroke-width=".5"/></g>`;
- case'throw':return`<g class="pj"><g class="pjr" style="transform-origin:31px 20px"><path d="M31 17.6l.7 1.7 1.7.7-1.7.7-.7 1.7-.7-1.7-1.7-.7 1.7-.7Z" fill="#c9d0d8"/></g></g>`;
- case'aim':return`<g class="pj"><path d="M48.4 20.2l2.6-1.2v2.4Z" fill="#ffb02e"/><circle cx="51.6" cy="19.6" r="1.8" fill="#d8dde4"/><circle cx="54" cy="18.6" r="1.3" fill="#c4cad2"/></g>`;
-}return''}
-function elephantArt(){const g='#9aa0a8',d='#7d838c';
- const leg=(x,c,cls)=>`<g class="${cls}" style="transform-origin:${x+1.7}px 37px"><rect x="${x}" y="36" width="3.4" height="9.6" rx="1.4" fill="${c}"/><rect x="${x-.2}" y="44.4" width="3.8" height="1.4" rx=".6" fill="#e8e2d0"/></g>`;
- return`<g class="el">${leg(-17.6,d,'e2')}${leg(-7.6,d,'e1')}<path d="M-20.2 31.4Q-23 33 -22.4 37" stroke="${d}" stroke-width=".9" fill="none"/><ellipse cx="-11.6" cy="33.4" rx="9.4" ry="6.8" fill="${g}"/><path d="M-17.6 26.8h9.4l.6 6.2h-10.6Z" fill="#6a2c8a"/><path d="M-17.6 33h10.6" stroke="${GOLD}" stroke-width=".8"/>${leg(-15.6,g,'e1')}${leg(-5.8,g,'e2')}<circle cx="-1.6" cy="29" r="5.2" fill="${g}"/><ellipse cx="-4" cy="29.8" rx="3" ry="4.2" fill="${d}"/><g class="tr" style="transform-origin:1.6px 31.4px"><path d="M1.2 30.2Q4.2 33 3.8 38.6Q3.6 41.6 5.4 41.4L5 42.8Q2 43.4 2.2 38.8Q2.4 34.6 .2 32.6Z" fill="${g}"/></g><path d="M1.6 32.8q2.4 1.4 3.2-.4" stroke="#f4efe2" stroke-width="1" fill="none" stroke-linecap="round"/><ellipse cx=".4" cy="27.8" rx=".7" ry=".9" fill="#111"/><circle cx=".6" cy="27.5" r=".25" fill="#fff"/></g>`;
-}
-function humanSVG(L){
- const sk=L.sk||'#e0ac7e',tu=L.tu||'#8a2b2b',pa=L.pa||sk,bo=L.bo||'#5a3a22';
- const at=(L.ar&&L.ar[0])||'none';const bulk=L.bulk?1.7:0,tx=15.2-bulk,tw=9.6+2*bulk;
- const bareA=['bare','tank'].includes(at);
- const fullArm=['plate','chain','lamellar'].includes(at);
- const armC=fullArm?L.ar[1]:tu;const handC=at==='plate'?L.ar[1]:sk;
- const cover=['wraps','firefist'];const acc=L.acc||[];
- const arm=(sx,back,item,cls)=>{const f=back?(c=>shd(c,-.14)):(c=>c);
-  let s=`<rect x="${sx-1.55}" y="19.2" width="3.1" height="11" rx="1.55" fill="${f(sk)}"/>`;
-  if(!bareA)s+=`<rect x="${sx-1.65}" y="19" width="3.3" height="${fullArm?11.2:6.6}" rx="1.6" fill="${f(armC)}"/>`;
-  if(acc.includes('manica')&&!back)s+=`<rect x="${sx-1.7}" y="19.4" width="3.4" height="9" rx="1.5" fill="#c9ced6"/>${[21,23,25,27].map(y=>`<path d="M${sx-1.6} ${y}h3.2" stroke="#8a929c" stroke-width=".4"/>`).join('')}`;
-  if(acc.includes('epaul')&&!back)s+=`<rect x="${sx-2}" y="18.4" width="4" height="1.6" rx=".7" fill="${GOLD}"/>`;
-  const it=item?`<g class="${cls}"><g transform="translate(${sx} 30.4)${REST_ROT[item]?' rotate('+REST_ROT[item]+')':''}">${itemArt(item)}</g></g>`:'';
-  const hand=`<circle cx="${sx}" cy="30.4" r="1.75" fill="${f(handC)}"/>`;
-  const ch=acc.includes('chains')?`<rect x="${sx-1.9}" y="27.9" width="3.8" height="1.1" rx=".4" fill="#8a929c"/><path d="M${sx+1} 29.1l.5 1.4M${sx+1.5} 30.5l-.4 1.2" stroke="#8a929c" stroke-width=".5"/>`:'';
-  return cover.includes(item)?s+hand+ch+it:s+it+hand+ch;
- };
- const leg=(x,c,b,cls)=>`<g class="${cls}"><rect x="${x}" y="30.4" width="3.7" height="12.8" rx="1.6" fill="${c}"/><rect x="${x-.3}" y="42.4" width="5.6" height="3.3" rx="1.3" fill="${b}"/></g>`;
- const o=[`<ellipse class="shadow" cx="20" cy="46.5" rx="${8+bulk}" ry="1.5"/>`];
- if(L.extra==='elephant')o.push(elephantArt());
- o.push('<g class="wh">');
- if(L.cape)o.push(`<g class="cp"><path d="M16 19h8.4l2.8 17q-6.9 2.4-13.8 0Z" fill="${L.cape}"/></g>`);
- o.push(`<g class="ab">${arm(17.4,true,L.it2,'it2')}</g>`);
- o.push(leg(17.6,shd(pa,-.15),shd(bo,-.15),'lb'),leg(19.4,pa,bo,'lf'));
- o.push(`<g class="bd"><rect x="${tx}" y="18.4" width="${tw}" height="13.6" rx="3.4" fill="${at==='bare'?sk:tu}"/>${armorArt(L,tx,tw,sk)}${L.belt?`<rect x="${tx}" y="28.6" width="${tw}" height="1.8" fill="${L.belt}"/>`:''}${skirtArt(L,tx,tw)}${accArt(L)}</g>`);
- if(L.sh)o.push(`<g class="sh">${shieldArt(L.sh[0],L.sh[1],L.sh[2],L)}</g>`);
- o.push(`<g class="hd">${headArt(L)}</g>`);
- o.push(`<g class="af">${arm(22.6,false,L.it,'it')}</g>`);
- o.push(projArt(L.act));
- o.push('</g>');
- return o.join('');
-}
-function dragonSVG(c1,c2){const d=shd(c1,-.25),l=shd(c1,.18);
- return`<ellipse class="shadow" cx="20" cy="46.4" rx="11" ry="1.6"/><g class="wh">
- <g class="tl" style="transform-origin:12px 35px"><path d="M12.6 34.4Q5 36.6 3.4 31.6 2.6 28.4 5.4 27.8 4.8 30.8 7.4 32.2 9.6 33 12.4 31.4Z" fill="${c1}"/><path d="M3.4 27.8l-1.8-2.6 3.4.6Z" fill="${c2}"/></g>
- <g class="wg" style="transform-origin:19px 29px"><path d="M17.6 29Q11.4 19 15.6 11.4Q17.6 17 21.6 18.6Q22 24 20.6 29Z" fill="${d}"/></g>
- <g class="q2" style="transform-origin:14px 37px"><rect x="12.6" y="36" width="3.2" height="9" rx="1.5" fill="${d}"/></g>
- <g class="q4" style="transform-origin:24px 37px"><rect x="22.6" y="36" width="3.2" height="9" rx="1.5" fill="${d}"/></g>
- <ellipse cx="19" cy="35" rx="8.6" ry="6.2" fill="${c1}"/><ellipse cx="20" cy="37.6" rx="6.4" ry="3.2" fill="${c2}"/>
- <path d="M12 30.4l1.4-2.4 1 2.4ZM15.4 29.2l1.4-2.6 1 2.6ZM19 28.8l1.4-2.6 1 2.6Z" fill="${c2}"/>
- <g class="q1" style="transform-origin:15px 38px"><rect x="13.4" y="37" width="3.4" height="8.6" rx="1.6" fill="${c1}"/></g>
- <g class="q3" style="transform-origin:25px 38px"><rect x="23.4" y="37" width="3.4" height="8.6" rx="1.6" fill="${c1}"/></g>
- <g class="hc" style="transform-origin:25px 31px"><path d="M23.4 32Q25.6 25 28.6 21.6l3 2.2Q28.8 27.6 27.6 33.4Z" fill="${c1}"/><ellipse cx="31" cy="21" rx="4.8" ry="3.8" fill="${c1}"/><ellipse cx="34.8" cy="22.6" rx="2.6" ry="1.9" fill="${l}"/><path d="M28.4 18.4l-2.6-3.8 3.8 2.6ZM30.6 17.8l-1-4.2 2.6 3.4Z" fill="${c2}"/><ellipse cx="31.6" cy="20.4" rx="1.05" ry="1.35" fill="#111"/><circle cx="31.9" cy="19.9" r=".4" fill="#fff"/><circle cx="36.4" cy="22" r=".35" fill="#111"/>
-  <g class="pj" style="transform-origin:37px 22.6px"><path d="M36.8 22.6Q41 19.6 46.4 21.8Q42.6 22.6 46.6 24.8Q41.4 25.8 36.8 23.4Z" fill="#ffb02e"/><path d="M37 22.8Q40 21.6 43 22.6Q40.4 23.4 37 23.2Z" fill="#fff1a8"/></g></g>
- <g class="wg" style="transform-origin:20px 29px"><path d="M18.6 29.4Q12.6 17 19.6 9Q20.4 15.6 26.6 17.6Q24.8 23.6 23 29.4Z" fill="${l}"/><path d="M19.6 9.6Q21.4 18 22.4 29" stroke="${d}" stroke-width=".5" fill="none"/></g></g>`;
-}
-function phoenixSVG(c1,c2){
- return`<ellipse class="shadow" cx="20" cy="46.4" rx="6" ry="1.2"/><g class="wh"><g class="fly">
- <g class="tl" style="transform-origin:14px 28px"><path d="M14.4 27.6Q6 30 1.4 38.4Q6.4 33.8 10.6 33Q5.6 37.4 4.6 43Q9.6 36 15.6 30.4Z" fill="${c2}"/><path d="M14.4 28.2Q8.6 31.4 6 36.6Q10 33 15 30Z" fill="${c1}"/></g>
- <g class="wg" style="transform-origin:19px 25px"><path d="M18 25.4Q12 14.6 6.4 13.4Q10.4 18.4 9.4 20.4Q13 21 17.6 27Z" fill="${shd(c1,-.2)}"/></g>
- <ellipse cx="20.4" cy="27" rx="6.4" ry="4.2" fill="${c1}"/><ellipse cx="21.6" cy="28.6" rx="4.2" ry="2.2" fill="${c2}"/>
- <circle cx="27" cy="22.6" r="3.4" fill="${c1}"/><path d="M30 22.2l2.8.9-2.6 1.2Z" fill="#ffd35a"/><ellipse cx="28" cy="22" rx=".8" ry="1.05" fill="#111"/><circle cx="28.25" cy="21.6" r=".3" fill="#fff"/>
- <path d="M25.6 19.6Q24.6 15.4 27 14.2Q26.6 17 28.6 15Q28.2 17.8 29.6 17.4Q28.4 19.4 27.2 19.8Z" fill="${c2}"/>
- <path d="M19.6 31l-.6 3.4M22 31l.4 3.4" stroke="#c9822a" stroke-width=".8"/>
- <g class="wg" style="transform-origin:21px 25px"><path d="M20 25.6Q15.6 11.6 8.8 8.4Q14 14.8 12.8 17.2Q17 18.2 21.6 26.8Z" fill="${c1}"/><path d="M20.2 25Q16.6 15.4 11.6 11.4" stroke="${c2}" stroke-width=".6" fill="none"/></g>
- <g class="pj" style="transform-origin:21px 26px"><circle cx="21" cy="26" r="11" fill="none" stroke="${c2}" stroke-width="1.2"/></g></g></g>`;
-}
-function kitsuneSVG(c1,c2){
- const tails=[...Array(9)].map((_,i)=>{const a=-80+i*14;return`<g transform="rotate(${a})"><path d="M0 0Q-2.8-6 0-12.6Q2.8-6 0 0Z" fill="${c1}" stroke="${shd(c1,-.18)}" stroke-width=".3"/><path d="M0-9.8Q-1.1-11.2 0-12.6Q1.1-11.2 0-9.8Z" fill="${c2}"/></g>`}).join('');
- return`<ellipse class="shadow" cx="20" cy="46.4" rx="10" ry="1.5"/><g class="wh">
- <g class="tl" style="transform-origin:13px 35px"><g transform="translate(13 35)">${tails}</g></g>
- <g class="q2" style="transform-origin:15px 38px"><rect x="14" y="37.4" width="2.2" height="8" rx="1" fill="${shd(c1,-.12)}"/></g>
- <g class="q4" style="transform-origin:24px 38px"><rect x="23" y="37.4" width="2.2" height="8" rx="1" fill="${shd(c1,-.12)}"/></g>
- <ellipse cx="19.6" cy="37" rx="7.4" ry="4.2" fill="${c1}"/>
- <g class="q1" style="transform-origin:16px 39px"><rect x="15" y="38.4" width="2.3" height="7.6" rx="1" fill="${c1}"/><rect x="14.8" y="44.2" width="2.8" height="1.6" rx=".6" fill="${c2}"/></g>
- <g class="q3" style="transform-origin:25px 39px"><rect x="24" y="38.4" width="2.3" height="7.6" rx="1" fill="${c1}"/><rect x="23.8" y="44.2" width="2.8" height="1.6" rx=".6" fill="${c2}"/></g>
- <g class="hc" style="transform-origin:25px 34px"><path d="M23.4 35Q25.4 30 28 28.4L30 31Q28 33 27.4 37Z" fill="${c1}"/><ellipse cx="29.6" cy="29" rx="4" ry="3.3" fill="${c1}"/><path d="M31.6 29.2l4.4 1.2-4 1.4Z" fill="${c1}"/><circle cx="35.9" cy="30.4" r=".5" fill="#111"/><path d="M27 27l-.6-4.6 2.8 3.2ZM29.6 26.4l.8-4.6 1.4 4Z" fill="${c1}"/><path d="M27.3 26.4l-.3-2.4 1.4 1.6Z" fill="${c2}"/><ellipse cx="30.4" cy="28.6" rx=".8" ry="1" fill="#2a1a10"/><circle cx="30.6" cy="28.2" r=".3" fill="#fff"/><path d="M28.4 31.4q1.6 1 3.4.4" stroke="${c2}" stroke-width=".6" fill="none"/></g>
- <g class="pj"><circle class="o1" cx="10" cy="24" r="1.8" fill="#6fd0ff"/><circle class="o2" cx="20" cy="20" r="1.6" fill="#9be3ff"/><circle class="o3" cx="30" cy="20" r="1.8" fill="#6fd0ff"/></g></g>`;
-}
-function krakenSVG(c1,c2){
- const tent=[13,16,19,22,25,28].map((x,i)=>`<g class="tn" style="transform-origin:${x}px 31px;animation-delay:${(-i*.18).toFixed(2)}s"><path d="M${x-1.4} 30Q${x-2.4} 37 ${x+(i%2?1.6:-1.6)} 42.6Q${x+(i%2?3.4:.2)} 45.4 ${x+(i%2?4:-.4)} 43Q${x+(i%2?2.4:-.6)} 42.6 ${x+(i%2?2.6:.4)} 40Q${x+1.4} 35 ${x+1.4} 30Z" fill="${i%2?shd(c1,-.12):c1}"/></g>`).join('');
- return`<ellipse class="shadow" cx="20" cy="46.4" rx="10" ry="1.6"/><g class="wh">${tent}
- <path d="M11 30Q10 14.4 20.4 14Q30.6 14.4 29.6 30Q20 33.4 11 30Z" fill="${c1}"/><circle cx="14.6" cy="20.6" r="1.4" fill="${c2}" opacity=".7"/><circle cx="25.6" cy="18.4" r="1.1" fill="${c2}" opacity=".7"/><circle cx="17.6" cy="16.6" r=".9" fill="${c2}" opacity=".7"/>
- <ellipse cx="17" cy="25" rx="2.4" ry="2.8" fill="#fff"/><ellipse cx="24" cy="25" rx="2.4" ry="2.8" fill="#fff"/><circle cx="17.8" cy="25.6" r="1.3" fill="#1a1030"/><circle cx="24.8" cy="25.6" r="1.3" fill="#1a1030"/><circle cx="18.2" cy="25.1" r=".45" fill="#fff"/><circle cx="25.2" cy="25.1" r=".45" fill="#fff"/><ellipse cx="14.6" cy="28" rx="1.2" ry=".5" fill="#ff8ab6" opacity=".5"/><ellipse cx="26.4" cy="28" rx="1.2" ry=".5" fill="#ff8ab6" opacity=".5"/>
- <path d="M19.4 28.6q1.4 1 2.8 0" stroke="#1a1030" stroke-width=".6" fill="none"/></g>`;
-}
-function petClass(p){const L=p.look||{};return'pt'+(p.cr?' cr cr-'+p.cr:'')+(L.it2&&p.act==='swing'?' dual':'')+(L.extra?' ex-'+L.extra:'')}
-function petSVG(p,state){const L=p.look||{};let inner,vb='0 0 40 48';
- if(p.cr==='dragon')inner=dragonSVG(L.c1,L.c2);else if(p.cr==='phoenix')inner=phoenixSVG(L.c1,L.c2);else if(p.cr==='kitsune')inner=kitsuneSVG(L.c1,L.c2);else if(p.cr==='kraken')inner=krakenSVG(L.c1,L.c2);
- else{inner=humanSVG(Object.assign({act:p.act},L));if(L.extra==='elephant')vb='-23 0 63 48'}
- return`<svg class="${petClass(p)} ${state||''}" viewBox="${vb}" aria-hidden="true">${inner}</svg>`;
-}
-
 /* ================= marcos ================= */
 function frameSVG(id){const P=(a,r)=>{const t=a*Math.PI/180;return[(60+r*Math.sin(t)).toFixed(2),(60-r*Math.cos(t)).toFixed(2)]};
  const ring=(r,c,w,x='')=>`<circle cx="60" cy="60" r="${r}" fill="none" stroke="${c}" stroke-width="${w}" ${x}/>`;let s='';
@@ -1801,7 +1615,7 @@ function chestSVG(t,cls){const[w,m,l]=CH_COL[t];const gem=t==='legendario'||t===
 
 /* ================= fondos de página ================= */
 const svgUri=s=>`url("data:image/svg+xml,${encodeURIComponent(s)}")`;
-const ARAUCARIA=svgUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 170" preserveAspectRatio="xMidYMax slice"><path d="M0 120L40 80 70 100 110 60 150 95 190 55 240 100 280 70 330 105 370 75 400 95V170H0Z" fill="#1a3340"/><path d="M110 60l-10 10h20ZM190 55l-12 12h24ZM280 70l-10 10h20Z" fill="#cfe3ea"/>${[[40,40],[120,25],[205,45],[300,30],[372,50]].map(([x,t])=>`<g transform="translate(${x} ${t})"><rect x="-1.6" y="10" width="3.2" height="140" fill="#06100b"/><path d="M-34 18q34-16 68 0q-34-6-68 0ZM-26 6q26-12 52 0q-26-5-52 0ZM-16-4q16-8 32 0q-16-3-32 0ZM-30 30q30-12 60 0q-30-5-60 0Z" fill="#06100b"/></g>`).join('')}<path d="M0 150Q100 138 200 148T400 146V170H0Z" fill="#06100b"/></svg>`);
+const ARAUCARIA=svgUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 170" preserveAspectRatio="xMidYMax slice"><path d="M0 120L60 70 120 110 190 60 260 105 330 65 400 100V170H0Z" fill="#1d3a33" opacity=".7"/>${[[30,0],[70,10],[120,-6],[175,8],[240,-2],[300,12],[350,0],[385,6]].map(([x,t])=>`<g fill="#0b1a14"><rect x="${x-3}" y="${10+t}" width="6" height="170"/>${[40,75,110,140].map(y=>`<rect x="${x-4}" y="${y+t}" width="8" height="3"/>`).join('')}<path d="M${x} ${50+t}q18-10 30-6q-16 2-30 10ZM${x} ${90+t}q-18-10-30-6q16 2 30 10Z"/></g>`).join('')}<path d="M0 152Q100 140 200 150T400 146V170H0Z" fill="#06100b"/></svg>`);
 const FIORDO=svgUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 170" preserveAspectRatio="xMidYMax slice"><path d="M0 110L60 40 110 90 170 30 230 95 300 35 360 85 400 60V170H0Z" fill="#2b4a66"/><path d="M60 40l-14 16h28ZM170 30l-16 18h32ZM300 35l-15 17h30Z" fill="#e8f2fa"/><path d="M0 130L50 95 120 135 200 90 270 140 340 100 400 130V170H0Z" fill="#132a40"/><rect y="148" width="400" height="22" fill="#0b1c2c"/><path d="M0 154h400M40 160h300" stroke="#3b6a8f" stroke-width="1" opacity=".5"/></svg>`);
 const TEMPLO=svgUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 170" preserveAspectRatio="xMidYMax slice"><circle cx="300" cy="90" r="40" fill="#ffb35a" opacity=".55"/><g fill="#1a0d12"><path d="M90 70L200 40 310 70Z"/><rect x="92" y="70" width="216" height="10"/>${[100,130,160,190,220,250,280].map(x=>`<rect x="${x+2}" y="82" width="12" height="62"/>`).join('')}<rect x="84" y="144" width="232" height="8"/><rect x="74" y="152" width="252" height="18"/><rect y="160" width="400" height="10"/></g></svg>`);
 const VOLCAN=svgUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 170" preserveAspectRatio="xMidYMax slice"><g fill="#6b6f78" opacity=".35"><circle cx="196" cy="30" r="14"/><circle cx="214" cy="18" r="12"/><circle cx="232" cy="8" r="10"/></g><path d="M60 170L180 52H220L340 170Z" fill="#1a0f12"/><path d="M180 52H220L212 62Q200 56 188 62Z" fill="#ff6a2a"/><path d="M196 60Q190 90 182 120M206 62Q214 96 226 130" stroke="#ff7a2a" stroke-width="2" fill="none" opacity=".8"/><path d="M0 150Q120 135 220 150T400 140V170H0Z" fill="#0d0708"/></svg>`);
@@ -1818,105 +1632,322 @@ const FONDO_BG={
  aurora:`linear-gradient(115deg,transparent 20%,rgba(62,207,142,.38) 35%,transparent 48%,rgba(150,90,255,.32) 62%,transparent 76%),radial-gradient(1px 1px at 15% 20%,#fff,transparent),radial-gradient(1px 1px at 60% 12%,#fff,transparent),radial-gradient(1px 1px at 85% 30%,#fff,transparent),linear-gradient(180deg,#040b16,#0a1a2a 70%,#06101a)`
 };
 
+/* ================= motor chibi con volumen =================
+   Lienzo 64×84, suelo en y=82, vista 3/4 mirando a la derecha.
+   Cada parte se pinta con sombra (tono oscuro), luz recortada (tono base desplazado hacia arriba-derecha),
+   brillo opcional y contorno grueso: así se ve con volumen y no plano. */
+const OL='#2b1e35';let PN=0;
+const ell=(cx,cy,rx,ry)=>`M${cx-rx} ${cy}a${rx} ${ry} 0 1 0 ${2*rx} 0a${rx} ${ry} 0 1 0 ${-2*rx} 0Z`;
+const rr=(x,y,w,h,r)=>`M${x+r} ${y}H${x+w-r}Q${x+w} ${y} ${x+w} ${y+r}V${y+h-r}Q${x+w} ${y+h} ${x+w-r} ${y+h}H${x+r}Q${x} ${y+h} ${x} ${y+h-r}V${y+r}Q${x} ${y} ${x+r} ${y}Z`;
+function Art(){this.id='q'+(++PN)+'_';this.n=0;this.defs=''}
+Art.prototype.p=function(d,c,o){o=o||{};const id=this.id+(this.n++);const ev=o.ev?' fill-rule="evenodd" clip-rule="evenodd"':'';
+ this.defs+=`<clipPath id="${id}"><path d="${d}"${ev}/></clipPath>`;const lx=o.lx==null?1.9:o.lx,ly=o.ly==null?-1.7:o.ly;
+ let s=`<path d="${d}" fill="${o.sh||shd(c,-.26)}"${ev}/><g clip-path="url(#${id})"><path d="${d}" fill="${c}" transform="translate(${lx} ${ly})"${ev}/>`;
+ if(o.hl)s+=`<ellipse cx="${o.hl[0]}" cy="${o.hl[1]}" rx="${o.hl[2]}" ry="${o.hl[3]}" fill="#fff" opacity="${o.ho||.28}"/>`;
+ if(o.extra)s+=o.extra;
+ return s+`</g><path d="${d}" fill="none" stroke="${OL}" stroke-width="${o.sw||1.3}" stroke-linejoin="round"${ev}/>`};
+Art.prototype.f=(d,c,sw,op)=>`<path d="${d}" fill="${c}"${sw?` stroke="${OL}" stroke-width="${sw}" stroke-linejoin="round"`:''}${op?` opacity="${op}"`:''}/>`;
+const ln=(d,c,w,op)=>`<path d="${d}" fill="none" stroke="${c||OL}" stroke-width="${w||1}" stroke-linecap="round" stroke-linejoin="round"${op?` opacity="${op}"`:''}/>`;
+function qpt(a,b,c,t){const u=1-t;return[u*u*a[0]+2*u*t*b[0]+t*t*c[0],u*u*a[1]+2*u*t*b[1]+t*t*c[1]]}
+
+/* ---------- pelo ---------- */
+const H_SHORT='M15.2 33.4Q12.4 25.6 15.4 18.4Q19.6 9.6 30 8.4Q42.6 7.4 48.6 15Q51.8 19.6 50.6 27.2L47.6 24.6L45.6 27.6L43.4 22.4L40.4 25.8L38.4 21.6L35 25.2L33.2 20.8L29.2 24.6L27.4 21.2L23.4 24.4L21.4 22.4L19.8 27L18.6 31.6Z';
+const H_SMOOTH='M15 32Q12.6 22 17 15Q22.6 8.4 32 8.2Q42 8.4 47.6 14.6Q51.6 20 50.4 27Q46 23 40 23.4Q33 22 26 23.4Q20.4 24.6 18.6 31Z';
+const H_SWEPT='M15 34Q12 22 17.4 14.4Q24 7.6 33.6 8.2Q44.6 9 49.4 17.4Q52 23 50.4 30Q48.4 24.6 44.6 22.4Q42 26.6 36 27Q40 24 39.6 20.6Q33 26.4 24 26.8Q20.8 28 19.6 34.6Z';
+const H_BOB='M14.2 41Q11.6 26 15.4 17.4Q20.8 8.6 32 8.4Q43.6 8.6 48.8 17.4Q52.2 25 50.8 35.4L47 36.4L46.8 24.8Q40 26.6 31.6 25.2Q24.4 24.6 19.6 25.6L19.6 41.2Z';
+const H_WILD='M14.4 34Q9 30 11.6 24Q8 20 12 16Q10.6 10.6 16.6 9.6Q17.6 4.6 23.4 6Q26.6 1.8 31.6 4.4Q36 1.4 40 5Q45.6 3.6 47.2 8.6Q53 9.6 51.6 15.4Q55.6 19.6 51.6 23.6Q53.6 28 50 30.6L47 24.6L44.6 27.8L42.4 22.6L39 26.2L37.4 21.8L33.6 25.4L32 21L28 24.8L26.4 21.6L22.4 24.6L20.6 22.4L19 27.4L17.8 32.6Z';
+const H_PART='M15.4 31Q12.8 20 18.4 13.6Q24.6 8 32 8.2Q39.6 8 45.8 13.6Q51.2 20 49.2 30Q46 23.6 40 22.6Q35.4 22 32.6 18.6Q29.8 22 24.4 22.6Q18.6 23.6 15.4 31Z';
+function hairBackArt(a,h){if(!h)return'';const[s,c]=h;const L='M15.4 24Q9.6 38 12.4 56Q15.6 61.6 21.6 58.6Q19.2 46 21 34Z',R='M48.6 22.6Q54 36 52 50Q49.4 54 45.6 51.4Q47.2 40 45 30Z';
+ switch(s){
+  case'long':case'swept':case'braids':return a.p(L,c,{lx:1.4})+a.p(R,c,{lx:1.4});
+  case'wavy':return a.p('M15.4 22Q7.6 32 10.4 42Q7.6 50 12 58Q16.4 64 23.4 60Q19.6 53 22 46Q19.4 40 21.8 33Z',c,{lx:1.4})+a.p('M48.6 21Q56.4 30 53.6 40Q56.6 48 52 54Q48 57.6 44.2 54.6Q47.6 48 45.4 42Q47.2 36 45.4 30Z',c,{lx:1.4});
+  case'pony':return a.p('M18.4 13.6Q7.4 13 5.4 25Q4 36 9 45Q9.8 35 13.6 29Q14.6 21 20.6 17.4Z',c,{lx:1.2});
+  case'bun':return a.p(ell(26,7.6,5.2,4.4),c)+a.f(rr(23,10.4,6.4,1.8,.9),shd(c,-.35));
+  case'mizura':return'';
+ }return''}
+function hairFrontArt(a,h){if(!h)return'';const[s,c]=h;const shine=ln('M36.4 12.4q6 .6 9.8 4.6','#fff',1.6,.5)+`<circle cx="47.6" cy="19.4" r=".8" fill="#fff" opacity=".5"/>`;
+ switch(s){
+  case'short':case'long':case'pony':return a.p(H_SHORT,c,{lx:1.6,ly:-1.4})+shine;
+  case'bun':return a.p(H_SMOOTH,c,{lx:1.6,ly:-1.4})+shine;
+  case'swept':case'wavy':case'braids':{let o=a.p(H_SWEPT,c,{lx:1.6,ly:-1.4})+shine;if(s==='braids')for(const[x,y0]of[[16.6,36],[47.8,34]])for(let k=0;k<5;k++)o+=a.p(ell(x+(x<30?-.4:.4)*k,y0+k*4.2,2.6,2.4),c,{lx:.8,ly:-.6,sw:1});return o}
+  case'bob':return a.p(H_BOB,c,{lx:1.6,ly:-1.4})+shine;
+  case'wild':return a.p(H_WILD,c,{lx:1.6,ly:-1.4})+shine;
+  case'curly':{let o=a.p(H_SMOOTH,c,{lx:1.6,ly:-1.4});const pts=[[16.4,22,4.2],[17.4,15.4,4.4],[22.6,10.6,4.6],[29.6,8.6,4.6],[36.8,8.6,4.6],[43.4,10.8,4.4],[48.2,15.8,4.2],[49.6,22.4,3.6],[22.4,22.6,3.2],[28.4,21.8,3.2],[34.6,21.4,3.2],[40.6,21.8,3],[45.6,23.2,2.8],[16,29,3.2]];pts.forEach(([x,y,r],i)=>{o+=`<circle cx="${x}" cy="${y}" r="${r}" fill="${i%3?c:shd(c,-.12)}" stroke="${OL}" stroke-width="1.1"/>`});return o+shine}
+  case'mizura':{let o=a.p(H_PART,c,{lx:1.6,ly:-1.4});for(const x of[12.6,51.4])o+=`<ellipse cx="${x}" cy="36.4" rx="3.2" ry="5.6" fill="none" stroke="${OL}" stroke-width="4.6"/><ellipse cx="${x}" cy="36.4" rx="3.2" ry="5.6" fill="none" stroke="${c}" stroke-width="2.6"/>`+a.f(rr(x-2.6,29.2,5.2,2.4,1),'#c0392b',.9);return o+shine}
+ }return''}
+function beardArt(a,b){if(!b)return'';const[s,c]=b;const stache='M30.6 36.4q2.8-2.4 5.6-.4q2.8-2 5.4.6q-2.8 1.6-5.4.4q-2.8 1.4-5.6-.6Z';
+ switch(s){
+  case'full':return a.p('M15.6 30.4Q15 43 24 46.6Q32 49.4 40.6 46.6Q49.6 43 49 31.6Q46 37.6 41.6 38.8Q38.6 41.8 34 41Q28.4 41.4 24.2 38.4Q19 36.6 15.6 30.4Z',c,{lx:1.2,ly:-1})+a.p(stache,c,{lx:.6,ly:-.6,sw:1});
+  case'short':return a.p('M16.4 32Q16.4 41.6 24.4 44.6Q32 47 40 44.6Q48 41.8 48.4 33Q45.4 37.8 41.4 38.8Q38.4 41.4 34 40.8Q28.6 41.2 24.4 38.6Q19.4 37 16.4 32Z',c,{lx:1,ly:-.8})+a.p(stache,c,{lx:.6,ly:-.6,sw:1});
+  case'long':return a.p('M15.8 30.6Q14 46 21 56Q27 63 32.6 61.2Q38.6 63 44 56Q50.6 46 49 31.6Q46 37.8 41.6 39Q38.6 42 34 41.2Q28.4 41.6 24.2 38.6Q19 36.8 15.8 30.6Z',c,{lx:1.2,ly:-1})+ln('M26 46q1 6 3.6 10M33 48v9M39.6 46q-.8 6-3 10',shd(c,-.3),.8)+a.p(stache,c,{lx:.6,ly:-.6,sw:1});
+  case'guan':return a.p('M21.6 37.6Q19.6 56 27.4 70Q32 75 36.6 70Q44.6 56 42.8 37.6Q38.4 41.6 32.4 41.2Q26 41.6 21.6 37.6Z',c,{lx:1,ly:-1})+a.p(stache,c,{lx:.6,ly:-.6,sw:1});
+  case'stache':return a.p(stache,c,{lx:.6,ly:-.6,sw:1});
+  case'fu':return a.p(stache,c,{lx:.6,ly:-.6,sw:1})+ln('M31.4 37q-1.6 4-1 9M41.2 37.4q1.6 4 .8 9',c,1.6)+ln('M31.4 37q-1.6 4-1 9M41.2 37.4q1.6 4 .8 9',OL,.5,.6);
+  case'goatee':return a.p(stache,c,{lx:.6,ly:-.6,sw:1})+a.p('M33.4 40.6q2.6 4.6 5.2 0q-2.6 1-5.2 0Z',c,{lx:.4,ly:-.4,sw:1});
+ }return''}
+
+/* ---------- cascos, coronas y tocados ---------- */
+function laurelArt(a,c){let s=ln('M15.8 26Q20 13.6 32 13.2Q44 13.6 48.4 25',shd(c,-.35),1.2);
+ for(const[A,B,C]of[[[15.8,26],[19.6,15.8],[30.6,13.2]],[[48.4,25],[44.4,15.6],[33.4,13.2]]])for(let k=0;k<6;k++){const t=.08+k*.17;const[x,y]=qpt(A,B,C,t);const[x2,y2]=qpt(A,B,C,t+.02);const ang=Math.atan2(y2-y,x2-x)*180/Math.PI+(k%2?28:-28);
+  s+=`<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="2.9" ry="1.3" transform="rotate(${ang.toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})" fill="${k%2?c:shd(c,.18)}" stroke="${OL}" stroke-width=".8"/>`}
+ return s}
+function gearBackArt(a,g){if(!g)return'';const[t,c1,c2]=g;
+ if(t==='sunhalo'){let s='';for(let k=0;k<14;k++){const an=k*Math.PI/7;const x=32+27*Math.sin(an),y=25-27*Math.cos(an),x1=32+21*Math.sin(an-.16),y1=25-21*Math.cos(an-.16),x2=32+21*Math.sin(an+.16),y2=25-21*Math.cos(an+.16);s+=`<path d="M${x1.toFixed(1)} ${y1.toFixed(1)}L${x.toFixed(1)} ${y.toFixed(1)}L${x2.toFixed(1)} ${y2.toFixed(1)}Z" fill="${c1}" stroke="${OL}" stroke-width=".8"/>`}return`<g class="halo">${s}${a.p(ell(32,25,21.6,21.6),c1,{lx:-1.4,ly:1.4,sh:shd(c1,-.15)})}${ln(ell(32,25,17,17),c2,1.2,.7)}</g>`}
+ if(t==='moonhalo')return`<g class="halo">${a.p('M12 34A22 22 0 1 1 50 7A17.6 17.6 0 1 0 12 34Z',c1,{lx:-1.2,ly:1.2,sh:shd(c1,-.15)})}<circle cx="49" cy="12" r="1.2" fill="#fff"/><circle cx="11" cy="16" r=".9" fill="#fff"/></g>`;
+ if(t==='lionpelt')return a.p('M11.6 26Q5.6 44 11.6 60L21 56Q16.4 42 18.6 28Z',c2,{lx:1.2})+a.p('M52.4 26Q58.4 42 53 56L45 52.6Q48.4 40 45.6 28Z',c2,{lx:1.2});
+ if(t==='nemes'||t==='nemesj')return a.p('M14.6 22Q9.6 36 12 54L21 52Q18.4 40 19.8 30Z',c1,{lx:1,extra:[38,42,46,50,54,58].map(y=>ln(`M8 ${y-12}l16 2`,c2,1.3)).join('')})+a.p('M49.4 22Q54.4 36 52 50L44.6 49Q46.2 38 44.6 30Z',c1,{lx:1,extra:[34,38,42,46,50].map(y=>ln(`M42 ${y-10}l14 2`,c2,1.3)).join('')});
+ return''}
+function gearArt(a,g,L){if(!g)return'';const[t,c1,c2,c3]=g;switch(t){
+ case'laurel':return laurelArt(a,c1);
+ case'crown':return a.p('M17.4 19.6L46.6 19.6L47.4 12.6L42.4 15.6L39.2 8.6L35.4 14.6L32 6.6L28.6 14.6L24.8 8.6L21.6 15.6L16.6 12.6Z',c1,{hl:[38,12,5,2]})+[[32,16.4],[25,17.2],[39,17.2]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.3" fill="${c2||'#c0392b'}" stroke="${OL}" stroke-width=".6"/>`).join('');
+ case'spikecrown':return a.p('M17.4 21.2L46.6 21.2L48.8 9L43.2 14.8L41.6 4.4L36.6 13.2L32 1.4L27.4 13.2L22.4 4.4L20.8 14.8L15.2 9Z',c1,{hl:[38,12,4,2]})+`<circle cx="32" cy="17.6" r="1.6" fill="${c2||'#55a6ff'}" stroke="${OL}" stroke-width=".6"/>`;
+ case'circlet':return a.p('M16 25.6Q32 18.4 48.6 23.8L48.4 25.8Q32 21.2 16.2 27.8Z',c1)+`<circle cx="33" cy="21.6" r="1.5" fill="${c2||'#55a6ff'}" stroke="${OL}" stroke-width=".6"/>`;
+ case'headband':return a.p('M15.6 25.6Q9 24 5.6 29.6Q10.6 28.6 15.4 28.4Z',c1,{sw:1})+a.p('M15.4 27Q10 30 9 35.6Q12.6 31.6 16 29.4Z',c1,{sw:1})+a.p('M15 24.4Q32 17.6 49.4 23L49.2 26.4Q32 21.6 15.2 28Z',c1,{lx:.8,ly:-.8});
+ case'galea':return a.p('M13.8 23.4Q11 26 11.6 30.6L14.8 30.6Z',c1,{sw:1})+a.p('M14 24.6Q13.4 9 32 7.4Q50.6 9 50 24.6Q32 19.4 14 24.6Z',c1,{hl:[39,13,6,3]})+a.p('M14.2 24L19.8 22.8L19.6 34Q17 36 15 33.6Z',shd(c1,-.08),{sw:1.1})+a.p('M44.2 22.6L49.8 23.8L49 33.4Q47 35.6 44.8 33.4Z',shd(c1,-.08),{sw:1.1})+a.p('M18.6 11Q21.6-2.6 34-1.6Q46.6 0 47.6 12.6Q44 7.6 40.6 7.2Q36.6 1.6 30.4 2.6Q23.6 4.2 22.6 10.6Z',c2,{extra:ln('M24 6q4-4 9-4M28 7.4q4-3 9-2.4M33 8q4-1.6 8 0',shd(c2,-.3),.8)});
+ case'corup':return a.p('M15.4 17.6Q14.6 3.8 32 3Q49.4 3.8 48.6 17.6Q32 12.6 15.4 17.6Z',c1,{hl:[39,8,6,2.4],extra:`<path d="M23 9.4q3.4-2 6 .6q-3 1.6-6-.6ZM35 10q2.6-2.6 6-.6q-3 2.2-6 .6Z" fill="${OL}" opacity=".8"/><rect x="31" y="9" width="2" height="5.4" rx="1" fill="${shd(c1,-.25)}"/>`})+a.p('M18 6Q20-6.6 33-6.8Q46-6.4 46.6 6Q42.6 2.4 38.6 2.2Q33.6-1.6 27.6-.6Q21.6.6 21 6Z',c2,{extra:ln('M23-1q4-4 10-4M28 0q4-2.6 10-2',shd(c2,-.35),.8)});
+ case'boeotian':return a.p('M18.6 11Q12 0 15.6-4.6Q19.4 1.6 22.6 9.4Z',c2,{sw:1})+a.p('M41.4 9.4Q44.6 1.6 48.4-4.6Q52 0 45.4 11Z',c2,{sw:1})+a.p('M13.6 23.4Q12.6 8.4 32 7Q51.4 8.4 50.4 23.4Q46 19.2 40 18.8Q32 17 24 18.8Q18 19.2 13.6 23.4Z',c1,{hl:[39,12,6,2.6]});
+ case'carthage':return a.p('M14.6 23.4Q14 9 32 4Q50 9 49.4 23.4Q32 18 14.6 23.4Z',c1,{hl:[39,11,5,3]})+a.p('M29 4.6Q32-2 36.6 0Q35 2.6 34.6 5.2Z',c2,{sw:1})+a.p('M14.6 22.6L19.4 21.6L19 31Q16.8 32.6 15.2 30.6Z',shd(c1,-.08),{sw:1});
+ case'pilos':return a.p('M15.6 21.4Q17.4 4.6 32 1.4Q46.6 4.6 48.4 21.4Q32 16.8 15.6 21.4Z',c1,{hl:[38,9,4,3]})+ln('M16.4 18.8Q32 14.6 47.6 18.8',shd(c1,-.3),1);
+ case'khepresh':return a.p('M15.6 25.4Q13 8 22 4Q32 0 42.6 4.4Q51.4 8.6 48.6 25.4Q46 21.4 41 21Q32 19 23.4 21Q18 21.6 15.6 25.4Z',c1,{hl:[38,9,6,3],extra:[[22,9],[27,6.6],[33,5.8],[39,7],[44,10],[20,15],[26,12.6],[32,11.8],[38,12.8],[44,15.6],[24,18.6],[31,17.6],[38,18.2]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r=".7" fill="${c2}"/>`).join('')})+a.p('M40.6 19.6q4.6-2.6 5.4 1.6q-.4 2.8-3 1.8q1.6-1.8-.6-2.4Z',c2,{sw:.9});
+ case'diadem':return a.p('M15.4 24.4Q32 17 48.8 22.8V25.4Q32 20.4 15.6 27.2Z',c1)+a.p('M42.4 20.6q3.8-3.6 5.6.2q-.2 2.6-2.6 2.2q1-1.6-.8-2.2Z',c1,{sw:.9})+`<circle cx="31" cy="21.8" r="1.4" fill="#2a7bd5" stroke="${OL}" stroke-width=".6"/>`;
+ case'sundisk':return a.p('M24 9.4Q21.6 3 25.6 1.2Q24.4 5 28 8.4Z',c2,{sw:.9})+a.p(ell(32,1.8,8,8),c1,{hl:[35,-1,3,2]})+a.p('M39.4 7.6q3.4-1.6 3.6 1.6q-.4 2-2.4 1.4',c2,{sw:.9});
+ case'bicorne':return a.p('M7 21.6Q32-3.4 57 21.6Q32 13.6 7 21.6Z',c1,{hl:[40,9,7,2]})+ln('M8 21.2Q32 14 56 21.2',c2,1.2)+`<circle cx="39" cy="10.4" r="2.6" fill="#2a4bd0" stroke="${OL}" stroke-width=".6"/><circle cx="39" cy="10.4" r="1.6" fill="#f4f4f4"/><circle cx="39" cy="10.4" r=".7" fill="#d0312d"/>`;
+ case'furcone':return a.p('M17.6 18.4Q22 4 32-1.4Q42 4 46.4 18.4Z',c1,{hl:[37,7,3,3]})+a.p('M14.6 20.6Q32 13 49.4 20.6Q50.6 24.6 47.4 25.6Q32 19.8 16.6 25.6Q13.4 24.6 14.6 20.6Z',c2)+`<circle cx="32" cy="-1.4" r="1.8" fill="#c0392b" stroke="${OL}" stroke-width=".7"/>`;
+ case'furhat':return a.p('M15.6 19.4Q16 5.4 32 4.6Q48 5.4 48.4 19.4Z',c1,{hl:[38,9,5,2]})+a.p('M13.6 18.4Q32 12 50.4 18.4Q51.6 23.6 48 24.6Q32 18.8 16 24.6Q12.4 23.6 13.6 18.4Z',c2);
+ case'kabuto':{let s=a.p('M15.2 21.4Q11 24 8.4 30.6L14.6 31.2L16.6 24.6Z',shd(c1,-.1),{sw:1.1})+a.p('M48.8 21.2Q53 24 55.6 30.2L49.6 31L47.6 24.4Z',shd(c1,-.1),{sw:1.1})+a.p('M15 22.2Q14 7.6 32 6.6Q50 7.6 49 22.2Q32 17.6 15 22.2Z',c1,{hl:[39,11,6,2.4],extra:ln('M24 8.4q-2 6-1.6 11M32 7v11M40 8.4q2 6 1.6 11',shd(c1,.25),.7)})+a.p('M16.8 22.8Q32 18.2 47.6 22.4L48 24.8Q32 20.6 16.6 25.4Z',shd(c1,-.3),{sw:1});
+  if(c3==='crescent')s+=a.p('M13.4 2.6Q30 14.6 55-3.4Q34 21 13.4 2.6Z',c2,{hl:[40,4,5,1.4]});
+  else s+=a.p('M28.6 14Q22.6 6 21-3.6Q25.8 3.6 30.6 12.6Z',c2,{sw:1})+a.p('M35.4 14Q41.4 6 43-3.6Q38.2 3.6 33.4 12.6Z',c2,{sw:1});
+  return s}
+ case'winged':return a.p('M17 15Q8 9.6 4 .6Q11.4 3 18.6 10.6Z',c2,{sw:1,extra:ln('M8 4q4 4 8 7M11 2.6q3 4 6 6',shd(c2,-.25),.6)})+a.p('M47 15Q56 9.6 60 .6Q52.6 3 45.4 10.6Z',c2,{sw:1,extra:ln('M56 4q-4 4-8 7M53 2.6q-3 4-6 6',shd(c2,-.25),.6)})+a.p('M15.6 20.4Q15 6.8 32 6Q49 6.8 48.4 20.4Q32 15.8 15.6 20.4Z',c1,{hl:[39,10,5,2]});
+ case'wanderer':return a.p('M17.6 19.4Q18.6 4.6 30 3.4Q42.6 2.8 45.6 19Z',c1,{hl:[37,8,4,2.4]})+a.p('M3.6 20.6Q32 11.6 60.4 20.6Q58.4 25.6 50 23.8Q32 18.6 14 23.8Q5.6 25.6 3.6 20.6Z',shd(c1,-.08),{hl:[44,17,8,1.4]});
+ case'lionpelt':return a.p('M13.6 26Q12 7.6 32 5Q52 7.6 50.4 26Q46 20.4 40 21Q38 23.8 32 23.8Q26 23.8 24 21Q18 20.4 13.6 26Z',c1,{hl:[39,11,6,3],extra:`<ellipse cx="25" cy="13" rx="1.6" ry="1.1" fill="${OL}"/><ellipse cx="39" cy="13" rx="1.6" ry="1.1" fill="${OL}"/><path d="M30.4 16.6h3.2l-1.6 2Z" fill="${OL}"/>`})+a.p(ell(17.6,8.6,3,3),c1,{sw:1})+a.p(ell(46.4,8.6,3,3),c1,{sw:1})+`<path d="M24.4 21.2l1 2.2 1-2M37.6 21.2l1 2.2 1-2" fill="#fff" stroke="${OL}" stroke-width=".5"/>`;
+ case'wingcap':return a.p('M15.4 14.6Q8 11 6 4.6Q12 6.6 17 11.6Z',c2,{sw:1})+a.p('M48.6 14.6Q56 11 58 4.6Q52 6.6 47 11.6Z',c2,{sw:1})+a.p('M15.8 20.6Q15.4 7 32 6.4Q48.6 7 48.2 20.6Q32 16.2 15.8 20.6Z',c1,{hl:[39,10,5,2]});
+ case'shell':return a.p('M41.6 20.6L46 9Q50.6 9.6 52.4 14Q51.6 18.6 41.6 20.6Z',c1,{sw:1,extra:ln('M41.6 20.6L48 10M41.6 20.6L50.6 12M41.6 20.6L52 15.6',shd(c1,-.25),.6)})+[[19,23.4],[23,21],[27.4,19.6],[32,19],[36.6,19.4]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.25" fill="#fff8ee" stroke="${OL}" stroke-width=".5"/>`).join('');
+ case'flowers':return[[17.4,23.6],[21.6,17.6],[27.4,14],[34,12.8],[40.4,14.4],[46,18.6]].map(([x,y],i)=>{const col=i%2?c2:c1;let f='';for(let k=0;k<5;k++){const an=k*1.2566;f+=`<circle cx="${(x+2*Math.cos(an)).toFixed(1)}" cy="${(y+2*Math.sin(an)).toFixed(1)}" r="1.6" fill="${col}" stroke="${OL}" stroke-width=".55"/>`}return f+`<circle cx="${x}" cy="${y}" r="1.1" fill="#ffe27a" stroke="${OL}" stroke-width=".5"/>`}).join('');
+ case'comb':return a.p('M40 14.6L49.6 9.6L50.4 11L41 16Z',c1,{sw:.9})+[[50,10],[46.6,12.4]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.7" fill="${c2}" stroke="${OL}" stroke-width=".6"/>`).join('')+ln('M47 12.6l-1.6 6M49.8 11l-.4 5.4',c1,.8);
+ case'coifcrown':return a.p('M12.6 36Q11 14 32 7.6Q53 14 51.4 36Q51 46.4 44 47.8L20 47.8Q13 46.4 12.6 36Z'+ell(32.6,31.8,14.2,12.8).replace(/a/g,'a'),c1,{ev:1,extra:[...Array(30)].map((_,i)=>{const x=14+(i%10)*3.8,y=12+Math.floor(i/10)*14;return`<circle cx="${x}" cy="${y}" r=".5" fill="${shd(c1,-.35)}"/>`}).join('')})+a.p('M18.6 15.4L45.4 15.4L46.2 9L41.8 11.6L39 5.6L35.4 10.8L32 4L28.6 10.8L25 5.6L22.2 11.6L17.8 9Z',c2,{hl:[38,9,4,1.6]});
+ case'futou':return a.p('M16.6 18.6Q17 5.6 32 5.2Q47 5.6 47.4 18.6Z',c1,{hl:[38,9,5,2]})+a.p('M15.4 17.6Q32 12.6 48.6 17.6L48.4 20.6Q32 16 15.6 20.6Z',shd(c1,-.25),{sw:1})+`<circle cx="32" cy="4.6" r="2" fill="${c2||'#c0392b'}" stroke="${OL}" stroke-width=".7"/>`;
+ case'guan':return a.p('M24.6 11L24.2 3.4Q32 .2 39.8 3.4L39.4 11Z',c1,{sw:1.1})+ln('M18 6.6L46 5',c2||'#e2b54a',1.1);
+ case'mianguan':return a.p('M22 14.4L23 6H41L42 14.4Z',c1,{sw:1.1})+a.p('M13.4 5.6L50.6 3.4L51 6.6L13.8 8.6Z',c1,{sw:1.1,extra:ln('M13.6 7.6L50.8 5.4',c2,.8)})+[44,46.4,48.8,15.8,18.2].map(x=>ln(`M${x} ${x>30?5.6:7.6}v10`,'#2b1e35',.5)+`<circle cx="${x}" cy="${x>30?10:12}" r=".8" fill="${c2}"/><circle cx="${x}" cy="${x>30?14:16}" r=".8" fill="#c0392b"/>`).join('');
+ case'gladhelm':return a.p('M15.6 17.4Q15 5 32 4.4Q49 5 48.4 17.4Q32 13.6 15.6 17.4Z',c1,{hl:[39,9,5,2]})+a.p('M12 18Q32 12 52 18L51.2 20.4Q32 14.8 12.8 20.4Z',shd(c1,-.12),{sw:1})+a.p('M21 7Q22.6-3.6 35.6-4.6Q46.6-4.6 47.4 3.6Q51.4 4 50.6 7.4Q46.6 6 44.6 4.6Q40-.6 33 1.4Q27.4 3.4 26 7.6Z',c2,{sw:1});
+}return''}
+
+/* ---------- cabezas especiales ---------- */
+function falconHead(a,L){const br='#6b3f1c',cr='#f4ecd8';return a.p(ell(32,28,17.4,16.4),br,{hl:[38,18,7,4],ho:.18})+a.p('M29.6 30.4Q30.6 21.8 40 21.4Q49 21.8 49.8 30Q49.8 38.4 44 41.2Q36 43.4 31.4 38.4Q29.2 34.8 29.6 30.4Z',cr,{lx:1,ly:-.8,sw:1.1})+a.p('M45.6 30.2Q56.4 28.6 57.4 35Q57.6 39.8 52.4 41Q53 37.2 49.6 36.8Q47 37.4 44.8 35.8Z','#e8b23a',{sw:1.2,extra:`<path d="M52.6 41Q56.2 39.4 57.4 35.6L55.6 39.6Z" fill="${OL}"/>`})+ln('M36 35.6q-1.4 4.8-5.2 6.8',OL,1.8)+ln('M32.6 28.8h13.2',OL,1.4)}
+function jackalHead(a,L){return a.p('M18.6 17Q15-2 21.6-6.4Q26.8 2 27.4 13.6Z','#1f1d26',{sw:1.2,extra:`<path d="M20.4 10Q19.4 1 21.8-2.6Q24.4 3 24.6 11Z" fill="#e2b54a" opacity=".85"/>`})+a.p('M33.4 12.6Q36.4-1.4 44-5Q45.6 6.4 42.6 17Z','#1f1d26',{sw:1.2,extra:`<path d="M36.4 11.4Q38.6 2 42.4-1Q42.6 6 41 13Z" fill="#e2b54a" opacity=".85"/>`})+a.p(ell(32,28,17,16),'#25222e',{hl:[40,19,6,3],ho:.15})+a.p('M38 29.6Q50.6 26.8 57.4 30.8Q59.6 33.4 56.8 35.6Q50.4 38.6 40 37.8Z','#25222e',{sw:1.2})+`<ellipse cx="57.4" cy="32.4" rx="1.6" ry="1.2" fill="${OL}"/>`+ln('M42 36.2q6 .6 13-.6',shd('#25222e',.4),.8)}
+
+/* ---------- cuerpo ---------- */
+const TORSO=b=>`M${22.6-b} 45.4Q${22.2-b} 43.8 ${24.6-b} 43.8H${39.4+b}Q${41.8+b} 43.8 ${41.4+b} 45.4L${43.6+b} 64.4Q${43.8+b} 66.6 ${41.6+b} 66.6H${22.4-b}Q${20.2-b} 66.6 ${20.4-b} 64.4Z`;
+function armorArt(a,L,b){const ar=L.ar||[];const t=ar[0],c=ar[1]||L.tu,c2=ar[2]||GOLD;const dk=shd(c,-.4);const X0=21.4-b,X1=42.6+b;
+ const plate=`M${23.6-b} 45.2H${40.4+b}Q${42+b} 45.2 ${42+b} 47L${42.8+b} 60.6H${21.2-b}L${22-b} 47Q${22-b} 45.2 ${23.6-b} 45.2Z`;
+ switch(t){
+  case'musc':return a.p(plate,c,{hl:[37,49,4,3],extra:ln('M25 50.6q3.6 2.4 7 0q3.4 2.4 7 0M32 51.4v6.4M26.6 56q5.4 1.6 10.8 0',dk,.8)});
+  case'seg':return a.p(plate,c,{hl:[37,48,4,2],extra:ln('M21 50.4h22M21 54h22M21 57.6h22',dk,.8)});
+  case'chain':return a.p(plate,c,{extra:[...Array(24)].map((_,i)=>`<circle cx="${(23.6+(i%6)*3.4).toFixed(1)}" cy="${(47.4+Math.floor(i/6)*3.4).toFixed(1)}" r=".55" fill="${dk}"/>`).join('')});
+  case'plate':return a.p(plate,c,{hl:[36,50,5,6],ho:.4,extra:ln('M32 45.6v15',dk,.7)});
+  case'lamellar':return a.p(plate,c,{extra:[47.6,50.6,53.6,56.6,59.4].map(y=>ln(`M${X0} ${y}H${X1}`,shd(c,.3),.7)).join('')+[...Array(12)].map((_,i)=>`<circle cx="${(24+(i%6)*3.2).toFixed(1)}" cy="${49+Math.floor(i/6)*6}" r=".55" fill="${c2}"/>`).join('')});
+  case'linen':return a.p(plate,c,{extra:`<rect x="20" y="54.6" width="24" height="2.4" fill="${c2}"/><circle cx="32" cy="50" r="2" fill="${c2}"/>`})+a.p(rr(21.6,44.6,6,4,1.4),shd(c,-.06),{sw:1})+a.p(rr(36.4,44.6,6,4,1.4),shd(c,-.06),{sw:1});
+  case'toga':return a.p('M38.4 44Q30 52 21 64.8L26.6 66.6Q32 54 42 46.4Z',c,{extra:ln('M38.4 44Q30 52 21 64.8',c2,1.6)});
+  case'chiton':return ln('M26.4 46.6q1 7 .4 13M32 46.8v13M37.6 46.6q-1 7-.4 13',shd(L.tu,-.2),.7)+a.p(rr(20.8,53.6,22.4,2.8,1.2),c2,{sw:1});
+  case'robe':return a.p('M26.6 43.8Q32 53.4 37.4 43.8L39.6 44.6Q32 57.6 24.4 44.6Z',c2,{sw:1});
+  case'kimono':case'kofun':return a.p('M24.4 44L38.6 58.6L41.2 56.4L28.4 44Z',c2,{sw:1})+a.p(rr(20.6,55.2,22.8,4.4,1.4),t==='kofun'?c2:c,{sw:1,extra:t==='kofun'?ln('M34 57.4l4 3.6M34 57.4l-1 4.4',c2,1):''});
+  case'coat':return a.p('M28 44.2H36L36.4 62.4H27.6Z',c2,{sw:1})+a.p('M25.6 44.2L28.4 44.2L30.6 52.6L27 51Z','#c0392b',{sw:.9})+a.p('M38.4 44.2L35.6 44.2L33.4 52.6L37 51Z','#c0392b',{sw:.9})+[48,52,56,60].map(y=>`<circle cx="38.4" cy="${y}" r=".8" fill="${GOLD}" stroke="${OL}" stroke-width=".4"/>`).join('');
+  case'deel':return a.p('M30 44Q38 50 42.2 56L42.6 59.4Q36 52 29 46Z',c2,{sw:1})+a.p(rr(20.6,57,22.8,3.2,1.2),c2,{sw:1});
+  case'surcoat':return a.p(plate,c,{extra:`<path d="M27.4 49.4l2.4-1.6 2.2 1.6 2.2-1.6 2.4 1.6M27.4 53.4l2.4-1.6 2.2 1.6 2.2-1.6 2.4 1.6M27.4 57.4l2.4-1.6 2.2 1.6 2.2-1.6 2.4 1.6" fill="none" stroke="${c2}" stroke-width="1.1"/>`});
+  case'leather':return a.p(`M${23-b} 45H${41+b}L${41.6+b} 60H${22.4-b}Z`,c,{extra:ln('M24 46l16 13',shd(c,-.4),1.6)});
+  case'bare':return ln(`M25.4 49.4q3.4 2 6.6 0q3.2 2 6.6 0M32 51v7.6M28.6 55.6h6.8M29 58.6h6`,shd(L.sk,-.3),.8);
+ }return''}
+function skirtArt(a,L,b){if(!L.skirt)return'';const[t,c]=L.skirt;switch(t){
+ case'pteruges':{let s='';for(let i=0;i<6;i++)s+=a.p(rr(20.8-b+i*(3.75+b/3),60.8,3.4,8,1.2),i%2?c:shd(c,.1),{sw:1});return s}
+ case'kilt':return a.p(`M${20.6-b} 60.4H${43.4+b}L${45.6+b} 70.6Q32 72.8 ${18.4-b} 70.6Z`,c,{extra:ln('M27 61.6l-1 9M32 61.6v10M37 61.6l1 9',shd(c,-.2),.6)});
+ case'long':return a.p(`M${20.8-b} 57.8H${43.2+b}L${47.6+b} 78.8Q32 81.4 ${16.4-b} 78.8Z`,c,{extra:ln('M26 60l-2.6 18M32 60v19M38 60l2.6 18',shd(c,-.2),.7)});
+ case'hakama':return a.p('M20.2 58.8H43.8L46.8 78.4H34.4L32.2 66.4L29.8 78.4H17.2Z',c,{extra:ln('M24 60l-2 17M40 60l2 17',shd(c,-.25),.7)});
+}return''}
+function legArt(a,L,x,back,cls){const sk=L.sk;const leg=L.leg||sk;const sh=L.shoe||['sandal','#8a5a2b'];const f=back?(c=>shd(c,-.12)):(c=>c);let s=a.p(rr(x,62.6,6.8,14.2,3.2),f(leg),{sw:1.2});
+ const foot=`M${x-.8} 74.4H${x+8}Q${x+10.6} 74.4 ${x+10.6} 77.2V78.6Q${x+10.6} 80.6 ${x+8.6} 80.6H${x-.6}Q${x-2.2} 80.6 ${x-2.2} 78.8V77.2Q${x-2.2} 74.4 ${x-.8} 74.4Z`;
+ switch(sh[0]){
+  case'sandal':s+=a.p(foot,f(sk),{sw:1.1})+ln(`M${x-2} 80h12.4`,f(sh[1]),1.6)+ln(`M${x} 72.6l6.8 2.6M${x+6.8} 72.6l-6.8 2.6M${x} 69.4l6.8 2.4`,f(sh[1]),1.1);break;
+  case'boot':s+=a.p(`M${x-.4} 68.4H${x+7.2}V74.4Q${x+10.6} 74.4 ${x+10.6} 77.4V80.6H${x-2.2}V76.6Q${x-2.2} 74.4 ${x-.4} 73.8Z`,f(sh[1]),{sw:1.1,hl:[x+7,76,2,1]});break;
+  case'zori':s+=a.p(foot,f('#f4f4f4'),{sw:1.1})+ln(`M${x-2} 80.2h12.6`,f(sh[1]),1.6);break;
+  case'wingsandal':s+=a.p(foot,f(sk),{sw:1.1})+ln(`M${x-2} 80h12.4`,f(sh[1]),1.6)+a.p(`M${x+1} 72Q${x-4} 68 ${x-6} 70Q${x-3} 72.4 ${x+1} 74Z`,'#f4f4f4',{sw:.9});break;
+  default:s+=a.p(foot,f(sh[1]),{sw:1.1});
+ }return`<g class="${cls}">${s}</g>`}
+function shieldArt(a,sh){const[t,c1,c2,em]=sh;switch(t){
+ case'aspis':return a.p(ell(19,57.4,8.8,8.8),c1,{hl:[22,54,3,2],extra:ln(ell(19,57.4,6.8,6.8),c2,1)})+(em==='lambda'?ln('M15.6 61.6L19 52.6L22.4 61.6',c2,1.8):em==='sun'?`<circle cx="19" cy="57.4" r="2.4" fill="${c2}"/>`+[...Array(8)].map((_,k)=>ln(`M${(19+3.4*Math.cos(k*.785)).toFixed(1)} ${(57.4+3.4*Math.sin(k*.785)).toFixed(1)}L${(19+5.4*Math.cos(k*.785)).toFixed(1)} ${(57.4+5.4*Math.sin(k*.785)).toFixed(1)}`,c2,1)).join(''):em==='horse'?`<path d="M16.6 61.6q-.6-5 2.6-7.4q3-1.8 4.4.6l-1.6.8q.4 3.6-2.6 6Z" fill="${c2}"/>`:`<circle cx="19" cy="57.4" r="2.2" fill="${c2}" stroke="${OL}" stroke-width=".6"/>`);
+ case'scutum':return a.p(rr(12.6,46.4,12.2,21.6,2.6),c1,{hl:[21,50,2,4],extra:`<path d="M14 50h9.4M14 64.6h9.4" stroke="${c2}" stroke-width="1"/><path d="M18.7 52l1.4 3-2.6 1.4 3.4 4.4" fill="none" stroke="${c2}" stroke-width="1"/>`})+`<circle cx="18.7" cy="57.2" r="2.2" fill="${c2}" stroke="${OL}" stroke-width=".7"/>`;
+ case'round':return a.p(ell(19,57.4,8.6,8.6),c1,{hl:[22,54,3,2],extra:ln('M10.4 57.4h17.2M19 48.8v17.2',c2,1.4)})+`<circle cx="19" cy="57.4" r="2.2" fill="#9aa3ad" stroke="${OL}" stroke-width=".7"/>`;
+ case'kite':return a.p('M12.6 47.2H25.6V57.6Q25.6 64 19.1 69.8Q12.6 64 12.6 57.6Z',c1,{hl:[22,51,2,3],extra:`<path d="M15 52.6l2-1.4 2 1.4 2-1.4 2 1.4M15 57l2-1.4 2 1.4 2-1.4 2 1.4M15.6 61.4l1.8-1.2 1.7 1.2 1.7-1.2 1.8 1.2" fill="none" stroke="${c2}" stroke-width="1"/>`});
+ case'oval':return a.p(ell(19,57.4,6.4,10.6),c1,{hl:[21,52,2,3],extra:ln('M19 47.4v20',c2,1.2)})+`<ellipse cx="19" cy="57.4" rx="2" ry="2.8" fill="${c2}" stroke="${OL}" stroke-width=".6"/>`;
+ case'parmula':return a.p(rr(13.4,51.6,11.2,11.4,1.6),c1,{extra:`<circle cx="19" cy="57.3" r="1.8" fill="${c2}"/>`});
+ case'mirror':return a.p(ell(19,57.4,8.6,8.6),c1,{hl:[22.6,53.6,3.4,2.4],ho:.7,extra:ln(ell(19,57.4,7,7),c2,1.2)+`<path d="M14.6 60.4q2-5.6 7.6-6.6" stroke="#fff" stroke-width="1" fill="none" opacity=".8"/>`});
+ case'pelt':return a.p('M13 48Q19.6 45 25.6 48.4Q27.4 56 25 63Q22 67.6 19 66.4Q15.4 68.4 12.4 64Q10.6 56 13 48Z',c1,{extra:[[16,52],[21,55],[17,60],[22,61]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="1.3" ry=".9" fill="${c2}"/>`).join('')});
+}return''}
+function accArt(a,L){let s='';const acc=L.acc||[];
+ if(acc.includes('collar'))s+=a.p('M21.4 44.6Q32 56 42.6 44.6L40.4 43.8Q32 51 23.6 43.8Z','#e2b54a',{sw:1,extra:ln('M23.6 45.6Q32 52.6 40.4 45.6',  '#2a7bd5',1.1)});
+ if(acc.includes('torc'))s+=ln('M24.4 44.8Q32 49 39.6 44.8','#2b1e35',2.4)+ln('M24.4 44.8Q32 49 39.6 44.8','#e2b54a',1.4);
+ if(acc.includes('magatama'))s+=ln('M24.4 44.6Q32 51 39.6 44.6',OL,.6)+[[27,47.4,'#3ecf8e'],[32,49,'#c0392b'],[37,47.4,'#55a6ff']].map(([x,y,c])=>`<path d="M${x-.8} ${y-1}a1.3 1.3 0 1 1 .6 2.4q-1 .2-1 1.4q-.8-1.8.4-3.8Z" fill="${c}" stroke="${OL}" stroke-width=".4"/>`).join('');
+ if(acc.includes('pearls'))s+=ln('M24.4 44.6Q32 50 39.6 44.6','#fff8ee',1.6)+ln('M24.4 44.6Q32 50 39.6 44.6',OL,.4,.6);
+ if(acc.includes('brisingamen'))s+=ln('M24.4 44.6Q32 51 39.6 44.6','#e2b54a',1.2)+`<circle cx="32" cy="49.6" r="2.2" fill="#ff9a2a" stroke="${OL}" stroke-width=".6"/>`;
+ if(acc.includes('starbelt'))s+=[28,32,36].map(x=>`<path d="M${x} 58.4l.7 1.6 1.6.6-1.6.6-.7 1.6-.7-1.6-1.6-.6 1.6-.6Z" fill="#fff6c8" stroke="${OL}" stroke-width=".3"/>`).join('');
+ if(acc.includes('phalerae'))s+=[[27,50],[32,50],[37,50]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.4" fill="#e2b54a" stroke="${OL}" stroke-width=".5"/>`).join('');
+ return s}
+function elephantArt(a){const g='#9aa3ad',d=shd(g,-.15);
+ const leg=(x,cls)=>`<g class="${cls}" style="transform-origin:${x+3}px 70px">${a.p(rr(x,68,6.4,13,2.8),d,{sw:1.1})}<path d="M${x+.6} 80.4h5.2" stroke="#e8e2d0" stroke-width="1.6"/></g>`;
+ return`<g class="el">${leg(-26,'e2')}${leg(-13,'e1')}${a.p('M-33.4 60q-3 4-1.6 8',d,{sw:1})}${a.p(ell(-16,64,15.6,12.4),g,{hl:[-10,58,6,3]})}${a.p('M-25 52.6H-8.4L-7.4 63.4H-26Z','#6a2c8a',{sw:1.1,extra:ln('M-26 62h18.6','#e2b54a',1.6)})}${leg(-22,'e1')}${leg(-9.6,'e2')}${a.p(ell(-2,53,11.8,11.2),g,{hl:[2,47,4,2.6]})}${a.p('M-9 53Q-17 52.6-15.6 62Q-12.6 66.6-6.6 62.6Z',shd(g,.12),{sw:1.1,extra:`<ellipse cx="-11" cy="57.6" rx="2.6" ry="3.4" fill="#f0b8c0" opacity=".7"/>`})}<g class="tr" style="transform-origin:7.6px 57px">${a.p('M6.6 55.4Q11.6 59 11 67Q10.6 72 13.6 72L13 74.6Q7.4 75.4 7.6 68Q8 62 4.2 59Z',g,{sw:1.1})}</g>${a.p('M5.6 60q4.4 2 5.4-1.4',  '#f4efe2',{sw:.9})}<ellipse cx="1.6" cy="51" rx="1.7" ry="2.2" fill="${OL}"/><circle cx="2.2" cy="50.2" r=".7" fill="#fff"/><ellipse cx="-2.4" cy="57" rx="2" ry="1.1" fill="#ff8f8f" opacity=".45"/></g>`}
+function ravenArt(a){return`<g transform="translate(-5 7)"><g class="rv" style="transform-origin:16px 44px">${a.p('M10 46Q9 38.6 15.4 37.6Q21 38 21.6 43.6Q20 47.4 14.6 47.6Z','#1f1d26',{sw:1})}${a.p(ell(18.4,37,4,3.8),'#1f1d26',{sw:1})}${a.p('M21.6 36.6l4.4 1.2-4 1.6Z','#9aa3ad',{sw:.8})}<circle cx="19.6" cy="36" r=".9" fill="#fff"/>${a.p('M10.6 44.6l-4.4 3 4.8-.4Z','#1f1d26',{sw:.8})}</g></g>`}
+
+/* ---------- ensamblaje ---------- */
+const REST_ROT={spear:25,trident:20,bident:20,jewelspear:22,guandao:18,naginata:25,banner:30,musket:25,longsword:16,katana:16,tsurugi:16,was:14};
+function chibiSVG(p){const L=p.look||{};const a=new Art();const sk=L.sk||'#f0c8a0';const b=L.bulk?2.2:0;const iris=L.eye||'#3a2416';const mood=L.mood||'smile';
+ const acc=L.acc||[];const at=(L.ar&&L.ar[0])||'none';const bare=at==='bare';const full=['plate','chain','lamellar','surcoat'].includes(at);
+ const armC=full?(L.ar[1]):bare?sk:(L.sleeve||L.tu);const handC=acc.includes('gauntlets')||at==='plate'?'#9aa3ad':sk;
+ const arm=(sx,rest,back,item,cls,shield)=>{const f=c=>back?shd(c,-.1):c;let s=a.p(rr(sx-3.1,45,6.2,14.4,3.1),f(sk),{sw:1.2});
+  if(!bare)s+=a.p(rr(sx-3.3,44.8,6.6,full?14:7.4,3.2),f(armC),{sw:1.2});
+  if(acc.includes('chains'))s+=a.p(rr(sx-3.6,55,7.2,2.2,1),'#9aa3ad',{sw:.9})+ln(`M${sx+2} 57l1 2.6`,'#9aa3ad',1);
+  if(acc.includes('epaul'))s+=a.p(rr(sx-4,43.6,8,2.6,1.2),GOLD,{sw:.9});
+  const it=item?`<g class="${cls}"><g transform="translate(${sx} 59.2) rotate(${REST_ROT[item]||0}) scale(1.45)" stroke="${OL}" stroke-width=".3">${itemArt(item)}</g></g>`:'';
+  const hand=a.p(ell(sx,59.2,3.7,3.7),f(handC),{sw:1.2});
+  return`<g transform="rotate(${rest} ${sx} 47.6)">${s}${it}${hand}${shield||''}</g>`};
+ const o=[`<ellipse class="shadow" cx="32" cy="81.6" rx="${14+b}" ry="2.6"/>`];
+ if(L.extra==='elephant')o.push(elephantArt(a));
+ o.push('<g class="wh">');
+ if(L.cape)o.push(`<g class="cp">${a.p('M21.6 45.6Q32 43.4 42.4 45.6L46.6 70.6Q38.6 75.4 30.4 73.4Q22.4 74.4 15.6 70.4Z',L.cape,{lx:-1.6,ly:-1.2})}</g>`);
+ o.push(`<g class="hb">${gearBackArt(a,L.hb)}${gearBackArt(a,L.hd)}${hairBackArt(a,L.hair)}</g>`);
+ o.push(legArt(a,L,24.2,true,'lb'),legArt(a,L,33.4,false,'lf'));
+ o.push(`<g class="bd">${a.p(TORSO(b),bare?sk:L.tu,{hl:[37,50,4,6],ho:.18})}${armorArt(a,L,b)}${L.belt?a.p(rr(20.6-b,57.6,22.8+2*b,3.2,1.2),L.belt,{sw:1})+a.f(rr(30,57.2,4,4,.8),GOLD,.8):''}${skirtArt(a,L,b)}${accArt(a,L)}${L.mantle?a.p('M18.6 47.6Q20 42.4 32 42.6Q44 42.4 45.4 47.6Q40 50.6 32 49.6Q24 50.6 18.6 47.6Z',L.mantle,{sw:1.1}):''}</g>`);
+ o.push(`<g class="ab">${arm(22.4,14,true,L.it2,'it2',L.sh?`<g class="sh">${shieldArt(a,L.sh)}</g>`:'')}</g>`);
+ // cabeza
+ let h='';
+ if(L.head==='falcon')h=falconHead(a,L);else if(L.head==='jackal')h=jackalHead(a,L);
+ else{h=a.p('M16.4 26.4Q11.8 26 11.8 31Q12.2 35.8 16.8 35.2Z',sk,{sw:1.2,lx:.8})+a.p(ell(32,28,17.6,16.6),sk,{hl:[40,21,7,4],ho:.18});
+  h+=`<ellipse cx="25.4" cy="36.4" rx="2.7" ry="1.5" fill="#ff7f8f" opacity=".45"/><ellipse cx="44.4" cy="36" rx="2.3" ry="1.4" fill="#ff7f8f" opacity=".45"/>`+ln('M36.8 34.4q.9.6.2 1.3',shd(sk,-.38),.9)}
+ const eye=(x,rx)=>`<ellipse cx="${x}" cy="31.4" rx="${rx}" ry="3.8" fill="${OL}"/><ellipse cx="${x}" cy="32.6" rx="${rx-.7}" ry="2.4" fill="${iris}"/><circle cx="${x+1}" cy="29.9" r="1.25" fill="#fff"/><circle cx="${x-.9}" cy="33" r=".6" fill="#fff"/>`;
+ const eyes=acc.includes('eyepatch')?eye(40.6,2.6)+a.p('M24.6 30.4Q29.6 27 34 30.4Q33.6 35 29.4 35Q25 35 24.6 30.4Z','#1a1a22',{sw:1})+ln('M15 25.4L44 23.6',OL,1.1):acc.includes('eyepatchR')?eye(29.4,2.85)+a.p('M36 30.2Q40.6 27 45 30.2Q44.6 34.8 40.4 34.8Q36.4 34.8 36 30.2Z','#1a1a22',{sw:1})+ln('M20 23.6L50 26',OL,1.1):eye(29.4,2.85)+eye(40.6,2.6);
+ const brows=mood==='serious'?ln('M26.4 25.6l5.4 1.6M43 25.4l-5.2 1.8',L.hair?shd(L.hair[1],-.3):OL,1.4):ln('M26.6 26.2q2.6-1.6 5.4-.4M37.8 25.8q2.6-1.4 5.2 0',L.hair?shd(L.hair[1],-.3):OL,1.3);
+ const mouths={smile:`<path d="M33 36.8q3 3.6 6.4 0q-.4 3.4-3.2 3.4q-2.8 0-3.2-3.4Z" fill="#7a2232" stroke="${OL}" stroke-width="1"/><path d="M34.4 38.8q1.8-.9 3.6 0q-.6 1.2-1.8 1.2q-1.2 0-1.8-1.2Z" fill="#ff8a9a"/>`,grin:`<path d="M32 36.4q4.2 4.6 8.6 0q-.6 4-4.3 4q-3.7 0-4.3-4Z" fill="#7a2232" stroke="${OL}" stroke-width="1"/><path d="M32.8 37.2q3.5 1.6 7 0v.9q-3.5 1.2-7 0Z" fill="#fff"/>`,calm:ln('M33.4 37.6q2.8 2 5.6 0',OL,1.1),smirk:ln('M33.6 38q3.4 1 5.8-1.4',OL,1.1),serious:ln('M33.8 38h5',OL,1.2)};
+ const faceUp=L.head?'':`<g class="ey" style="animation-delay:${(-(PN%9)*.53).toFixed(2)}s">${eyes}</g><g class="eh">${ln('M26.4 32.6q3-4 6 0M37.6 32.6q3-4 6 0',OL,1.5)}</g><g class="ec">${ln('M26.6 32q2.8 1.8 5.6 0M37.8 32q2.6 1.8 5.2 0',OL,1.3)}</g>${brows}<g class="mn">${mouths[mood]||mouths.smile}</g><g class="mo"><ellipse cx="36.2" cy="38.4" rx="1.7" ry="2.1" fill="#7a2232" stroke="${OL}" stroke-width="1"/></g>`;
+ const animalFace=L.head?`<g class="ey" style="animation-delay:${(-(PN%9)*.53).toFixed(2)}s">${L.head==='falcon'?`<circle cx="40.2" cy="29" r="3.8" fill="#e8b23a" stroke="${OL}" stroke-width="1"/><circle cx="40.6" cy="29" r="2.5" fill="${OL}"/><circle cx="41.6" cy="27.7" r="1" fill="#fff"/>`:`<ellipse cx="29.6" cy="28" rx="3.5" ry="4" fill="#e8b23a" stroke="${OL}" stroke-width="1"/><ellipse cx="30" cy="28.6" rx="2" ry="2.6" fill="${OL}"/><circle cx="31" cy="26.8" r="1.2" fill="#fff"/><ellipse cx="40.4" cy="27.4" rx="3.1" ry="3.7" fill="#e8b23a" stroke="${OL}" stroke-width="1"/><ellipse cx="40.8" cy="28" rx="1.8" ry="2.4" fill="${OL}"/><circle cx="41.7" cy="26.3" r="1.1" fill="#fff"/>`}</g><g class="eh">${ln('M26.6 29.6q3-4 6 0M37 29q3-4 6 0',L.head==='jackal'?'#e2b54a':OL,1.5)}</g><g class="ec">${ln('M26.8 29q2.8 1.8 5.6 0M37.4 28.6q2.6 1.8 5.2 0',L.head==='jackal'?'#e2b54a':OL,1.3)}</g><g class="mn"></g><g class="mo"></g>`:'';
+ if(L.head)h+=animalFace;else h+=beardArt(a,L.beard)+faceUp+hairFrontArt(a,L.hair);
+ h+=gearArt(a,L.hd,L);
+ o.push(`<g class="hd">${h}</g>`);
+ if(L.extra==='raven')o.push(ravenArt(a));
+ o.push(`<g class="af">${arm(41.6,-14,false,L.it,'it')}</g>`);
+ o.push(projArt(p.act));
+ o.push('</g>');
+ return`<defs>${a.defs}</defs>${o.join('')}`;
+}
+function projArt(act){switch(act){
+ case'bow':return`<g class="pj"><path d="M50 48h10" stroke="#7a4a22" stroke-width="1.1"/><path d="M61 48l-2.4-1.3v2.6Z" fill="#dde2e8" stroke="${OL}" stroke-width=".4"/></g>`;
+ case'bolt':return`<g class="pj"><path d="M52 40L46 50H50L45.6 60L56.6 46.6H52.4L56 40Z" fill="#ffe24a" stroke="#e89a20" stroke-width=".8"/></g>`;
+ case'aim':return`<g class="pj"><circle cx="66" cy="47" r="2.6" fill="#d8dde4"/><circle cx="69.6" cy="45.6" r="1.8" fill="#c4cad2"/><path d="M62.6 48l3.2-1.6v3.2Z" fill="#ffb02e"/></g>`;
+ case'cast':return`<g class="pj">${[[48,22],[56,30],[44,14],[58,18]].map(([x,y],i)=>`<path class="sp${i}" d="M${x} ${y-3}l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9Z" fill="#fff6a8" stroke="#e8b23a" stroke-width=".4"/>`).join('')}</g>`;
+ case'slam':return`<g class="pj"><path d="M44 81l4-8 2 4 3-9 2 7 3-5" fill="none" stroke="#9fd4ff" stroke-width="1.6" stroke-linejoin="round"/><path d="M44 81l4-8 2 4 3-9 2 7 3-5" fill="none" stroke="#fff" stroke-width=".6"/></g>`;
+}return''}
+function petClass(p){const L=p.look||{};return'pt'+(L.it2&&p.act==='swing'&&['katana','wakizashi'].includes(L.it2)?' dual':'')+(L.extra?' ex-'+L.extra:'')}
+function petSVG(p,state){const L=p.look||{};const vb=L.extra==='elephant'?'-36 -10 100 94':'0 -10 64 94';
+ return`<svg class="${petClass(p)} ${state||''}" viewBox="${vb}" aria-hidden="true">${chibiSVG(p)}</svg>`;
+}
+
 /* ================= estilos del módulo ================= */
 (function(){const css=`
-.pt{overflow:visible;display:block}.pt g{transform-box:view-box}.pt .shadow{fill:rgba(0,0,0,.3)}
-.pt .lb{transform-origin:19.4px 31px}.pt .lf{transform-origin:21.2px 31px}.pt .ab{transform-origin:17.4px 20.2px}.pt .af{transform-origin:22.6px 20.2px}
-.pt .it{transform-origin:22.6px 30.4px}.pt .it2{transform-origin:17.4px 30.4px}.pt .wh{transform-origin:20px 46px}.pt .hd{transform-origin:20px 18px}.pt .cp{transform-origin:20px 19px}.pt .sh{transform-origin:15px 26px}
-.pt .pj{opacity:0}.pt.cr-phoenix .fly{transform-origin:20px 26px}
-@keyframes pk-leg{0%,100%{transform:rotate(24deg)}50%{transform:rotate(-24deg)}}
-@keyframes pk-arm{0%,100%{transform:rotate(-16deg)}50%{transform:rotate(16deg)}}
-@keyframes pk-bob{0%,50%,100%{transform:translateY(0)}25%,75%{transform:translateY(-.9px)}}
-@keyframes pk-br{0%,100%{transform:translateY(0)}50%{transform:translateY(-.6px)}}
-@keyframes pk-cape{0%,100%{transform:rotate(2deg)}50%{transform:rotate(9deg)}}
-@keyframes pk-hdb{0%,100%{transform:rotate(0)}50%{transform:rotate(-3deg)}}
-.pt.walk .lf{animation:pk-leg .64s ease-in-out infinite}.pt.walk .lb{animation:pk-leg .64s ease-in-out -.32s infinite}
-.pt.walk .af{animation:pk-arm .64s ease-in-out -.32s infinite}.pt.walk .ab{animation:pk-arm .64s ease-in-out infinite}
-.pt.walk .wh{animation:pk-bob .64s linear infinite}.pt.walk .cp{animation:pk-cape .64s ease-in-out infinite}
-.pt.idle .wh{animation:pk-br 2.6s ease-in-out infinite}.pt.idle .cp{animation:pk-cape 3s ease-in-out infinite}.pt.idle .hd{animation:pk-hdb 3.4s ease-in-out infinite}
-@keyframes pk-leg2{0%,100%{transform:rotate(40deg)}50%{transform:rotate(-40deg)}}
-@keyframes pk-arm2{0%,100%{transform:rotate(-46deg)}50%{transform:rotate(36deg)}}
-@keyframes pk-runb{0%,50%,100%{transform:translateY(0) rotate(7deg)}25%,75%{transform:translateY(-1.6px) rotate(7deg)}}
-.pt.act-run .lf{animation:pk-leg2 .38s linear infinite}.pt.act-run .lb{animation:pk-leg2 .38s linear -.19s infinite}
-.pt.act-run .af{animation:pk-arm2 .38s linear -.19s infinite}.pt.act-run .ab{animation:pk-arm2 .38s linear infinite}
-.pt.act-run .wh{animation:pk-runb .38s linear infinite}.pt.act-run .cp{animation:pk-cape .38s linear infinite}
-@keyframes pk-swA{0%,100%{transform:rotate(-10deg)}30%{transform:rotate(-200deg)}48%,62%{transform:rotate(-60deg)}}
-@keyframes pk-swI{0%,100%{transform:rotate(0)}30%{transform:rotate(20deg)}48%,62%{transform:rotate(150deg)}}
-@keyframes pk-guard{0%,100%{transform:rotate(-25deg)}50%{transform:rotate(-45deg)}}
-@keyframes pk-lunge{0%,100%{transform:none}48%,62%{transform:translateX(1.5px) rotate(4deg)}}
-.pt.act-swing .af{animation:pk-swA 1.1s cubic-bezier(.5,0,.3,1) infinite}.pt.act-swing .it{animation:pk-swI 1.1s cubic-bezier(.5,0,.3,1) infinite}
-.pt.act-swing .ab{animation:pk-guard 1.1s ease-in-out infinite}.pt.act-swing .wh{animation:pk-lunge 1.1s ease-in-out infinite}
+.pt{overflow:visible;display:block}.pt g{transform-box:view-box}.pt .shadow{fill:rgba(20,10,30,.28)}
+.pt .lb{transform-origin:27.6px 63px}.pt .lf{transform-origin:36.8px 63px}.pt .ab{transform-origin:22.4px 47.6px}.pt .af{transform-origin:41.6px 47.6px}
+.pt .it{transform-origin:41.6px 59.2px}.pt .it2{transform-origin:22.4px 59.2px}.pt .wh{transform-origin:32px 81px}.pt .hd{transform-origin:32px 44px}.pt .cp{transform-origin:32px 46px}.pt .bd{transform-origin:32px 66px}
+.pt .pj{opacity:0}.pt .eh,.pt .ec,.pt .mo{display:none}
+.pt .ey{transform-box:fill-box;transform-origin:center;animation:pk-blink 4.6s infinite}
+@keyframes pk-blink{0%,93%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
+.pt .halo{transform-box:fill-box;transform-origin:center;animation:pk-halo 3.2s ease-in-out infinite}@keyframes pk-halo{0%,100%{transform:scale(1);opacity:.92}50%{transform:scale(1.04);opacity:1}}
+.pt .rv{animation:pk-rv 2.4s ease-in-out infinite}@keyframes pk-rv{0%,70%,100%{transform:rotate(0)}80%{transform:rotate(-12deg)}90%{transform:rotate(6deg)}}
+@keyframes pk-leg{0%,100%{transform:rotate(22deg)}50%{transform:rotate(-22deg)}}
+@keyframes pk-arm{0%,100%{transform:rotate(-18deg)}50%{transform:rotate(18deg)}}
+@keyframes pk-bob{0%,50%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-1.6px) rotate(2.5deg)}75%{transform:translateY(-1.6px) rotate(-2.5deg)}}
+@keyframes pk-hb{0%,50%,100%{transform:rotate(0)}25%{transform:rotate(-2deg)}75%{transform:rotate(2deg)}}
+@keyframes pk-cape{0%,100%{transform:rotate(3deg)}50%{transform:rotate(10deg)}}
+@keyframes pk-br{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.025)}}
+.pt.walk .lf{animation:pk-leg .56s ease-in-out infinite}.pt.walk .lb{animation:pk-leg .56s ease-in-out -.28s infinite}
+.pt.walk .af{animation:pk-arm .56s ease-in-out -.28s infinite}.pt.walk .ab{animation:pk-arm .56s ease-in-out infinite}
+.pt.walk .wh{animation:pk-bob .56s linear infinite}.pt.walk .hd{animation:pk-hb .56s ease-in-out infinite}.pt.walk .cp{animation:pk-cape .56s ease-in-out infinite}
+.pt.idle .bd,.pt.sit .bd,.pt.sitf .bd{animation:pk-br 2.4s ease-in-out infinite}.pt.idle .cp{animation:pk-cape 3s ease-in-out infinite}.pt.idle .hd{animation:pk-hb 4s ease-in-out infinite}
+@keyframes pk-kick{0%,100%{transform:rotate(-10deg)}50%{transform:rotate(16deg)}}
+.pt.sit .wh{transform:translateY(17px)}.pt.sit .lf{animation:pk-kick 1.4s ease-in-out infinite}.pt.sit .lb{animation:pk-kick 1.4s ease-in-out -.7s infinite}.pt.sit .af{transform:rotate(-8deg)}.pt.sit .ab{transform:rotate(8deg)}.pt.sit .shadow,.pt.sleep .shadow{opacity:0}
+.pt.sitf .wh,.pt.sleep .wh{transform:translateY(13px)}.pt.sitf .lf,.pt.sitf .lb,.pt.sleep .lf,.pt.sleep .lb{transform:rotate(-80deg)}
+.pt.sleep .hd{animation:pk-sl 3s ease-in-out infinite}@keyframes pk-sl{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(-8deg) translateY(.6px)}}
+.pt.sleep .ey,.pt.sleep .eh,.pt.sleep .mn{display:none}.pt.sleep .ec,.pt.sleep .mo{display:inline}
+@keyframes pk-dkick{0%,100%{transform:rotate(-30deg)}50%{transform:rotate(30deg)}}
+@keyframes pk-dsw{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+.pt.drag .lf{animation:pk-dkick .3s linear infinite}.pt.drag .lb{animation:pk-dkick .3s linear -.15s infinite}
+.pt.drag .af{transform:rotate(-150deg)}.pt.drag .ab{transform:rotate(150deg)}.pt.drag .wh{animation:pk-dsw .6s ease-in-out infinite}
+.pt.drag .mn,.pt.fall .mn{display:none}.pt.drag .mo,.pt.fall .mo{display:inline}
+@keyframes pk-flail{0%,100%{transform:rotate(-160deg)}50%{transform:rotate(-120deg)}}
+@keyframes pk-flailB{0%,100%{transform:rotate(160deg)}50%{transform:rotate(120deg)}}
+.pt.fall .af{animation:pk-flail .22s linear infinite}.pt.fall .ab{animation:pk-flailB .22s linear infinite}.pt.fall .lf{transform:rotate(-24deg)}.pt.fall .lb{transform:rotate(24deg)}
+.pt.jump .af{transform:rotate(-150deg)}.pt.jump .ab{transform:rotate(150deg)}.pt.jump .lf{transform:rotate(-30deg)}.pt.jump .lb{transform:rotate(18deg)}.pt.jump .ey{display:none}.pt.jump .eh{display:inline}
+@keyframes pk-land{0%{transform:scale(1.1,.78)}60%{transform:scale(.96,1.05)}100%{transform:none}}
+.pt.land .wh{animation:pk-land .3s ease-out}
+@keyframes pk-clA{0%,100%{transform:rotate(-170deg)}50%{transform:rotate(-120deg)}}
+@keyframes pk-clB{0%,100%{transform:rotate(120deg)}50%{transform:rotate(170deg)}}
+@keyframes pk-clL{0%,100%{transform:rotate(-40deg)}50%{transform:rotate(10deg)}}
+.pt.climb .af{animation:pk-clA .6s ease-in-out infinite}.pt.climb .ab{animation:pk-clB .6s ease-in-out infinite}.pt.climb .lf{animation:pk-clL .6s ease-in-out infinite}.pt.climb .lb{animation:pk-clL .6s ease-in-out -.3s infinite}
+@keyframes pk-chA{0%,100%{transform:rotate(-150deg)}50%{transform:rotate(-125deg)}}
+@keyframes pk-chB{0%,100%{transform:rotate(150deg)}50%{transform:rotate(125deg)}}
+@keyframes pk-hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-7px)}}
+.pt.cheer .af{animation:pk-chA .35s ease-in-out infinite}.pt.cheer .ab{animation:pk-chB .35s ease-in-out infinite}.pt.cheer .wh{animation:pk-hop .5s ease-out infinite}.pt.cheer .ey{display:none}.pt.cheer .eh{display:inline}
+@keyframes pk-swA{0%,100%{transform:rotate(-4deg)}30%{transform:rotate(-196deg)}48%,62%{transform:rotate(-50deg)}}
+@keyframes pk-swI{0%,100%{transform:rotate(0)}30%{transform:rotate(20deg)}48%,62%{transform:rotate(140deg)}}
+@keyframes pk-guard{0%,100%{transform:rotate(-10deg)}50%{transform:rotate(-30deg)}}
+@keyframes pk-lunge{0%,100%{transform:none}48%,62%{transform:translateX(2px) rotate(4deg)}}
+.pt.act-swing .af,.pt.act-slam .af,.pt.act-bolt .af{animation:pk-swA 1.1s cubic-bezier(.5,0,.3,1) infinite}.pt.act-swing .it,.pt.act-slam .it{animation:pk-swI 1.1s cubic-bezier(.5,0,.3,1) infinite}
+.pt.act-swing .ab,.pt.act-slam .ab,.pt.act-bolt .ab{animation:pk-guard 1.1s ease-in-out infinite}.pt.act-swing .wh,.pt.act-slam .wh,.pt.act-bolt .wh{animation:pk-lunge 1.1s ease-in-out infinite}
 .pt.dual.act-swing .ab{animation:pk-swA 1.1s cubic-bezier(.5,0,.3,1) -.55s infinite}.pt.dual.act-swing .it2{animation:pk-swI 1.1s cubic-bezier(.5,0,.3,1) -.55s infinite}
-@keyframes pk-thA{0%,100%{transform:rotate(-25deg)}35%{transform:translateX(-1.5px) rotate(-70deg)}50%,64%{transform:translateX(3px) rotate(-92deg)}}
-@keyframes pk-thI{0%,100%{transform:rotate(0)}35%{transform:rotate(125deg)}50%,64%{transform:rotate(157deg)}}
+@keyframes pk-zap{0%,46%{opacity:0}50%,64%{opacity:1}70%,100%{opacity:0}}.pt.act-slam .pj{animation:pk-zap 1.1s linear infinite}
+@keyframes pk-boltf{0%,46%{opacity:0;transform:translate(0,0)}50%{opacity:1;transform:translate(0,0)}82%{opacity:1;transform:translate(38px,6px)}86%,100%{opacity:0;transform:translate(38px,6px)}}
+@keyframes pk-bolth{0%,44%{opacity:1}46%,100%{opacity:0}}.pt.act-bolt .pj{animation:pk-boltf 1.1s linear infinite}.pt.act-bolt .it{animation:pk-bolth 1.1s linear infinite}
+@keyframes pk-thA{0%,100%{transform:rotate(-20deg)}35%{transform:translateX(-1.5px) rotate(-62deg)}50%,64%{transform:translateX(4px) rotate(-84deg)}}
+@keyframes pk-thI{0%,100%{transform:rotate(0)}35%{transform:rotate(120deg)}50%,64%{transform:rotate(149deg)}}
 .pt.act-thrust .af{animation:pk-thA 1.2s ease-in-out infinite}.pt.act-thrust .it{animation:pk-thI 1.2s ease-in-out infinite}.pt.act-thrust .ab{animation:pk-guard 1.2s ease-in-out infinite}
-@keyframes pk-lift{0%,100%{transform:rotate(0)}40%,60%{transform:rotate(-172deg)}}
-.pt.act-lift .af,.pt.act-lift .ab{animation:pk-lift 1.5s ease-in-out infinite}
-@keyframes pk-push{0%,100%{transform:translate(-11px,0) rotate(64deg)}50%{transform:translate(-11px,0) rotate(72deg)}}
-@keyframes pk-pushA{0%,100%{transform:rotate(-64deg)}50%{transform:rotate(-58deg)}}
-.pt.act-pushup .wh{animation:pk-push 1.1s ease-in-out infinite}.pt.act-pushup .af,.pt.act-pushup .ab{animation:pk-pushA 1.1s ease-in-out infinite}
-@keyframes pk-spinI{to{transform:rotate(360deg)}}
-.pt.act-spin .af{transform:rotate(-70deg)}.pt.act-spin .it{animation:pk-spinI .5s linear infinite}.pt.act-spin .ab{transform:rotate(-30deg)}
-@keyframes pk-bowA{0%,100%{transform:rotate(-5deg)}25%,80%{transform:rotate(-90deg)}}
+@keyframes pk-bowA{0%,100%{transform:rotate(-4deg)}25%,80%{transform:rotate(-76deg)}}
 @keyframes pk-bowI{0%,100%{transform:rotate(0)}25%,80%{transform:rotate(90deg)}}
-@keyframes pk-bowB{0%,100%{transform:rotate(5deg)}25%{transform:rotate(-88deg)}50%,58%{transform:translateX(-2.4px) rotate(-82deg)}62%,80%{transform:rotate(-88deg)}}
-@keyframes pk-arrow{0%,58%{opacity:0;transform:translateX(0)}60%{opacity:1;transform:translateX(0)}88%{opacity:1;transform:translateX(26px)}90%,100%{opacity:0;transform:translateX(26px)}}
+@keyframes pk-bowB{0%,100%{transform:rotate(4deg)}25%{transform:rotate(-100deg)}50%,58%{transform:translateX(-3px) rotate(-92deg)}62%,80%{transform:rotate(-100deg)}}
+@keyframes pk-arrow{0%,58%{opacity:0;transform:translateX(0)}60%{opacity:1;transform:translateX(0)}88%{opacity:1;transform:translateX(34px)}90%,100%{opacity:0;transform:translateX(34px)}}
 .pt.act-bow .af{animation:pk-bowA 1.8s ease-in-out infinite}.pt.act-bow .it{animation:pk-bowI 1.8s ease-in-out infinite}.pt.act-bow .ab{animation:pk-bowB 1.8s ease-in-out infinite}.pt.act-bow .pj{animation:pk-arrow 1.8s linear infinite}
-@keyframes pk-punA{0%,40%,100%{transform:rotate(-30deg)}15%{transform:rotate(-94deg)}}
-@keyframes pk-punB{0%,50%,100%{transform:rotate(-30deg)}65%{transform:rotate(-94deg)}}
-.pt.act-punch .af{animation:pk-punA .8s ease-out infinite}.pt.act-punch .ab{animation:pk-punB .8s ease-out infinite}.pt.act-punch .wh{animation:pk-bob .4s linear infinite}
-@keyframes pk-thrA{0%,100%{transform:rotate(-10deg)}35%{transform:rotate(-210deg)}50%{transform:rotate(-70deg)}}
-@keyframes pk-star{0%,48%{opacity:0;transform:translate(0,0)}50%{opacity:1;transform:translate(0,0)}85%{opacity:1;transform:translate(24px,2px)}86%,100%{opacity:0;transform:translate(24px,2px)}}
-.pt.act-throw .af{animation:pk-thrA 1.2s ease-in infinite}.pt.act-throw .pj{animation:pk-star 1.2s linear infinite}.pt.act-throw .pjr{animation:pk-spinI .25s linear infinite}
-@keyframes pk-jump{0%,100%{transform:translateY(0)}20%{transform:translateY(.8px)}45%{transform:translateY(-8px)}70%{transform:translateY(0)}}
-@keyframes pk-stompL{0%,100%{transform:rotate(0)}30%,42%{transform:rotate(-62deg)}52%{transform:rotate(0)}}
-@keyframes pk-stompW{0%,48%,100%{transform:translateY(0)}30%{transform:rotate(-6deg)}54%{transform:translateY(1px)}}
-.pt.act-stomp .lf{animation:pk-stompL 1.3s ease-in infinite}.pt.act-stomp .wh{animation:pk-stompW 1.3s ease-in infinite}.pt.act-stomp .af,.pt.act-stomp .ab{transform:rotate(-40deg)}
-@keyframes pk-flex{0%,100%{transform:rotate(-10deg)}30%,70%{transform:rotate(-140deg)}50%{transform:rotate(-128deg)}}
-.pt.act-flex .af,.pt.act-flex .ab{animation:pk-flex 1.6s ease-in-out infinite}.pt.act-flex .wh{animation:pk-br .8s ease-in-out infinite}
-@keyframes pk-sal{0%,100%{transform:rotate(-10deg)}20%,80%{transform:rotate(-158deg)}}
-@keyframes pk-salI{0%,100%{transform:rotate(0)}20%,80%{transform:rotate(158deg)}}
-.pt.act-salute .af{animation:pk-sal 2.4s ease-in-out infinite}.pt.act-salute .it{animation:pk-salI 2.4s ease-in-out infinite}.pt.act-salute .cp{animation:pk-cape 1.2s ease-in-out infinite}
-@keyframes pk-pt{0%,100%{transform:rotate(-10deg)}25%,75%{transform:rotate(-95deg)}}
-@keyframes pk-ptI{0%,100%{transform:rotate(0)}25%,75%{transform:rotate(185deg)}}
-.pt.act-point .af{animation:pk-pt 2.2s ease-in-out infinite}.pt.act-point .it{animation:pk-ptI 2.2s ease-in-out infinite}.pt.act-point .hd{animation:pk-hdb 1.1s ease-in-out infinite}
-@keyframes pk-rd{0%,100%{transform:rotate(-10deg)}25%,75%{transform:rotate(-55deg)}}
-@keyframes pk-rdH{0%,100%{transform:rotate(0)}40%,60%{transform:rotate(7deg)}}
-.pt.act-read .af{animation:pk-rd 2.6s ease-in-out infinite}.pt.act-read .hd{animation:pk-rdH 2.6s ease-in-out infinite}
-@keyframes pk-ban{0%,100%{transform:rotate(-10deg)}20%,80%{transform:rotate(-160deg)}}
-@keyframes pk-banI{0%,100%{transform:rotate(0)}20%,80%{transform:rotate(130deg)}40%{transform:rotate(118deg)}60%{transform:rotate(142deg)}}
-.pt.act-banner .af{animation:pk-ban 2.4s ease-in-out infinite}.pt.act-banner .it{animation:pk-banI 2.4s ease-in-out infinite}
-@keyframes pk-aim{0%,100%{transform:rotate(-10deg)}25%,80%{transform:rotate(-90deg)}}
+@keyframes pk-aim{0%,100%{transform:rotate(-4deg)}25%,80%{transform:rotate(-76deg)}}
 @keyframes pk-aimI{0%,100%{transform:rotate(0)}25%,80%{transform:rotate(155deg)}}
-@keyframes pk-smoke{0%,52%{opacity:0;transform:translateX(0)}55%{opacity:1}80%{opacity:0;transform:translateX(5px)}100%{opacity:0}}
-.pt.act-aim .af{animation:pk-aim 2.2s ease-in-out infinite}.pt.act-aim .it{animation:pk-aimI 2.2s ease-in-out infinite}.pt.act-aim .ab{animation:pk-aim 2.2s ease-in-out infinite}.pt.act-aim .pj{animation:pk-smoke 2.2s linear infinite}
-@keyframes pk-q{0%,100%{transform:rotate(18deg)}50%{transform:rotate(-18deg)}}
-.pt.cr.walk .q1,.pt.cr.walk .q4,.pt.walk .e1{animation:pk-q .6s ease-in-out infinite}.pt.cr.walk .q2,.pt.cr.walk .q3,.pt.walk .e2{animation:pk-q .6s ease-in-out -.3s infinite}
-@keyframes pk-flap{0%,100%{transform:rotate(0)}50%{transform:rotate(-22deg)}}
-.pt.cr .wg{animation:pk-flap 1.6s ease-in-out infinite}.pt.cr-phoenix .wg{animation:pk-flap .55s ease-in-out infinite}
-@keyframes pk-tail{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(6deg)}}
-.pt.cr .tl,.pt .tr{animation:pk-tail 1.4s ease-in-out infinite}
-@keyframes pk-hover{0%,100%{transform:translateY(0)}50%{transform:translateY(-2.4px)}}
-.pt.cr-phoenix .fly{animation:pk-hover 1.4s ease-in-out infinite}
-@keyframes pk-tn{0%,100%{transform:rotate(-9deg)}50%{transform:rotate(9deg)}}
-.pt.cr-kraken .tn{animation:pk-tn 1.1s ease-in-out infinite}.pt.cr.walk .wh{animation:pk-bob .6s linear infinite}
-@keyframes pk-fireH{0%,100%{transform:rotate(0)}25%,75%{transform:rotate(-10deg)}}
-@keyframes pk-fire{0%,22%{opacity:0;transform:scaleX(.2)}30%,70%{opacity:1;transform:scaleX(1)}78%,100%{opacity:0;transform:scaleX(1.2)}}
-.pt.act-fire .hc{animation:pk-fireH 1.8s ease-in-out infinite}.pt.act-fire .pj{animation:pk-fire 1.8s ease-in-out infinite}
-@keyframes pk-flare{0%{opacity:0;transform:scale(.3)}40%{opacity:.9}100%{opacity:0;transform:scale(1.5)}}
-.pt.act-flare .pj{animation:pk-flare 1.2s ease-out infinite}.pt.act-flare .wg{animation:pk-flap .3s ease-in-out infinite}
-@keyframes pk-orb{0%{opacity:0;transform:translateY(4px)}30%,70%{opacity:1}100%{opacity:0;transform:translateY(-8px)}}
-.pt.act-orbs .pj{opacity:1}.pt.act-orbs .pj circle{opacity:0}.pt.act-orbs .o1{animation:pk-orb 1.6s ease-in-out infinite}.pt.act-orbs .o2{animation:pk-orb 1.6s ease-in-out -.5s infinite}.pt.act-orbs .o3{animation:pk-orb 1.6s ease-in-out -1s infinite}.pt.act-orbs .tl{animation:pk-tail .5s ease-in-out infinite}
-.pt.act-wave .tn{animation:pk-tn .35s ease-in-out infinite}.pt.act-wave .wh{animation:pk-jump 1.2s ease-in-out infinite}
-@keyframes pk-trunk{0%,100%{transform:rotate(0)}40%,60%{transform:rotate(-80deg)}}
-.pt[class*="act-"] .tr{animation:pk-trunk 2s ease-in-out infinite}
-@keyframes pk-flm{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.35)}}
-.pt .flm{transform-box:fill-box;transform-origin:50% 100%;animation:pk-flm .4s ease-in-out infinite}
-#pets{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 2px);height:56px;pointer-events:none;z-index:40;overflow:hidden}
-.pet{position:absolute;bottom:0;left:0;height:46px;will-change:transform}.pet svg{height:100%;width:auto}.pet.flip svg{transform:scaleX(-1)}
-.pet.r-l svg{filter:drop-shadow(0 0 2px rgba(245,184,61,.6))}.pet.r-m svg{filter:drop-shadow(0 0 3px rgba(255,90,138,.8))}
-body.has-pets{padding-bottom:120px!important}
-.pet-ic svg.pt{height:40px;width:auto}.icon .chest{width:38px;height:auto}.icon .frm{width:40px;height:40px}
+@keyframes pk-aimB{0%,100%{transform:rotate(4deg)}25%,80%{transform:rotate(-96deg)}}
+@keyframes pk-smoke{0%,52%{opacity:0;transform:translateX(0)}55%{opacity:1}80%{opacity:0;transform:translateX(6px)}100%{opacity:0}}
+.pt.act-aim .af{animation:pk-aim 2.2s ease-in-out infinite}.pt.act-aim .it{animation:pk-aimI 2.2s ease-in-out infinite}.pt.act-aim .ab{animation:pk-aimB 2.2s ease-in-out infinite}.pt.act-aim .pj{animation:pk-smoke 2.2s linear infinite}
+@keyframes pk-sal{0%,100%{transform:rotate(-4deg)}20%,80%{transform:rotate(-150deg)}}
+@keyframes pk-salI{0%,100%{transform:rotate(0)}20%,80%{transform:rotate(164deg)}}
+.pt.act-salute .af{animation:pk-sal 2.4s ease-in-out infinite}.pt.act-salute .it{animation:pk-salI 2.4s ease-in-out infinite}.pt.act-salute .cp{animation:pk-cape 1.2s ease-in-out infinite}.pt.act-salute .ey{display:none}.pt.act-salute .eh{display:inline}
+@keyframes pk-pt{0%,100%{transform:rotate(-4deg)}25%,75%{transform:rotate(-76deg)}}
+@keyframes pk-ptI{0%,100%{transform:rotate(0)}25%,75%{transform:rotate(180deg)}}
+.pt.act-point .af{animation:pk-pt 2.2s ease-in-out infinite}.pt.act-point .it{animation:pk-ptI 2.2s ease-in-out infinite}.pt.act-point .hd{animation:pk-hb 1.1s ease-in-out infinite}
+@keyframes pk-rd{0%,100%{transform:rotate(-4deg)}25%,75%{transform:rotate(-40deg)}}
+@keyframes pk-rdH{0%,100%{transform:rotate(0)}40%,60%{transform:rotate(7deg)}}
+.pt.act-read .af{animation:pk-rd 2.6s ease-in-out infinite}.pt.act-read .hd{animation:pk-rdH 2.6s ease-in-out infinite}.pt.act-read .ey{display:none}.pt.act-read .ec{display:inline}
+@keyframes pk-flex{0%,100%{transform:rotate(-4deg)}30%,70%{transform:rotate(-130deg)}50%{transform:rotate(-118deg)}}
+@keyframes pk-flexB{0%,100%{transform:rotate(4deg)}30%,70%{transform:rotate(130deg)}50%{transform:rotate(118deg)}}
+.pt.act-flex .af{animation:pk-flex 1.6s ease-in-out infinite}.pt.act-flex .ab{animation:pk-flexB 1.6s ease-in-out infinite}.pt.act-flex .ey{display:none}.pt.act-flex .eh{display:inline}
+@keyframes pk-ban{0%,100%{transform:rotate(-4deg)}20%,80%{transform:rotate(-150deg)}}
+@keyframes pk-banI{0%,100%{transform:rotate(0)}20%,80%{transform:rotate(134deg)}40%{transform:rotate(122deg)}60%{transform:rotate(146deg)}}
+.pt.act-banner .af{animation:pk-ban 2.4s ease-in-out infinite}.pt.act-banner .it{animation:pk-banI 2.4s ease-in-out infinite}
+@keyframes pk-cast{0%,100%{transform:rotate(-4deg)}25%,75%{transform:rotate(-130deg)}}
+@keyframes pk-castI{0%,100%{transform:rotate(0)}25%,75%{transform:rotate(134deg)}}
+@keyframes pk-castB{0%,100%{transform:rotate(4deg)}25%,75%{transform:rotate(40deg)}}
+@keyframes pk-rise{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@keyframes pk-spark{0%{opacity:0;transform:scale(.2)}40%{opacity:1;transform:scale(1.25)}100%{opacity:0;transform:scale(.6) translateY(-6px)}}
+.pt.act-cast .af{animation:pk-cast 2.4s ease-in-out infinite}.pt.act-cast .it{animation:pk-castI 2.4s ease-in-out infinite}.pt.act-cast .ab{animation:pk-castB 2.4s ease-in-out infinite}.pt.act-cast .wh{animation:pk-rise 1.2s ease-in-out infinite}
+.pt.act-cast .pj{opacity:1}.pt.act-cast .pj path{opacity:0;transform-box:fill-box;transform-origin:center;animation:pk-spark 1.2s ease-out infinite}.pt.act-cast .pj .sp1{animation-delay:-.3s}.pt.act-cast .pj .sp2{animation-delay:-.6s}.pt.act-cast .pj .sp3{animation-delay:-.9s}.pt.act-cast .ey{display:none}.pt.act-cast .eh{display:inline}
+.pt.walk .e1{animation:pk-q .56s ease-in-out infinite}.pt.walk .e2{animation:pk-q .56s ease-in-out -.28s infinite}@keyframes pk-q{0%,100%{transform:rotate(14deg)}50%{transform:rotate(-14deg)}}
+@keyframes pk-tail{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(6deg)}}.pt .tr{animation:pk-tail 1.4s ease-in-out infinite}
+@keyframes pk-trunk{0%,100%{transform:rotate(0)}40%,60%{transform:rotate(-70deg)}}.pt[class*="act-"] .tr{animation:pk-trunk 2s ease-in-out infinite}
+#pets{position:fixed;inset:0;pointer-events:none;z-index:40;overflow:hidden}
+.pet{position:absolute;left:0;top:0;height:74px;pointer-events:auto;touch-action:none;cursor:grab;will-change:transform;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.pet>svg{height:100%;width:auto;display:block}.pet.flip>svg{transform:scaleX(-1)}
+.pet>svg{filter:drop-shadow(0 0 3px var(--gl,transparent))}
+.pbub{position:absolute;bottom:calc(100% - 4px);left:50%;transform:translateX(-50%);background:#fffaf0;color:#2b1e35;font:600 12px/1.25 var(--f-body);padding:6px 9px;border-radius:12px;border:2px solid #2b1e35;width:max-content;max-width:150px;text-align:center;box-shadow:0 3px 0 rgba(0,0,0,.25);pointer-events:none;animation:pop .3s cubic-bezier(.2,1.4,.4,1)}
+.pbub::after{content:"";position:absolute;top:100%;left:50%;margin-left:-6px;border:6px solid transparent;border-top-color:#2b1e35}
+body.has-pets{padding-bottom:110px!important}
+.pet-ic svg.pt{height:42px;width:auto}.icon .chest{width:38px;height:auto}.icon .frm{width:40px;height:40px}
 .frm{display:block;overflow:visible}.frm g{transform-box:view-box}.frm .rot{transform-origin:60px 60px;animation:auRot 30s linear infinite}.frm .pulse{transform-origin:60px 60px;animation:auPulse 2s ease-in-out infinite alternate}
 .frm .fl{transform-box:fill-box;transform-origin:50% 100%;animation:frFl .7s ease-in-out infinite alternate}@keyframes frFl{from{transform:scaleY(.75)}to{transform:scaleY(1.15)}}
 .tw{animation:tw 1.6s ease-in-out infinite}@keyframes tw{0%,100%{opacity:.15}50%{opacity:1}}
@@ -2005,7 +2036,15 @@ body.bg-nebulosa::after{animation:bgDrift 40s ease-in-out infinite}body.bg-auror
 
 /* ================= estado ================= */
 const CHEST_Q=[];
-function ensureChestState(){if(!S)return;S.equip=S.equip||{};const E=S.equip;E.pets=E.pets||[];for(const k of['avatar','marco','fondo','aura','fx','lema'])if(E[k]===undefined)E[k]=null;S.chestCycle=S.chestCycle||0;S.streakChests=S.streakChests||{};S.stats=S.stats||{missions:0,objectives:0};S.stats.chests=S.stats.chests||0;S.stats.chestTier=S.stats.chestTier||{}}
+const OLD_PETS={pet_recluta:['raro','Recluta de la Liga'],pet_pesista:['raro','Pesista de Barrio'],pet_kaito:['raro','Kaito'],pet_rin:['raro','Rin'],pet_sora:['raro','Sora'],pet_shaolin:['raro','Monje Shaolin'],pet_chasqui:['raro','Chasqui'],pet_sumo:['raro','Luchador de Sumo'],pet_centurion:['épico','Centurión'],pet_hoplita:['épico','Hoplita Espartano'],pet_murmillo:['épico','Gladiador Murmillo'],pet_samurai:['épico','Samurái'],pet_vikingo:['épico','Vikingo'],pet_ninja:['épico','Ninja'],pet_caballero:['épico','Caballero Medieval'],pet_weichafe:['épico','Weichafe Mapuche'],pet_jaguar:['épico','Guerrero Jaguar'],pet_marea:['épico','Capitana Marea'],pet_kraken:['épico','Kraken de Bolsillo'],pet_minotauro:['épico','Minotauro Gimnasta'],pet_legionario:['legendario','Legionario Romano'],pet_pachacutec:['legendario','Pachacútec'],pet_dragon:['legendario','Dragón de Bolsillo'],pet_kitsune:['legendario','Kitsune de Nueve Colas'],pet_akane:['legendario','Akane'],pet_lautaro:['mítico','Lautaro'],pet_fenix:['mítico','Fénix']};
+function migratePets(){if(!S||S.petsV===2)return;S.petsV=2;const notes=[],map={};
+ for(const i of S.inventory||[]){if(i.type!=='companero'||PET_BY[i.rid])continue;const o=OLD_PETS[i.rid]||['raro',i.rid];
+  const pool=PETS.filter(p=>p.rarity===o[0]&&!S.pokedex[p.id]&&!Object.values(map).includes(p.id));const n=pool.length?pool[Math.floor(Math.random()*pool.length)]:null;
+  delete S.pokedex[i.rid];if(n){map[i.rid]=n.id;S.pokedex[n.id]={first:today(),count:1};notes.push(`Tu compañero ${o[1]} se transformó en ${n.name} (${n.rarity}).`);i.rid=n.id}else i.status='used'}
+ for(const k of Object.keys(S.pokedex||{}))if(k.startsWith('pet_')&&!PET_BY[k])delete S.pokedex[k];
+ const E=S.equip;if(E){if(E.pets)E.pets=E.pets.map(id=>map[id]||id).filter(id=>PET_BY[id]);if(E.avatar&&E.avatar.startsWith('pet_')&&!PET_BY[E.avatar])E.avatar=map[E.avatar]||null}
+ if(notes.length)UI.reveals.push({kind:'notes',notes})}
+function ensureChestState(){if(!S)return;S.equip=S.equip||{};const E=S.equip;E.pets=E.pets||[];for(const k of['avatar','marco','fondo','aura','fx','lema'])if(E[k]===undefined)E[k]=null;S.chestCycle=S.chestCycle||0;S.streakChests=S.streakChests||{};S.stats=S.stats||{missions:0,objectives:0};S.stats.chests=S.stats.chests||0;S.stats.chestTier=S.stats.chestTier||{};migratePets()}
 function owned(rid){return!!(S&&S.inventory.some(i=>i.rid===rid&&i.status==='active'))}
 function nickOf(){return IS_WEB?((S.profile&&S.profile.nick)||''):(S.nick||'')}
 const byRar=(a,b)=>RARITIES.indexOf((cref(b.rid)||b).rarity)-RARITIES.indexOf((cref(a.rid)||a).rarity);
@@ -2158,29 +2197,82 @@ function ppSet(slot,v){ensureChestState();const E=S.equip;v=v||null;
  persist();render();customizeSheet();
 }
 
-/* ================= compañeros en pantalla ================= */
+/* ================= compañeros vivos (estilo Shimeji) =================
+   Caminan, se suben y se sientan en las tarjetas, trepan los bordes, duermen, se pueden arrastrar y lanzar,
+   caen con gravedad y reaccionan cuando los tocas o ganas premios. */
+const PET_H=74,GRAV=1700;
 const PETS_RT={list:[],raf:0,last:0,key:''};
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+function petPlats(){const hdr=document.querySelector('header.top');const hb=hdr?hdr.getBoundingClientRect().bottom:0;const H=innerHeight;const out=[];
+ for(const el of document.querySelectorAll('#view .card,#view .kpi,#view .hero,#view .icard,#view .chcard,#view .pf-card,#view .stat,#view .dex,#view .lad.cur')){const r=el.getBoundingClientRect();if(r.width<64||r.top<hb+PET_H*.85||r.top>H-PET_H*.5)continue;out.push({el,top:r.top,l:r.left+14,r:r.right-14})}
+ return{list:out,hb,H}}
+function setPose(q,c){if(q.cls===c)return;q.cls=c;q.svg.setAttribute('class',petClass(q.p)+' '+c)}
+function petPose(q,cls,st,now,dur){q.state=st;q.until=now+dur;setPose(q,cls)}
+function petSay(q,text,ms){const t=text||rnd(q.p.say||['¡Una más!']);q.bub.textContent=t;q.bub.hidden=false;q.lastSay=performance.now();clearTimeout(q.bubT);q.bubT=setTimeout(()=>{q.bub.hidden=true},ms||2800)}
+function petFall(q,keepV){q.plat=null;if(!keepV){q.vx=0;q.vy=0}q.state='fall';setPose(q,'fall')}
+function petLand(q,now){const hard=q.vy>950;q.vx=0;q.vy=0;petPose(q,'land','land',now,320);if(hard&&Math.random()<.6)petSay(q,rnd(['¡Uf!','¡Auch!','¡Aterrizaje perfecto!','¡Otra vez!']),1600)}
+function petJump(q){const P=petPlats();const c=P.list.filter(pl=>pl.el!==q.plat&&pl.top<q.y-24&&pl.top>q.y-300&&pl.r-pl.l>40&&Math.abs((pl.l+pl.r)/2-q.x)<320);if(!c.length)return false;
+ const pl=rnd(c);const tx=clamp(q.x+(Math.random()-.5)*140,pl.l+6,pl.r-6);const T=.62;q.vx=(tx-q.x)/T;q.vy=(pl.top-q.y-.5*GRAV*T*T)/T;q.dir=q.vx<0?-1:1;q.plat=null;q.state='jump';setPose(q,'jump');return true}
+function petClimb(q,now){const P=petPlats();q.state='climb';q.dir=q.x<innerWidth/2?-1:1;q.climbTo=Math.max(P.hb+PET_H+30,innerHeight*(.25+Math.random()*.35));setPose(q,'climb')}
+function petNext(q,now){const st=q.state;const R=Math.random();
+ if(q.afterLand){q.afterLand=null;petPose(q,'act-'+q.p.act,'act',now,2600);return}
+ if(st==='walk'){
+  if(R<.32)petPose(q,'act-'+q.p.act,'act',now,2600+Math.random()*1600);
+  else if(R<.44)petPose(q,'idle','idle',now,1500+Math.random()*2000);
+  else if(R<.6)petPose(q,q.plat?'sit':'sitf','sit',now,3500+Math.random()*4500);
+  else if(R<.82&&petJump(q)){}
+  else{q.dir=Math.random()<.5?-1:1;petPose(q,'walk','walk',now,3000+Math.random()*5000)}
+ }else if(st==='sit'&&Math.random()<.4){petPose(q,'sleep','sleep',now,7000+Math.random()*6000);petSay(q,'Zzz…',5200)}
+ else petPose(q,'walk','walk',now,3000+Math.random()*5000);
+ if(now-q.lastSay>25000&&Math.random()<.3&&q.state!=='sleep')petSay(q)}
+function petTap(q){if(['fall','jump','drag','climb'].includes(q.state))return;q.vy=-440;q.vx=0;q.plat=null;q.state='jump';setPose(q,'jump');q.afterLand='act';petSay(q)}
+function petsCheer(text){for(const q of PETS_RT.list){if(['drag','fall','jump','climb'].includes(q.state))continue;q.vy=-400;q.vx=0;q.plat=null;q.state='jump';setPose(q,'jump');q.afterLand='act';petSay(q,text||null,2600)}}
+function mkPet(id,i){const p=PET_BY[id];const el=document.createElement('div');el.className='pet';if(p.glow)el.style.setProperty('--gl',p.glow);else if(p.rarity==='mítico')el.style.setProperty('--gl','rgba(255,90,138,.7)');else if(p.rarity==='legendario')el.style.setProperty('--gl','rgba(245,184,61,.55)');
+ el.innerHTML=petSVG(p,'fall')+'<div class="pbub" hidden></div>';el.setAttribute('aria-label',p.name);
+ const q={id,p,el,svg:el.firstElementChild,bub:el.lastElementChild,x:innerWidth*(.25+.45*i),y:(document.querySelector('header.top')||{getBoundingClientRect:()=>({bottom:60})}).getBoundingClientRect().bottom+PET_H+10,vx:0,vy:0,dir:i%2?-1:1,speed:24+Math.random()*10,state:'fall',until:0,plat:null,cls:'fall',w:56,h:PET_H,lastSay:0,drag:null};
+ el.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();try{el.setPointerCapture(e.pointerId)}catch(_){}q.drag={px:e.clientX,py:e.clientY,ox:q.x-e.clientX,oy:q.y-e.clientY,hist:[[e.clientX,e.clientY,performance.now()]],moved:false}});
+ el.addEventListener('pointermove',e=>{const d=q.drag;if(!d)return;if(!d.moved&&Math.hypot(e.clientX-d.px,e.clientY-d.py)>7){d.moved=true;q.state='drag';q.plat=null;setPose(q,'drag');if(Math.random()<.6)petSay(q,rnd(['¡Bájame!','¡Wiii!','¡Eh, cuidado!','¿A dónde vamos?']),1400)}
+  if(d.moved){q.x=clamp(e.clientX+d.ox,q.w/2,innerWidth-q.w/2);q.y=clamp(e.clientY+d.oy,q.h,innerHeight-6);d.hist.push([e.clientX,e.clientY,performance.now()]);if(d.hist.length>6)d.hist.shift()}});
+ const up=e=>{const d=q.drag;if(!d)return;q.drag=null;if(!d.moved){petTap(q);return}const h=d.hist,a=h[0],b=h[h.length-1];const t=Math.max(.016,(b[2]-a[2])/1000);q.vx=clamp((b[0]-a[0])/t,-1100,1100);q.vy=clamp((b[1]-a[1])/t,-1300,900);q.state='fall';setPose(q,'fall')};
+ el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);el.addEventListener('click',e=>e.stopPropagation());
+ return q}
 function syncPets(){
  const want=((S&&S.equip&&S.equip.pets)||[]).filter(id=>PET_BY[id]&&owned(id)).slice(0,2);let layer=document.getElementById('pets');
  if(!want.length){if(layer)layer.remove();PETS_RT.list=[];PETS_RT.key='';document.body.classList.remove('has-pets');if(PETS_RT.raf){cancelAnimationFrame(PETS_RT.raf);PETS_RT.raf=0}return}
- if(!layer){layer=document.createElement('div');layer.id='pets';layer.setAttribute('aria-hidden','true');document.body.appendChild(layer);PETS_RT.key=''}
+ if(!layer){layer=document.createElement('div');layer.id='pets';document.body.appendChild(layer);PETS_RT.key=''}
  document.body.classList.add('has-pets');const key=want.join(',');if(key===PETS_RT.key)return;PETS_RT.key=key;
- layer.innerHTML='';const W=layer.clientWidth||innerWidth;
- PETS_RT.list=want.map((id,i)=>{const p=PET_BY[id];const el=document.createElement('div');el.className='pet r-'+RK[p.rarity];el.innerHTML=petSVG(p,RM?'idle':'walk');layer.appendChild(el);return{id,p,el,svg:el.firstElementChild,x:W*(.15+.5*i),dir:i%2?-1:1,speed:15+Math.random()*8,state:'walk',until:performance.now()+3000+Math.random()*5000}});
- for(const q of PETS_RT.list)q.el.style.transform=`translateX(${q.x.toFixed(1)}px)`;
- if(!RM&&!PETS_RT.raf){PETS_RT.last=performance.now();PETS_RT.raf=requestAnimationFrame(petLoop)}
+ const keep=PETS_RT.list.filter(q=>want.includes(q.id));for(const q of PETS_RT.list)if(!keep.includes(q))q.el.remove();
+ PETS_RT.list=want.map((id,i)=>keep.find(q=>q.id===id)||(()=>{const q=mkPet(id,i);layer.appendChild(q.el);return q})());
+ if(RM){for(const q of PETS_RT.list){q.y=innerHeight-6;setPose(q,'idle');q.el.style.transform=`translate(${(q.x-28).toFixed(0)}px,${(q.y-q.h).toFixed(0)}px)`}return}
+ if(!PETS_RT.raf){PETS_RT.last=performance.now();PETS_RT.raf=requestAnimationFrame(petLoop)}
 }
 function petLoop(now){
  const layer=document.getElementById('pets');if(!layer||!PETS_RT.list.length){PETS_RT.raf=0;return}
- const dt=Math.min(.1,(now-PETS_RT.last)/1000);PETS_RT.last=now;const W=layer.clientWidth;
- for(const q of PETS_RT.list){const pw=q.el.offsetWidth||40;const base=petClass(q.p);
-  if(now>q.until){if(q.state==='walk'){if(Math.random()<.72){q.state='act';q.svg.setAttribute('class',base+' act-'+q.p.act);q.until=now+2600+Math.random()*1600}else{q.state='idle';q.svg.setAttribute('class',base+' idle');q.until=now+1400+Math.random()*1600}}else{q.state='walk';if(Math.random()<.35)q.dir*=-1;q.svg.setAttribute('class',base+' walk');q.until=now+5000+Math.random()*7000}}
-  if(q.state==='walk'||(q.state==='act'&&q.p.act==='run')){q.x+=q.dir*(q.state==='act'?q.speed*3.2:q.speed)*dt;if(q.x<4){q.x=4;q.dir=1}if(q.x>W-pw-4){q.x=Math.max(4,W-pw-4);q.dir=-1}}
-  q.el.style.transform=`translateX(${q.x.toFixed(1)}px)`;q.el.classList.toggle('flip',q.dir<0);
+ const dt=Math.min(.05,(now-PETS_RT.last)/1000);PETS_RT.last=now;const W=innerWidth,H=innerHeight,floor=H-6;let P=null;const plats=()=>P||(P=petPlats());
+ for(const q of PETS_RT.list){q.w=q.el.offsetWidth||56;const hw=Math.min(q.w/2,30);
+  if(q.state==='drag'){}
+  else if(q.state==='fall'||q.state==='jump'){q.vy+=GRAV*dt;const ny=q.y+q.vy*dt;q.x+=q.vx*dt;
+   if(q.x<hw){q.x=hw;q.vx=Math.abs(q.vx)*.4}if(q.x>W-hw){q.x=W-hw;q.vx=-Math.abs(q.vx)*.4}
+   let landed=null;if(q.vy>0)for(const pl of plats().list){if(q.y<=pl.top+2&&ny>=pl.top&&q.x>=pl.l&&q.x<=pl.r){landed=pl;break}}
+   if(landed){q.y=landed.top;q.plat=landed.el;petLand(q,now)}else if(ny>=floor){q.y=floor;q.plat=null;petLand(q,now)}else q.y=ny;
+  }else{
+   let l=hw,r=W-hw,gone=false;
+   if(q.state!=='climb'){
+    if(q.plat){if(!q.plat.isConnected){const alt=plats().list.find(pl=>Math.abs(pl.top-q.y)<10&&q.x>=pl.l-8&&q.x<=pl.r+8);if(alt)q.plat=alt.el;else gone=true}
+     if(!gone){const rc=q.plat.getBoundingClientRect();if(rc.top<plats().hb+20||rc.top>H-10||rc.width<40)gone=true;else{q.y=rc.top;l=rc.left+12;r=rc.right-12}}}
+    else q.y=floor;
+   }
+   if(gone)petFall(q);
+   else{
+    if(q.state==='walk'){q.x+=q.dir*q.speed*dt;if(q.x<l||q.x>r){if(q.plat&&Math.random()<.5){q.vx=q.dir*70;q.vy=-140;petFall(q,true)}else{q.x=clamp(q.x,l,r);q.dir*=-1;if(!q.plat&&Math.random()<.3)petClimb(q,now)}}}
+    else if(q.state==='climb'){q.x=q.dir<0?hw:W-hw;q.y-=36*dt;if(q.y<q.climbTo){q.vx=(q.dir<0?1:-1)*150;q.vy=-80;q.dir*=-1;petFall(q,true)}}
+    if(q.state!=='fall'&&q.state!=='climb'&&now>q.until)petNext(q,now);
+   }
+  }
+  q.el.style.transform=`translate(${(q.x-q.w/2).toFixed(1)}px,${(q.y-q.h).toFixed(1)}px)`;q.el.classList.toggle('flip',q.dir<0);
  }
  PETS_RT.raf=requestAnimationFrame(petLoop);
 }
-
 /* ================= efectos de pantalla ================= */
 const FX={kind:null};
 function fxAt(x,y,kind,n){if(RM||!kind)return;let l=document.getElementById('fxl');if(!l){l=document.createElement('div');l.id='fxl';l.setAttribute('aria-hidden','true');document.body.appendChild(l)}
@@ -2217,7 +2309,8 @@ function clearCosmetics(){const b=document.body;for(const c of Array.from(b.clas
  const STREAK_CH={3:'raro',7:'epico',14:'legendario',30:'mitico',60:'mitico',100:'mitico'};
  const _afterChange=afterChange;
  afterChange=function(reveals=[]){if(S&&READY){ensureChestState();const C=compute();for(const[n,t]of Object.entries(STREAK_CH))if(C.streakNow>=+n&&!S.streakChests[n]){S.streakChests[n]=today();awardChest(t,`Racha de ${n} días`)}}
-  return _afterChange((reveals||[]).concat(CHEST_Q.splice(0)))};
+  const all=(reveals||[]).concat(CHEST_Q.splice(0));if(all.length&&PETS_RT.list.length)setTimeout(()=>petsCheer(rnd(['¡Bien hecho!','¡Eso es!','¡Premio!','¡Así se hace!'])),500);
+  return _afterChange(all)};
  const _startGame=startGame;
  startGame=function(){if(S){ensureChestState();if(!S.chestWelcome){S.chestWelcome=today();awardChest('raro','Cofre de bienvenida')}}return _startGame()};
  const _nextReveal=nextReveal;
