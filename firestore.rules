@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Cada jugador solo puede leer y escribir su propia liga.
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+      match /logs/{date} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+    }
+    // Liga general: todos los jugadores con sesión leen la tabla;
+    // cada uno escribe solo su propia fila (apodo y tres cifras).
+    match /ranking/{uid} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['nick','week','effort','days','improve','updated']);
+      allow delete: if request.auth != null && request.auth.uid == uid;
+    }
+  }
+}
