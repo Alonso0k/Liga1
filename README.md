@@ -20,6 +20,13 @@ Juego de progresión de entrenamiento para jugar con amigos. Cada jugador entra 
 
 Sin `config.js` configurado, la página funciona en modo demo (datos solo en el navegador).
 
+## Cofres, compañeros y perfil
+
+- **Cofres** raros, épicos, legendarios y míticos, con hasta 5 objetos cada uno (PP + 4 objetos de la rareza del cofre). El mítico siempre trae al menos un objeto mítico. Cada 10 cofres uno es al menos legendario y cada 30, mítico.
+- **Recompensas exclusivas de cofres**: consumibles (boosts de PP, escudos, llaves), marcos, fondos de página, auras, efectos de pantalla, lemas, títulos e íconos de perfil.
+- **50 compañeros animados** en estilo anime chibi: figuras históricas y mitológicas más originales de la liga. Hasta 2 caminan por la pantalla. Los raros y épicos salen en cualquier parte; los legendarios y míticos, solo en cofres.
+- **Perfil**: nombre, ícono, marco, fondo, aura, título, lema, estadísticas, progreso semanal, mejores hazañas e insignias.
+
 ## Privacidad
 
 - Los datos de cada jugador (cuerpo, bancos, registros, inventario) solo los puede leer su dueño.

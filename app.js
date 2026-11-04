@@ -211,7 +211,7 @@ function compute(){
     if(prev){const g=diffDays(prev,d);let ok=true;for(let k=1;k<g;k++)if(!freeze.has(addDays(prev,k))){ok=false;break}streak=ok?streak+1:1;units+=effGap(g);if(g>4)units=Math.max(0,units-.6*(g-4))}else{streak=1;const g=S.profile&&S.profile.created?Math.max(1,diffDays(addDays(S.profile.created,-1),d)):1;units=effGap(g)}
     let base=0;for(const[k,e]of Object.entries(L.ex||{}))base+=entryPts(k,e);
     let sMult=1+Math.min(.30,.02*(streak-1));if(effectOn('nostreak',d))sMult=1;
-    let mult=1;if(effectOn('boost',d))mult*=1.5;if(effectOn('fatigue',d))mult*=.75;
+    let mult=1;if(effectOn('boost',d))mult*=1.5;if(effectOn('boost2',d))mult*=2;if(effectOn('chalk',d))mult*=1.1;if(effectOn('banner',d))mult*=1.5;mult=Math.min(mult,3);if(effectOn('fatigue',d))mult*=.75;
     const prs=T.filter(e=>{const b=Math.max(best[e],baseVal(e));return b>0&&c[e]>b});
     const w=T.reduce((a,e)=>a+rawPts(e,L.ex&&L.ex[e]),0);
     const overload=prevW!=null&&w>0&&w>=prevW;
@@ -382,7 +382,7 @@ function grantReward(rarity,source,forceType){
   let ri=Math.max(0,RARITIES.indexOf(rarity));let cursed=false;
   const curse=(S.effects||[]).find(e=>e.type==='curse'&&!e.consumed);if(curse){curse.consumed=true;ri=Math.max(0,ri-1);cursed=true}
   const rar=RARITIES[ri];const pool=[];const comuna=((S.profile&&S.profile.comuna)||'').toLowerCase();
-  for(const c of catalogAll()){if(c.rarity!==rar||c.only)continue;if(forceType&&c.type!==forceType)continue;if(['insignia','titulo','cronica','tema'].includes(c.type)&&S.pokedex[c.id])continue;pool.push({ref:c,w:TYPE_W[c.type]*(c.mine?2:1)})}
+  for(const c of catalogAll()){if(c.rarity!==rar||c.only)continue;if(forceType&&c.type!==forceType)continue;if(['insignia','titulo','cronica','tema','companero','marco','fondo','aura','efecto','lema','icono'].includes(c.type)&&S.pokedex[c.id])continue;pool.push({ref:c,w:TYPE_W[c.type]*(c.mine?2:1)})}
   if(!forceType||forceType==='cupon')for(const cp of CAT){if(cp.rarity!==rar||!couponAvailable(cp))continue;const near=comuna&&((cp.zone||'')+' '+(cp.channel||'')).toLowerCase().includes(comuna);pool.push({ref:couponRef(cp),w:TYPE_W.cupon*(near?2:1)})}
   if(!pool.length){if(forceType)return grantReward(rarity,source,null);const pts=[10,20,40,80,150,300][ri];addLedger(today(),pts,'bonus','Recompensa convertida en PP');return{rid:'pp',name:`+${pts} PP`,icon:'✨',rarity:rar,type:'pp',source,cursed}}
   const ch=wpick(Math.random,pool,p=>p.w);return Object.assign(giveItem(ch.ref,source),{cursed});
@@ -390,10 +390,10 @@ function grantReward(rarity,source,forceType){
 function giveItem(ref,source){
   const t=today();const rid=ref.id;const pd=S.pokedex[rid]||(S.pokedex[rid]={first:t,count:0});pd.count++;
   let inv=null;
-  if(['cupon','vale','item','titulo','tema'].includes(ref.type)){
+  if(['cupon','vale','item','titulo','tema','cofre','companero','marco','fondo','aura','efecto','lema','icono'].includes(ref.type)){
     let expires=null;if(ref.type==='vale')expires=addDays(t,ref.days||14);if(ref.type==='cupon')expires=ref.snap.validUntil||null;
     inv={iid:uid(),rid,type:ref.type,got:t,expires,status:'active',source};if(ref.snap)inv.snap=ref.snap;if(ref.mine)inv.snapName=ref.name;
-    if((ref.type==='titulo'||ref.type==='tema')&&S.inventory.find(i=>i.rid===rid&&i.status==='active'))inv=null;
+    if((UNIQ_INV.includes(ref.type))&&S.inventory.find(i=>i.rid===rid&&i.status==='active'))inv=null;
     if(inv)S.inventory.push(inv);
   }
   return{rid,name:ref.name,icon:ref.icon,rarity:ref.rarity,type:ref.type,source,iid:inv?inv.iid:null};
@@ -401,7 +401,7 @@ function giveItem(ref,source){
 function giveFixed(code,source){
   if(code.startsWith('cup:'))return grantReward(code.slice(4),source,'cupon');
   const c=catById(code);if(!c)return grantReward('raro',source);
-  if(['insignia','titulo','cronica','tema'].includes(c.type)&&S.pokedex[c.id])return grantReward(c.rarity,source);
+  if(['insignia','titulo','cronica','tema','companero','marco','fondo','aura','efecto','lema','icono'].includes(c.type)&&S.pokedex[c.id])return grantReward(c.rarity,source);
   return giveItem(c,source);
 }
 function refOf(rid){if(rid&&rid.startsWith('cup:')){const cp=CAT.find(c=>'cup:'+c.id===rid);if(cp)return couponRef(cp);const inv=S.inventory.find(i=>i.rid===rid&&i.snap);if(inv)return{id:rid,type:'cupon',name:inv.snap.title,icon:'🎟️',rarity:'raro',snap:inv.snap};return null}
@@ -536,6 +536,7 @@ function starterPack(){
   addFeat({date:today(),kind:'ascenso',title:'Ingreso a la liga',desc:'Novato I. Base: '+tracked().map(e=>`${entryText(e,S.profile.base[e])} de ${lc(exDef(e).short)}`).join(', ')+'.',pts:0,rarity:'común',level:0});
   return out;
 }
+
 /* ================= emblemas ================= */
 let EMB_N=0;
 const TIER_ACCENT=[['#e3986a','#8f4a24'],['#c6cedd','#5b6680'],['#f0bb45','#8a5a0e'],['#82d2f7','#22648a'],['#bb98ff','#5531b0'],['#46d7a2','#0e6a4b'],['#ff6f90','#8a1534'],['#d99bff','#7a3fd0']];
@@ -648,6 +649,7 @@ function bodySVG(list,fillOf,label){
   return`<figure><svg viewBox="0 0 200 404" role="img" aria-label="Músculos, vista ${label}"><g class="sil"><ellipse cx="100" cy="34" rx="18" ry="21"/><rect x="91" y="50" width="18" height="16" rx="5"/>${SIL_HALF}<g transform="translate(200 0) scale(-1 1)">${SIL_HALF}</g></g>${half}<g transform="translate(200 0) scale(-1 1)">${half}</g>${abs}</svg><figcaption>${label}</figcaption></figure>`;
 }
 
+
 /* ================= vistas (versión web) ================= */
 function weeklyBars(){
   const t=today();const mon=mondayOf(t);const weeks=[];const T=tracked();
@@ -685,7 +687,7 @@ function vInicio(){
   const td=D.perDay[today()];const sb=Math.round(Math.min(.3,.02*Math.max(0,D.streakNow-1))*100);
   const caps=tracked().map(e=>{const r=exParams(e).ref;const step=exDef(e).metric==='secs'?5:exDef(e).metric==='load'?10:1;const a=r[L],b=L<MAXL?r[L+1]-step:r[L]*1.1,v=D.rec[e]||0;const capMax=Math.max(r[Math.min(MAXL,L+3)],v)*1.08||10;
     return`<div class="cap"><div class="cap-name"><i class="sw" style="background:${exColor(e)}"></i>${esc(exDef(e).short)}</div><div class="cap-track"><div class="cap-band" style="left:${a/capMax*100}%;width:${Math.max(1,(b-a+step)/capMax*100)}%"></div><div class="cap-mark" style="left:${clamp(v/capMax*100,0,100)}%"></div></div><div class="cap-val num">${fmt1(v)} <span class="faint">/ ${refRange(L,e)}</span></div></div>`}).join('');
-  const effs=activeEffects(today()).map(e=>({boost:['st-good','Elixir ×1,5 activo hoy'],fatigue:['st-bad','Fatiga: ×0,75 hoy'],nostreak:['st-warn','Racha sin bono'],dishonor:['st-bad','Deshonra: título oculto'],sealed:['st-warn','Sello: sin cambios de objetivo'],curse:['st-serious','Maldición: próxima recompensa rebajada']}[e.type])).filter(Boolean);
+  const effs=activeEffects(today()).map(e=>({boost:['st-good','Elixir ×1,5 activo hoy'],fatigue:['st-bad','Fatiga: ×0,75 hoy'],nostreak:['st-warn','Racha sin bono'],dishonor:['st-bad','Deshonra: título oculto'],sealed:['st-warn','Sello: sin cambios de objetivo'],curse:['st-serious','Maldición: próxima recompensa rebajada'],boost2:['st-good','Poder ×2 activo'],chalk:['st-good','Tiza: ×1,1 hoy'],banner:['st-good','Estandarte: ×1,5 activo'],horn:['st-good','Cuerno de guerra: misiones ×2 PP'],fortune:['st-info','Fortuna: tu próximo cofre sube de nivel'],aegis:['st-info','Corazón de Fénix: inmune a castigos']}[e.type])).filter(Boolean);
   const shields=S.inventory.filter(i=>i.rid==='itm_escudo'&&i.status==='active').length;if(shields)effs.push(['st-info',`Escudo de Rango listo${shields>1?' ×'+shields:''}`]);
   if((S.freezeDays||[]).includes(today()))effs.push(['st-info','Comodín: hoy cuenta para la racha']);
   const recent=S.inventory.slice().reverse().slice(0,6);
@@ -891,7 +893,7 @@ function dexEntries(){
 }
 function vPokedex(){
   const E=dexEntries();const got=E.filter(e=>S.pokedex[e.rid]).length;const pct=E.length?Math.round(got/E.length*100):0;
-  const types={todos:null,insignia:'Insignias',titulo:'Títulos',cronica:'Crónicas',item:'Ítems',vale:'Vales',tema:'Temas',cupon:'Cupones'};
+  const types={todos:null,insignia:'Insignias',titulo:'Títulos',cronica:'Crónicas',item:'Ítems',vale:'Vales',tema:'Temas',cofre:'Cofres',companero:'Compañeros',marco:'Marcos',fondo:'Fondos',aura:'Auras',efecto:'Efectos',lema:'Lemas',icono:'Íconos',cupon:'Cupones'};
   const list=E.filter(e=>!types[UI.pokeF]||e.ref.type===UI.pokeF);const byType=k=>{const all=E.filter(e=>e.ref.type===k);return`${all.filter(e=>S.pokedex[e.rid]).length}/${all.length}`};
   return`<section class="sec" style="margin-top:0"><div class="dex-top"><div class="ring" style="--p:${pct}"><b class="num">${pct}%</b></div><div><div class="sec-title">Pokédex del esfuerzo</div><p class="muted num">${got} de ${E.length} recompensas descubiertas</p><div class="row" style="gap:6px;margin-top:6px">${Object.keys(types).filter(k=>k!=='todos').map(k=>`<span class="chip">${types[k]} ${byType(k)}</span>`).join('')}</div></div></div></section>
   <section class="sec"><div class="seg" role="group" aria-label="Filtrar por tipo">${Object.keys(types).map(k=>`<button data-act="pokef" data-v="${k}" aria-pressed="${UI.pokeF===k}">${k==='todos'?'Todos':types[k]}</button>`).join('')}</div>
@@ -919,7 +921,7 @@ function vLiga(){
   </section>
   <section class="sec"><div class="seg" role="group" aria-label="Ordenar por">${Object.keys(label).map(k=>`<button data-act="rsort" data-v="${k}" aria-pressed="${sortKey===k}">${label[k]}</button>`).join('')}</div>
    <div class="card">${!rows.length?`<div class="empty">${on?'Todavía no hay datos esta semana.':'Únete para ver la tabla y aparecer en ella.'}</div>`:`<table class="tbl"><thead><tr><th>#</th><th style="text-align:left">Jugador</th><th>${label[sortKey]}</th></tr></thead><tbody>${rows.map((r,i)=>`<tr class="${r.id===S.uid?'hl':''}"><td>${i+1}</td><td style="text-align:left">${esc(r.nick||'Jugador')}${r.id===S.uid?' <span class="faint">(tú)</span>':''}</td><td>${val(r)}</td></tr>`).join('')}</tbody></table>`}</div>
-   ${on?'<p class="sec-note">Solo se comparte tu apodo y estas tres cifras. Puedes salir desde Perfil.</p>':''}</section>`;
+   ${on?'<p class="sec-note">Solo se comparte tu apodo y estas tres cifras. Puedes salir desde Ajustes.</p>':''}</section>`;
 }
 
 /* ===== Perfil ===== */
@@ -930,7 +932,7 @@ function banksEditor(banks){
 }
 function vPerfil(){
   const P=UI.pf||(UI.pf=JSON.parse(JSON.stringify(S.profile)));
-  return`<section class="sec" style="margin-top:0"><div class="sec-head"><h2 class="sec-title">Tu perfil</h2><span class="sec-note">${esc(STORE==='demo'?'Modo demo (solo este navegador)':(AUTH_USER&&AUTH_USER.email)||'')}</span></div>
+  return`<section class="sec" style="margin-top:0"><div class="sec-head"><h2 class="sec-title">Tus datos</h2><span class="sec-note">${esc(STORE==='demo'?'Modo demo (solo este navegador)':(AUTH_USER&&AUTH_USER.email)||'')}</span></div>
    <div class="card form">
     <label class="fl">Apodo<input type="text" id="pf-nick" maxlength="24" value="${esc(P.nick||'')}"></label>
     <div class="grid2"><label class="fl">Altura (cm)<input type="number" id="pf-height" inputmode="numeric" value="${esc(P.height||'')}"></label><label class="fl">Peso (kg)<input type="number" id="pf-weight" inputmode="decimal" step="0.5" value="${esc(P.weight||'')}"></label></div>
@@ -966,6 +968,7 @@ function render(){
   const cur=document.querySelector('.ladder .lad.cur');if(cur){const p=cur.parentElement;p.scrollTop=Math.max(0,cur.offsetTop-p.clientHeight/2)}
   window.scrollTo(0,sy);
 }
+
 /* ================= hoja modal y revelaciones ================= */
 function openSheet(html){const w=$('#sheet');w.innerHTML=`<div class="sheet" role="dialog" aria-modal="true"><button class="sheet-x" data-act="close" aria-label="Cerrar">✕</button>${html}</div>`;w.hidden=false}
 function closeSheet(){closeSheetSilent();setTimeout(nextReveal,120)}
@@ -1339,4 +1342,971 @@ function boot(){
   FB.auth.getRedirectResult().catch(e=>{if(e&&e.code)toast('No se pudo iniciar sesión: '+e.code,'bad')});
   FB.auth.onAuthStateChanged(u=>{if(u)startUser(u);else{if(STORE==='demo')return;resetSession();STORE='cargando';BOOTED=true;renderLanding()}});
 }
+
+/* ================= COFRES, COMPAÑEROS Y PERFIL (módulo compartido artefacto + web) ================= */
+const IS_WEB=typeof catalogAll==='function';
+function cref(id){return IS_WEB?catById(id):(CAT_BY_ID[id]||null)}
+const UNIQ_INV=['titulo','tema','companero','marco','fondo','aura','efecto','lema','icono'];
+const UNIQ_DEX=['insignia','titulo','companero','marco','fondo','aura','efecto','lema','icono'];
+const COSMETIC=['companero','marco','fondo','aura','efecto','lema','icono'];
+const CH_TIERS=['raro','epico','legendario','mitico'];
+const CH_NAME={raro:'raro',epico:'épico',legendario:'legendario',mitico:'mítico'};
+const CH_RAR={raro:'raro',epico:'épico',legendario:'legendario',mitico:'mítico'};
+const RAR_TIER={'común':'raro','poco común':'raro','raro':'raro','épico':'epico','legendario':'legendario','mítico':'mitico'};
+const RM=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+Object.assign(TYPE_NAME,{cofre:'Cofre',companero:'Compañero',marco:'Marco',fondo:'Fondo',aura:'Aura',efecto:'Efecto',lema:'Lema',icono:'Ícono'});
+TYPE_W.companero=4;
+
+/* ---------- contenido de cada cofre (PP + 4 objetos = máximo 5) ---------- */
+const CH_SPEC={
+ raro:{pp:[80,130],slots:['común','raro',[['raro',.6],['común',.4]],[['épico',.22],['raro',.48],['común',.3]]],txt:'+80–130 PP, 1 objeto común, 1 raro garantizado y 2 más con chance de épico.'},
+ epico:{pp:[180,280],slots:['raro','épico',[['épico',.55],['raro',.45]],[['legendario',.14],['épico',.46],['raro',.4]]],txt:'+180–280 PP, 1 objeto raro, 1 épico garantizado y 2 más con chance de legendario.'},
+ legendario:{pp:[420,650],slots:['épico','legendario',[['legendario',.5],['épico',.5]],[['mítico',.08],['legendario',.47],['épico',.45]]],txt:'+420–650 PP, 1 objeto épico, 1 legendario garantizado y 2 más con chance de mítico.'},
+ mitico:{pp:[1000,1500],slots:['legendario','mítico',[['mítico',.35],['legendario',.65]],[['mítico',.2],['legendario',.8]]],txt:'+1.000–1.500 PP, 1 objeto legendario y al menos 1 mítico garantizado. Con suerte, 2 o 3 míticos.'}
+};
+
+/* ---------- catálogo exclusivo de cofres ---------- */
+const CH_CATALOG=[];
+const chAdd=(o)=>{o.only=o.only!==false;o.chest=true;CH_CATALOG.push(o);return o};
+// cofres
+chAdd({id:'chest_raro',type:'cofre',tier:'raro',name:'Cofre raro',icon:'🧰',rarity:'raro',desc:CH_SPEC.raro.txt,noDrop:true});
+chAdd({id:'chest_epico',type:'cofre',tier:'epico',name:'Cofre épico',icon:'🧰',rarity:'épico',desc:CH_SPEC.epico.txt,noDrop:true});
+chAdd({id:'chest_legendario',type:'cofre',tier:'legendario',name:'Cofre legendario',icon:'🧰',rarity:'legendario',desc:CH_SPEC.legendario.txt,noDrop:true});
+chAdd({id:'chest_mitico',type:'cofre',tier:'mitico',name:'Cofre mítico',icon:'🧰',rarity:'mítico',desc:CH_SPEC.mitico.txt,noDrop:true});
+// consumibles
+[['cx_barra','Barra de Proteína','🍫','común','+30 PP al instante. Masticable y motivacional.'],
+ ['cx_batido','Batido de la Fragua','🥤','común','+45 PP al instante. Sabe a hierro y a victoria.'],
+ ['cx_tiza','Tiza de Gimnasta','🧂','común','Hoy tus repeticiones valen ×1,1.'],
+ ['cx_cinta','Cinta de Racha','🎗️','común','Protege ayer u hoy como día de racha, igual que un Comodín.'],
+ ['cx_vendas','Vendas del Gladiador','🩹','raro','Te entrega un Escudo de Rango, que bloquea la próxima penalización.'],
+ ['cx_pergamino2','Pergamino del Estratega','📜','raro','Dos cambios de objetivo extra para hoy.'],
+ ['cx_cantimplora','Cantimplora del Legionario','🫗','raro','+90 PP al instante.'],
+ ['cx_dado2','Dado de Fortuna','🎲','raro','Vuelve a tirar las misiones de hoy que todavía no aceptas.'],
+ ['cx_elixir2','Elixir de Titán','⚗️','épico','Hoy tus repeticiones valen ×2.'],
+ ['cx_egida','Égida','🛡️','épico','Dos Escudos de Rango de una vez.'],
+ ['cx_reloj','Reloj de Arena de Cronos','⏳','épico','Borra tus castigos activos. Si no tienes, te devuelve la última multa de la semana.'],
+ ['cx_cuerno','Cuerno de Guerra','📯','épico','Hoy cada misión completada te da el doble de PP.'],
+ ['cx_llave_oro','Llave de Oro','🔑','épico','Abre al instante un cofre épico.'],
+ ['cx_tonico','Tónico de Hércules','🧪','legendario','+300 PP al instante.'],
+ ['cx_fortuna','Pócima de Fortuna','🍀','legendario','Tu próximo cofre sube un nivel. Si ya es mítico, trae un objeto mítico extra.'],
+ ['cx_estandarte','Estandarte de la Legión','🚩','legendario','Durante 3 días tus repeticiones valen ×1,5.'],
+ ['cx_llave_cel','Llave Celestial','🗝️','legendario','Abre al instante un cofre legendario.'],
+ ['cx_ambrosia','Ambrosía del Olimpo','🍯','mítico','Durante 3 días tus repeticiones valen ×2.'],
+ ['cx_corazon','Corazón de Fénix','❤️‍🔥','mítico','Durante 7 días ninguna misión fallida te castiga.'],
+ ['cx_llave_vacio','Llave del Vacío','🌌','mítico','Abre al instante un cofre mítico.']
+].forEach(([id,name,icon,rarity,desc])=>chAdd({id,type:'item',name,icon,rarity,desc}));
+// marcos
+[['mk_laurel','Marco de Laurel','raro','Una corona de laurel alrededor de tu ícono, como un general en su triunfo.'],
+ ['mk_hierro','Marco de Hierro Forjado','raro','Remaches y metal martillado. Sobrio, pesado, eterno.'],
+ ['mk_bambu','Marco de Bambú','raro','Flexible pero irrompible, como tu disciplina.'],
+ ['mk_llamas','Marco de Llamas','épico','Un anillo de fuego vivo que nunca se apaga.'],
+ ['mk_escarcha','Marco de Escarcha','épico','Cristales de hielo del fin del mundo.'],
+ ['mk_egeo','Marco del Egeo','épico','Olas que giran como el mar de los héroes griegos.'],
+ ['mk_runico','Marco Rúnico','legendario','Runas nórdicas que giran lentamente alrededor de tu ícono.'],
+ ['mk_coliseo','Marco del Coliseo','legendario','Los arcos del anfiteatro más famoso de Roma.'],
+ ['mk_faraon','Marco del Faraón','legendario','Oro y lapislázuli bajo el disco solar alado.'],
+ ['mk_prisma','Marco Prisma','mítico','Todos los colores girando a la vez.'],
+ ['mk_eclipse','Marco del Eclipse','mítico','Una corona de luz alrededor de la oscuridad.']
+].forEach(([id,name,rarity,desc])=>chAdd({id,type:'marco',name,icon:'🖼️',rarity,desc}));
+// fondos
+[['fd_arena','Arena del Coliseo','raro','Atardecer de arena caliente para toda la página.'],
+ ['fd_bosque','Bosque de Araucarias','raro','Araucarias recortadas contra la cordillera.'],
+ ['fd_dojo','Dojo de Madera','épico','Tablones oscuros y la luz cálida de los faroles.'],
+ ['fd_fiordo','Fiordo del Norte','épico','Montañas nevadas que caen a un mar helado.'],
+ ['fd_dunas','Dunas del Nilo','épico','Arena dorada, pirámides y un sol enorme.'],
+ ['fd_templo','Templo al Atardecer','legendario','Columnas griegas contra un cielo encendido.'],
+ ['fd_volcan','Volcán del Sur','legendario','Un volcán humeante y el brillo de la lava.'],
+ ['fd_nebulosa','Nebulosa Prisma','mítico','Galaxias de colores y estrellas que titilan.'],
+ ['fd_aurora','Aurora Austral','mítico','Cortinas de luz verde y violeta sobre la noche.']
+].forEach(([id,name,rarity,desc])=>chAdd({id,type:'fondo',name,icon:'🏞️',rarity,desc}));
+// auras (alrededor de tu emblema e ícono)
+[['au_viento','Aura de Viento','raro','Corrientes de aire giran alrededor de tu emblema.','🌀'],
+ ['au_ignea','Aura Ígnea','épico','Tu emblema arde con un brillo naranja.','🔥'],
+ ['au_glacial','Aura Glacial','épico','Escarcha y luz azul alrededor de tu emblema.','❄️'],
+ ['au_trueno','Aura de Trueno','legendario','Relámpagos que destellan de vez en cuando.','⚡'],
+ ['au_sombra','Aura Sombría','legendario','Humo violeta que se arremolina, misterioso.','🌑'],
+ ['au_prisma','Aura Prisma','mítico','Un halo arcoíris que gira sin parar.','🌈'],
+ ['au_olimpo','Aura del Olimpo','mítico','Rayos dorados de luz divina detrás de tu emblema.','🌟']
+].forEach(([id,name,rarity,desc,icon])=>chAdd({id,type:'aura',name,icon,rarity,desc}));
+// efectos de pantalla
+[['ef_chispas','Chispas','raro','Cada toque en la pantalla suelta chispas.','✨'],
+ ['ef_petalos','Lluvia de Pétalos','épico','Pétalos de cerezo en cada toque y en cada premio.','🌸'],
+ ['ef_confeti','Confeti de Campeón','legendario','Confeti en cada toque y una explosión en cada premio.','🎊'],
+ ['ef_estrellas','Polvo de Estrellas','mítico','Estrellas doradas brotan de cada toque.','💫']
+].forEach(([id,name,rarity,desc,icon])=>chAdd({id,type:'efecto',name,icon,rarity,desc}));
+// lemas (descripción del perfil)
+[['común','Una más. Siempre una más.'],['común','Hoy no se negocia.'],['común','El suelo ya me conoce.'],['común','Sudor hoy, orgullo mañana.'],
+ ['raro','Veni, vidi, empujé.'],['raro','La disciplina le gana a la motivación.'],['raro','Lento, pero no me detengo.'],['raro','Mis excusas no levantan peso.'],
+ ['épico','Forjado en repeticiones.'],['épico','Mis codos firmaron con sangre.'],['épico','Alea iacta est: hoy entreno.'],
+ ['legendario','Que tiemble la gravedad.'],['legendario','Nacido en el suelo, criado en la barra.'],['legendario','Ad astra, una flexión a la vez.'],
+ ['mítico','Soy la razón por la que el suelo madruga.'],['mítico','Memento mori, pero después de la última serie.']
+].forEach(([rarity,name],i)=>chAdd({id:'lm_'+String(i+1).padStart(2,'0'),type:'lema',name,icon:'❝',rarity,desc:'Lema de perfil. Aparece bajo tu nombre y en tu inicio.'}));
+// títulos exclusivos
+[['tc_aprendiz','Aprendiz de Cofres','común'],['tc_recluta','Recluta Sudoroso','común'],
+ ['tc_cazador','Cazador de Cofres','raro'],['tc_forja','Hijo de la Forja','raro'],['tc_gladiador','Gladiador de Living','raro'],
+ ['tc_dragones','Domador de Dragones','épico'],['tc_centurion','Centurión del Suelo','épico'],['tc_cartago','Estratega de Cartago','épico'],
+ ['tc_cesar','César de las Flexiones','legendario'],['tc_barra','Señor de la Barra','legendario'],['tc_conquistador','Conquistador del Suelo','legendario'],
+ ['tc_emperador','Emperador de los Cofres','mítico'],['tc_semidios','Semidiós del Empuje','mítico']
+].forEach(([id,name,rarity])=>chAdd({id,type:'titulo',name,icon:'🏷️',rarity,desc:'Título equipable, exclusivo de cofres.'}));
+// íconos de perfil
+[['ic_lobo','Lobo Gris','🐺','común'],['ic_zorro','Zorro Culpeo','🦊','común'],['ic_jabali','Jabalí','🐗','común'],
+ ['ic_condor','Cóndor de los Andes','🦅','raro'],['ic_toro','Toro de Creta','🐂','raro'],['ic_buho','Búho de Atenea','🦉','raro'],
+ ['ic_leon','León de Nemea','🦁','épico'],['ic_oso','Oso Pardo','🐻','épico'],['ic_escorpion','Escorpión del Desierto','🦂','épico'],
+ ['ic_dragon','Dragón Dorado','🐉','legendario'],['ic_elefante','Elefante de Guerra','🐘','legendario'],
+ ['ic_sol','Sol Invicto','☀️','mítico'],['ic_cometa','Cometa','☄️','mítico']
+].forEach(([id,name,icon,rarity])=>chAdd({id,type:'icono',name,icon,rarity,desc:'Ícono de perfil. Úsalo como tu imagen en la ventana Perfil.'}));
+// insignias exclusivas
+[['bg_polvo','Polvo de Cofre','✨','común','Lo primero que sale de cualquier cofre.'],
+ ['bg_llave','Guardián de Llaves','🗝️','raro','Para quien colecciona llaves como trofeos.'],
+ ['bg_espada','Espada Rota','🗡️','raro','Recuerdo de un combate que no te venció.'],
+ ['bg_gema','Gema Pulida','💎','épico','Presión, tiempo y constancia: así se hacen las gemas.'],
+ ['bg_corona','Corona del Saqueador','👑','legendario','Vaciaste cofres como un rey vacía tesoros.'],
+ ['bg_ojo','Ojo del Vacío','🌀','mítico','Miraste dentro de un cofre mítico y el cofre te miró a ti.']
+].forEach(([id,name,icon,rarity,desc])=>chAdd({id,type:'insignia',name,icon,rarity,desc}));
+
+/* ---------- 50 compañeros animados ---------- */
+const ORIGINS=[['roma','Roma antigua'],['grecia','Grecia y Macedonia'],['mitogriega','Mitología griega'],['egipto','Egipto'],['cartago','Cartago'],['europa','Pueblos de Europa'],['estepa','Estepas de Asia'],['japon','Japón feudal'],['china','China'],['america','América originaria'],['medieval','Europa medieval y moderna'],['bestiario','Bestiario mítico'],['liga','Originales de la Liga']];
+const ORIGIN_NAME=Object.fromEntries(ORIGINS);
+const SK={l:'#f1c9a5',lw:'#f4d8bc',m:'#e0ac7e',mt:'#d9a477',t:'#c48a5a',b:'#a86b42',e:'#b07a4a'};
+const PETS=[
+ // ---- raros (salen en cualquier parte)
+ {id:'pet_recluta',name:'Recluta de la Liga',rarity:'raro',origin:'liga',act:'pushup',icon:'💪',look:{sk:SK.m,hair:['short','#2b1d14'],hd:['headband','#ff5a5f'],tu:'#3a7bd5',ar:['tank'],pa:'#2a2f45',bo:'#e8e8e8'},desc:'El primer compañero de todo jugador. Hace flexiones en cualquier rincón de tu pantalla.',feats:['Nunca se salta el calentamiento','Cuenta las repeticiones en voz alta','Se sabe tu racha de memoria']},
+ {id:'pet_pesista',name:'Pesista de Barrio',rarity:'raro',origin:'liga',act:'lift',icon:'🏋️',look:{sk:SK.t,hair:['short','#111111'],beard:['stache','#111111'],tu:'#d95926',ar:['tank'],pa:'#333a55',bo:'#222222',it:'dumbbell',it2:'dumbbell'},desc:'Entrena en la plaza con mancuernas oxidadas y una fe inquebrantable.',feats:['Récord del barrio en press militar','Presta las pesas a quien las necesite']},
+ {id:'pet_kaito',name:'Kaito, Puño del Alba',rarity:'raro',origin:'liga',act:'punch',icon:'👊',look:{sk:SK.l,hair:['short','#1b1b2a'],hd:['headband','#f4f4f4'],tu:'#2f6b4f',ar:['gi','#f4f4f4'],belt:'#f4f4f4',pa:'#2f6b4f',bo:'#1a1a1a',it:'wraps',it2:'wraps'},desc:'Personaje original de la liga. Entrena desde que sale el sol y jura que su puño se calienta con cada serie.',feats:['Mil golpes antes del desayuno','Le ganó a su propia flojera en un duelo a tres asaltos']},
+ {id:'pet_rin',name:'Rin, Filo del Viento',rarity:'raro',origin:'liga',act:'swing',icon:'🍃',look:{sk:SK.l,hair:['bob','#3fb7a8'],tu:'#1f2f57',ar:['haori','#f2f2f2'],pa:'#1f2f57',bo:'#222222',it:'katana'},desc:'Personaje original de la liga. Espadachina errante que corta las hojas que caen sin tocar el árbol.',feats:['Corta el viento en tres direcciones','Nunca desenvaina dos veces para lo mismo']},
+ {id:'pet_sora',name:'Sora, Arquero Celeste',rarity:'raro',origin:'liga',act:'bow',icon:'🏹',look:{sk:SK.l,hair:['pony','#d7dbe6'],tu:'#6aa7e8',cape:'#2b4f8a',ar:['leather','#8a5a2b'],pa:'#2b3550',bo:'#5a3a22',it:'bow'},desc:'Personaje original de la liga. Dicen que apunta a las nubes y le acierta a las estrellas.',feats:['La flecha más lejana del torneo celeste','Le acierta a una moneda a cien pasos']},
+ {id:'pet_shaolin',name:'Monje Shaolin',rarity:'raro',origin:'china',act:'spin',icon:'🥋',look:{sk:SK.m,hair:['bald'],tu:'#e8892b',ar:['robe','#c0392b'],pa:'#e8892b',bo:'#3a2a1a',it:'staff'},desc:'Guardián de un templo de montaña donde el kung-fu se entrena desde hace siglos.',feats:['El templo Shaolin fue fundado hacia el año 495','Su entrenamiento une meditación y artes marciales','El bastón es una de sus armas clásicas']},
+ {id:'pet_chasqui',name:'Chasqui del Tahuantinsuyo',rarity:'raro',origin:'america',act:'run',icon:'🏃',look:{sk:SK.b,hair:['short','#111111'],hd:['plume','#f4f4f4','#c0392b'],tu:'#c0392b',ar:['unku','#c0392b','#f0c24a'],pa:SK.b,bo:'#7a4e2e'},desc:'Mensajero del Imperio inca que corría en relevos por el Qhapaq Ñan, la red de caminos andinos.',feats:['Con relevos, un mensaje podía avanzar más de 200 km en un día','Llevaba quipus, cuerdas con nudos que guardaban información','Anunciaba su llegada con una trompeta de caracola, el pututu']},
+ {id:'pet_sumo',name:'Luchador de Sumo',rarity:'raro',origin:'japon',act:'stomp',icon:'🤼',look:{sk:'#e8b48a',hair:['topknot','#111111'],tu:'#e8b48a',ar:['bare'],bulk:1,skirt:['mawashi','#2c3e7a'],pa:'#e8b48a',bo:'#e8b48a'},desc:'Lucha ritual japonesa sobre un círculo de arcilla llamado dohyō.',feats:['Tiene raíces en antiguos rituales sintoístas','Gana quien saca al rival del círculo o le hace tocar el suelo','El rango máximo es yokozuna']},
+ // ---- épicos (salen en cualquier parte)
+ {id:'pet_centurion',name:'Centurión',rarity:'épico',origin:'roma',act:'salute',icon:'🦅',look:{sk:SK.mt,hair:['short','#2b1d14'],hd:['galea_t','#c9ced6','#c0392b'],tu:'#b0302a',ar:['chain','#aab2bd'],skirt:['pteruges','#7a3b1f'],pa:SK.mt,bo:'#6b4423',cape:'#a52a2a',it:'vitis',acc:['phalerae']},desc:'Oficial romano que mandaba una centuria, unos 80 legionarios.',feats:['Llevaba una vara de vid, la vitis, como símbolo de mando','El más veterano, el primus pilus, dirigía la primera cohorte','Era la columna vertebral de la disciplina romana']},
+ {id:'pet_hoplita',name:'Hoplita Espartano',rarity:'épico',origin:'grecia',act:'thrust',icon:'🛡️',look:{sk:SK.mt,hd:['corinthian','#c58b3a','#1a1a1a'],tu:'#a52a2a',ar:['musc','#c58b3a'],skirt:['pteruges','#e9dcc0'],pa:SK.mt,bo:'#6b4423',it:'spear',sh:['aspis','#c58b3a','#7a4a14']},desc:'Soldado de infantería pesada que combatía en falange.',feats:['Los espartanos entrenaban desde los 7 años en la agogé','Su escudo protegía también al compañero de al lado','«Vuelve con tu escudo o sobre él»']},
+ {id:'pet_murmillo',name:'Gladiador Murmillo',rarity:'épico',origin:'roma',act:'swing',icon:'🐟',look:{sk:SK.t,hd:['fish','#b9c0c8','#c0392b'],tu:SK.t,ar:['bare'],skirt:['kilt','#e9dcc0'],belt:'#c9a24a',pa:SK.t,bo:'#6b4423',it:'gladius',sh:['scutum','#c0392b','#e8c45a'],acc:['manica']},desc:'Gladiador de armamento pesado con un casco de cresta en forma de pez.',feats:['Solía enfrentarse al tracio o al hoplomachus','Usaba escudo grande y espada corta, como un legionario','Los gladiadores famosos tenían fans y grafitis en Pompeya']},
+ {id:'pet_samurai',name:'Samurái',rarity:'épico',origin:'japon',act:'swing',icon:'⛩️',look:{sk:SK.l,hd:['kabuto','#2a2f45','#e8c45a'],tu:'#2a3f8f',ar:['lamellar','#2a3f8f'],skirt:['kilt','#1f2a5c'],pa:'#1f2a5c',bo:'#2a2a2a',it:'katana'},desc:'Guerrero de la clase militar del Japón feudal.',feats:['Seguía un código de honor llamado bushidō','La katana era considerada el alma del samurái','Dominaba también el arco a caballo']},
+ {id:'pet_vikingo',name:'Vikingo',rarity:'épico',origin:'europa',act:'swing',icon:'🪓',look:{sk:SK.l,hair:['long','#d9a441'],beard:['full','#d9a441'],hd:['nasal','#9aa3ad'],tu:'#4a6b3a',ar:['leather','#6b4b2a'],pa:'#5a4a3a',bo:'#4a3020',it:'axe',sh:['round','#c0392b','#e8e2d0']},desc:'Navegante y guerrero escandinavo de los siglos VIII al XI.',feats:['Llegaron a Norteamérica cerca del año 1000','Sus barcos navegaban en mar abierto y por ríos','Fundaron asentamientos desde Islandia hasta Kiev']},
+ {id:'pet_ninja',name:'Ninja',rarity:'épico',origin:'japon',act:'throw',icon:'🥷',look:{sk:SK.l,hd:['ninja','#1c1f2b'],tu:'#1c1f2b',ar:['robe','#2b3040'],pa:'#1c1f2b',bo:'#111111',it:'shuriken'},desc:'Espía y agente del Japón feudal, experto en sigilo.',feats:['Las escuelas más famosas eran las de Iga y Kōga','Trabajaba en espionaje, sabotaje e infiltración','Usaba shuriken, garfios y mucha paciencia']},
+ {id:'pet_caballero',name:'Caballero Medieval',rarity:'épico',origin:'medieval',act:'swing',icon:'⚔️',look:{sk:SK.l,hd:['helm_full','#b9c0c8','#c0392b'],tu:'#b9c0c8',ar:['plate','#b9c0c8'],pa:'#9aa3ad',bo:'#7a828c',it:'longsword',sh:['kite','#1f4fa8','#e8c45a']},desc:'Guerrero montado de la Europa medieval, cubierto de acero.',feats:['Una armadura completa pesaba entre 20 y 25 kg','Se formaba desde niño como paje y luego escudero','Las justas eran su deporte de competencia']},
+ {id:'pet_weichafe',name:'Weichafe Mapuche',rarity:'épico',origin:'america',act:'thrust',icon:'🌿',look:{sk:SK.b,hair:['long','#111111'],hd:['trarilonco','#c0392b'],tu:'#2c2c2c',ar:['poncho','#2c2c2c','#c0392b'],pa:SK.b,bo:SK.b,it:'lance'},desc:'Guerrero mapuche. Weichafe significa «el que lucha» en mapudungun.',feats:['El pueblo mapuche resistió primero a los incas y luego a los españoles','Combatía con largas lanzas de colihue','La frontera del Biobío se reconoció en parlamentos con la Corona']},
+ {id:'pet_jaguar',name:'Guerrero Jaguar',rarity:'épico',origin:'america',act:'swing',icon:'🐆',look:{sk:SK.b,hd:['jaguar','#e3a63a','#3a2a10'],tu:'#e3a63a',ar:['jaguarsuit','#e3a63a','#3a2a10'],pa:'#e3a63a',bo:SK.b,it:'macuahuitl',sh:['chimalli','#2a7bd5','#e8c45a']},desc:'Guerrero de élite del ejército mexica.',feats:['Ascendía capturando prisioneros en batalla','Usaba el macuahuitl, un mazo con filos de obsidiana','Era una de las dos grandes órdenes de élite, junto a los guerreros águila']},
+ {id:'pet_marea',name:'Capitana Marea',rarity:'épico',origin:'liga',act:'swing',icon:'🏴‍☠️',look:{sk:SK.l,hair:['long','#1f6f78'],hd:['tricorn','#2a1f1a','#e2b54a'],tu:'#9b2335',ar:['coat','#9b2335','#efe2bf'],pa:'#2a2f45',bo:'#1a1a1a',it:'cutlass',acc:['sash']},desc:'Personaje original de la liga. Capitana que navega buscando la isla donde no existe la gravedad, y mientras tanto entrena en cubierta.',feats:['Le ganó un duelo a una tormenta de tres días','Su tripulación hace flexiones al amanecer, sin excepción']},
+ {id:'pet_kraken',name:'Kraken de Bolsillo',rarity:'épico',origin:'bestiario',act:'wave',cr:'kraken',icon:'🐙',look:{c1:'#8e5bd6',c2:'#f2b4ff'},desc:'El monstruo marino de las leyendas escandinavas, en versión miniatura y amistosa.',feats:['Las leyendas lo describían tan grande como una isla','Inspiró historias de marinos durante siglos','Esta versión solo hunde la flojera']},
+ {id:'pet_minotauro',name:'Minotauro Gimnasta',rarity:'épico',origin:'bestiario',act:'lift',icon:'🐂',look:{head:'bull',hcol:'#6b4423',sk:'#b07a4a',ar:['bare'],tu:'#b07a4a',bulk:1,skirt:['kilt','#c0392b'],pa:'#b07a4a',bo:'#4a3020',it:'dumbbell',it2:'dumbbell'},desc:'La criatura con cabeza de toro del laberinto de Creta, ahora dedicada al press de hombros.',feats:['Según el mito, vivía en el laberinto de Dédalo','Teseo lo venció con ayuda del hilo de Ariadna','Hoy solo persigue récords personales']},
+ // ---- legendarios (solo cofres)
+ {id:'pet_legionario',name:'Legionario Romano',rarity:'legendario',origin:'roma',act:'swing',icon:'🏛️',look:{sk:SK.mt,hair:['short','#2b1d14'],hd:['galea','#c9ced6','#c0392b'],tu:'#b0302a',ar:['seg','#c9ced6'],skirt:['pteruges','#7a3b1f'],pa:SK.mt,bo:'#6b4423',it:'gladius',sh:['scutum','#b0302a','#e8c45a']},desc:'Soldado de infantería pesada de Roma. Entrena con su espada sin descanso.',feats:['Marchaba unos 30 km al día con todo su equipo','Levantaba un campamento fortificado cada noche','Su formación testudo lo cubría como una tortuga']},
+ {id:'pet_marcoaurelio',name:'Marco Aurelio',rarity:'legendario',origin:'roma',act:'read',icon:'📜',look:{sk:'#e0b48a',hair:['curly','#5a3a22'],beard:['full','#5a3a22'],hd:['laurel','#5f9a3a'],tu:'#ece3cf',ar:['toga','#ece3cf','#6a2c8a'],pa:'#e0b48a',bo:'#6b4423',it:'scroll'},desc:'Emperador romano (121–180) y filósofo estoico.',feats:['Escribió las «Meditaciones», que se siguen leyendo hoy','Fue el último de los llamados Cinco Buenos Emperadores','Defendió la frontera del Danubio en las guerras marcomanas']},
+ {id:'pet_agripa',name:'Marco Vipsanio Agripa',rarity:'legendario',origin:'roma',act:'swing',icon:'⚓',look:{sk:SK.mt,hair:['short','#3a2a1a'],hd:['rostrata','#e8c45a'],tu:'#2a4f8a',ar:['musc','#c9a24a'],skirt:['pteruges','#2a4f8a'],pa:SK.mt,bo:'#6b4423',cape:'#1f3a6b',it:'gladius'},desc:'General, almirante y mano derecha de Augusto (c. 63–12 a. C.).',feats:['Ganó la batalla naval de Actium (31 a. C.)','Construyó el primer Panteón de Roma','Amplió los acueductos y abrió grandes termas públicas']},
+ {id:'pet_espartaco',name:'Espartaco',rarity:'legendario',origin:'roma',act:'swing',icon:'⛓️',look:{sk:SK.t,hd:['thraex','#9aa3ad','#c0392b'],tu:SK.t,ar:['bare'],skirt:['kilt','#e9dcc0'],belt:'#6b4423',pa:SK.t,bo:'#6b4423',it:'sica',sh:['parmula','#8a5a2b','#c9a24a'],acc:['chains']},desc:'Gladiador tracio que desafió a Roma (c. 103–71 a. C.).',feats:['Encabezó la mayor rebelión de esclavos contra Roma (73–71 a. C.)','Su ejército llegó a reunir a decenas de miles de personas','Derrotó a varias legiones antes de caer ante Craso']},
+ {id:'pet_escipion',name:'Escipión el Africano',rarity:'legendario',origin:'roma',act:'salute',icon:'🐘',look:{sk:SK.mt,hair:['short','#3a2a1a'],hd:['galea','#e0c27a','#f4f4f4'],tu:'#7a1f2a',ar:['musc','#d4b06a'],skirt:['pteruges','#7a1f2a'],pa:SK.mt,bo:'#6b4423',cape:'#7a1f2a',it:'gladius',sh:['scutum','#7a1f2a','#e8c45a']},desc:'General romano (236–183 a. C.), el hombre que venció a Aníbal.',feats:['Derrotó a Aníbal en Zama (202 a. C.)','Puso fin a la Segunda Guerra Púnica','Tomó Cartago Nova, en Hispania, con un ataque audaz']},
+ {id:'pet_vercingetorix',name:'Vercingétorix',rarity:'legendario',origin:'europa',act:'swing',icon:'🗡️',look:{sk:SK.l,hair:['long','#d9a441'],beard:['stache','#d9a441'],hd:['winged','#c58b3a','#f4f4f4'],tu:'#2f6b3a',ar:['chain','#9aa3ad'],pa:'#8a3a2a',bo:'#4a3020',cape:'#2f6b3a',it:'longsword',sh:['oval','#2f6b3a','#c9a24a'],acc:['torc']},desc:'Caudillo de los arvernos que unió a la Galia contra César (c. 82–46 a. C.).',feats:['Unió por primera vez a decenas de tribus galas','Venció a César en Gergovia (52 a. C.)','Resistió el asedio de Alesia hasta el final']},
+ {id:'pet_boudica',name:'Boudica',rarity:'legendario',origin:'europa',act:'thrust',icon:'🔥',look:{sk:'#f4d0b0',hair:['long','#c8471f'],tu:'#2f6b3a',ar:['dress','#2f6b3a','#c9a24a'],skirt:['long','#2f6b3a'],cape:'#8a3a2a',pa:'#f4d0b0',bo:'#4a3020',it:'spear',sh:['oval','#8a3a2a','#c9a24a'],acc:['torc']},desc:'Reina de los icenos de Britania (m. c. 61 d. C.).',feats:['Lideró una gran revuelta contra Roma','Arrasó Camulodunum, Londinium y Verulamium','Tiene una estatua junto al puente de Westminster']},
+ {id:'pet_ramses',name:'Ramsés II',rarity:'legendario',origin:'egipto',act:'swing',icon:'𓂀',look:{sk:SK.e,hd:['khepresh','#2346a8','#e8c45a'],tu:'#f4ecd8',ar:['linen','#f4ecd8','#e8c45a'],skirt:['kilt','#f4ecd8'],belt:'#e8c45a',pa:SK.e,bo:'#c9a24a',it:'khopesh',acc:['collar']},desc:'Faraón de Egipto (c. 1303–1213 a. C.), llamado Ramsés el Grande.',feats:['Reinó cerca de 66 años','Mandó construir los templos de Abu Simbel','Firmó con los hititas uno de los primeros tratados de paz conocidos']},
+ {id:'pet_atila',name:'Atila',rarity:'legendario',origin:'estepa',act:'bow',icon:'🐎',look:{sk:SK.mt,hd:['furhat','#6b4423','#c9a27a'],beard:['fu','#1a1a1a'],tu:'#7a2f1f',ar:['lamellar','#8a6a3a'],pa:'#5a3a2a',bo:'#3a2a1a',it:'recurve'},desc:'Rey de los hunos (c. 406–453), llamado «el azote de Dios».',feats:['Gobernó un imperio desde el Rin hasta el mar Negro','Puso en jaque a Roma de Oriente y de Occidente','Sus arqueros a caballo eran temidos en toda Europa']},
+ {id:'pet_musashi',name:'Miyamoto Musashi',rarity:'legendario',origin:'japon',act:'swing',icon:'⚔️',look:{sk:SK.l,hair:['topknot','#1a1a1a'],beard:['short','#1a1a1a'],tu:'#5a5f6a',ar:['kimono','#2a2a2a'],skirt:['hakama','#3a3f4a'],pa:'#3a3f4a',bo:'#2a2a2a',it:'katana',it2:'wakizashi'},desc:'Espadachín japonés (c. 1584–1645), maestro de las dos espadas.',feats:['Dijo no haber perdido ninguno de sus más de 60 duelos','Fundó el estilo de dos espadas Niten Ichi-ryū','Escribió «El libro de los cinco anillos»']},
+ {id:'pet_nobunaga',name:'Oda Nobunaga',rarity:'legendario',origin:'japon',act:'aim',icon:'🏯',look:{sk:SK.l,hd:['kabuto','#1a1a1a','#e8c45a'],tu:'#7a1f1f',ar:['lamellar','#1a1a1a','#c0392b'],cape:'#7a1f1f',skirt:['kilt','#2a2a2a'],pa:'#2a2a2a',bo:'#1a1a1a',it:'musket'},desc:'Daimio japonés (1534–1582) que inició la unificación de Japón.',feats:['Venció a un ejército mucho mayor en Okehazama (1560)','Usó arcabuces de forma masiva en Nagashino (1575)','Abrió el camino a la unificación del país']},
+ {id:'pet_tomoe',name:'Tomoe Gozen',rarity:'legendario',origin:'japon',act:'thrust',icon:'🌸',look:{sk:SK.lw,hair:['long','#111111'],hd:['headband','#f4f4f4'],tu:'#a52a2a',ar:['lamellar','#a52a2a','#f4f4f4'],skirt:['hakama','#2a2f45'],pa:'#2a2f45',bo:'#2a2a2a',it:'naginata'},desc:'Guerrera onna-musha del siglo XII, en las guerras Genpei.',feats:['El «Cantar de Heike» la describe como arquera y jinete formidable','Según el relato, valía por mil guerreros','Es símbolo de las mujeres samurái']},
+ {id:'pet_ragnar',name:'Ragnar Lodbrok',rarity:'legendario',origin:'europa',act:'swing',icon:'⛵',look:{sk:SK.l,hair:['braid','#c9a061'],beard:['long','#c9a061'],tu:'#3a3f4a',ar:['leather','#5a4030'],cape:'#6b5a46',pa:'#4a3a2a',bo:'#3a2a1a',it:'axe',sh:['round','#2a4f8a','#e8e2d0']},desc:'Héroe vikingo de las sagas nórdicas del siglo IX.',feats:['Las sagas le atribuyen incursiones en Francia e Inglaterra','Es el padre legendario de grandes caudillos vikingos','Su historia mezcla hechos y leyenda']},
+ {id:'pet_juana',name:'Juana de Arco',rarity:'legendario',origin:'medieval',act:'banner',icon:'⚜️',look:{sk:SK.lw,hair:['bob','#5a3a22'],tu:'#c9ced6',ar:['plate','#c9ced6'],pa:'#9aa3ad',bo:'#7a828c',it:'banner'},desc:'Heroína francesa (c. 1412–1431) de la Guerra de los Cien Años.',feats:['Con 17 años ayudó a levantar el asedio de Orleans (1429)','Llevó a Carlos VII a coronarse en Reims','Es patrona de Francia']},
+ {id:'pet_pachacutec',name:'Pachacútec',rarity:'legendario',origin:'america',act:'swing',icon:'☀️',look:{sk:SK.b,hair:['short','#111111'],hd:['mascapaycha','#c0392b','#e8c45a'],tu:'#c0392b',ar:['unku','#c0392b','#e8c45a'],pa:SK.b,bo:SK.b,cape:'#2346a8',it:'macestar',acc:['earspool']},desc:'Sapa Inca del siglo XV que transformó el reino del Cusco en un imperio.',feats:['Convirtió el reino del Cusco en el Tahuantinsuyo','Se le atribuye la construcción de Machu Picchu','Reorganizó el imperio y su red de caminos']},
+ {id:'pet_aquiles',name:'Aquiles',rarity:'legendario',origin:'mitogriega',act:'thrust',icon:'🏺',look:{sk:'#e0b48a',hair:['curly','#c9a061'],hd:['corinthian','#e8c45a','#1a1a1a'],tu:'#f4ecd8',ar:['musc','#e8c45a'],skirt:['pteruges','#f4ecd8'],pa:'#e0b48a',bo:'#6b4423',it:'spear',sh:['aspis','#e8c45a','#9a6a1a']},desc:'El mayor guerrero aqueo de la guerra de Troya.',feats:['Es el protagonista de la «Ilíada» de Homero','Venció a Héctor frente a las murallas de Troya','Era casi invulnerable, salvo por el talón']},
+ {id:'pet_heracles',name:'Heracles',rarity:'legendario',origin:'mitogriega',act:'flex',icon:'🦁',look:{sk:SK.mt,beard:['full','#3a2a1a'],hd:['lion','#d9a441','#8a5a1a'],tu:SK.mt,ar:['bare'],bulk:1,skirt:['kilt','#d9a441'],pa:SK.mt,bo:'#6b4423',it:'club'},desc:'Semidiós hijo de Zeus, el más fuerte de los héroes griegos.',feats:['Completó los doce trabajos','Venció al león de Nemea y a la Hidra de Lerna','Sostuvo el cielo en lugar de Atlas']},
+ {id:'pet_dragon',name:'Dragón de Bolsillo',rarity:'legendario',origin:'bestiario',act:'fire',cr:'dragon',icon:'🐉',look:{c1:'#2f9e6a',c2:'#f2d36b'},desc:'Un dragón en miniatura que vigila tu inventario como si fuera su tesoro.',feats:['Los dragones aparecen en mitos desde China hasta Europa','En China simbolizan fuerza y buena fortuna','Este escupe fuego cada vez que rompes un récord']},
+ {id:'pet_kitsune',name:'Kitsune de Nueve Colas',rarity:'legendario',origin:'bestiario',act:'orbs',cr:'kitsune',icon:'🦊',look:{c1:'#f6f3ee',c2:'#e8592a'},desc:'El zorro espíritu del folclor japonés.',feats:['Según la leyenda, gana una cola cada cien años','Con nueve colas alcanza su máximo poder','Domina las ilusiones y el fuego zorro, el kitsunebi']},
+ {id:'pet_akane',name:'Akane, Llama Carmesí',rarity:'legendario',origin:'liga',act:'punch',icon:'🔥',look:{sk:SK.l,hair:['pony','#a8262a'],tu:'#1c1f2b',ar:['gi','#a8262a'],belt:'#c0392b',pa:'#1c1f2b',bo:'#111111',it:'firefist',it2:'firefist'},desc:'Personaje original de la liga. Peleadora que convierte cada serie en fuego: sus puños arden cuando supera un récord.',feats:['Invicta en el torneo de la Fragua','Su racha más larga duró un año entero']},
+ // ---- míticos (solo cofres)
+ {id:'pet_cesar',name:'Julio César',rarity:'mítico',origin:'roma',act:'salute',icon:'👑',look:{sk:'#e0b48a',hair:['short','#3a2a1a'],hd:['laurel','#e8c45a'],tu:'#b0302a',ar:['musc','#d4b06a'],skirt:['pteruges','#b0302a'],pa:'#e0b48a',bo:'#6b4423',cape:'#8a1a2a',it:'gladius'},desc:'General y dictador romano (100–44 a. C.).',feats:['Conquistó la Galia y venció en Alesia (52 a. C.)','Cruzó el Rubicón en el 49 a. C.: «Alea iacta est»','Su calendario juliano es la base del que usamos hoy','Dijo «Veni, vidi, vici» tras su victoria en Zela']},
+ {id:'pet_alejandro',name:'Alejandro Magno',rarity:'mítico',origin:'grecia',act:'thrust',icon:'🐴',look:{sk:SK.l,hair:['curly','#e8b84e'],hd:['boeotian','#9c6a22','#f4f4f4'],tu:'#f4ecd8',ar:['linen','#f4ecd8','#e8c45a'],skirt:['pteruges','#f4ecd8'],pa:SK.l,bo:'#6b4423',cape:'#6a2c8a',it:'spear'},desc:'Rey de Macedonia (356–323 a. C.).',feats:['No perdió ninguna de sus grandes batallas','Derrotó al Imperio persa en Gránico, Isos y Gaugamela','Fundó más de 20 ciudades, entre ellas Alejandría','Llegó hasta la India antes de cumplir 30 años']},
+ {id:'pet_napoleon',name:'Napoleón Bonaparte',rarity:'mítico',origin:'medieval',act:'point',icon:'🎖️',look:{sk:SK.lw,hair:['short','#3a2a1a'],hd:['bicorne','#1a1a1a','#e8c45a'],tu:'#1f3a8a',ar:['coat','#1f3a8a','#f4f4f4'],pa:'#f4f4f4',bo:'#111111',it:'spyglass',acc:['epaul']},desc:'Emperador de los franceses (1769–1821).',feats:['Su gran victoria fue Austerlitz (1805)','Su Código Civil inspiró leyes en muchos países, también el Código Civil chileno','Llegó a dominar gran parte de Europa']},
+ {id:'pet_augusto',name:'Octavio Augusto',rarity:'mítico',origin:'roma',act:'salute',icon:'🏺',look:{sk:SK.l,hair:['short','#5a3a22'],hd:['laurel','#5f9a3a'],tu:'#ece3cf',ar:['toga','#ece3cf','#6a2c8a'],pa:SK.l,bo:'#6b4423'},desc:'Primer emperador de Roma (63 a. C.–14 d. C.).',feats:['Venció a Marco Antonio y Cleopatra en Actium (31 a. C.)','Inició la Pax Romana, cerca de dos siglos de relativa paz','Gobernó como emperador más de 40 años','«Encontré una Roma de ladrillo y la dejé de mármol»']},
+ {id:'pet_anibal',name:'Aníbal Barca',rarity:'mítico',origin:'cartago',act:'thrust',icon:'🐘',look:{sk:SK.t,beard:['full','#1a1a1a'],hd:['pilos','#c58b3a','#c0392b'],tu:'#6a2c8a',ar:['linen','#e9dcc0','#c9a24a'],skirt:['pteruges','#6a2c8a'],pa:SK.t,bo:'#6b4423',cape:'#6a2c8a',it:'spear',extra:'elephant'},desc:'General cartaginés (247–c. 183 a. C.), la pesadilla de Roma.',feats:['Cruzó los Alpes con elefantes de guerra (218 a. C.)','Aniquiló a un ejército romano mucho mayor en Cannas (216 a. C.)','Su táctica de Cannas se estudia hasta hoy']},
+ {id:'pet_leonidas',name:'Leónidas I',rarity:'mítico',origin:'grecia',act:'thrust',icon:'🛡️',look:{sk:SK.mt,beard:['full','#2b1d14'],hd:['corinthian','#c58b3a','#b0302a'],tu:'#a52a2a',ar:['musc','#c58b3a'],skirt:['pteruges','#a52a2a'],pa:SK.mt,bo:'#6b4423',cape:'#a52a2a',it:'spear',sh:['aspis','#c58b3a','#7a1f14'],lambda:1},desc:'Rey de Esparta, caído en las Termópilas (480 a. C.).',feats:['Con 300 espartanos y aliados griegos frenó al ejército persa','Resistió tres días en el paso de las Termópilas','Su sacrificio inspiró a toda Grecia']},
+ {id:'pet_cleopatra',name:'Cleopatra VII',rarity:'mítico',origin:'egipto',act:'salute',icon:'🐍',look:{sk:'#c99067',hair:['bob','#111111'],hd:['diadem','#e8c45a'],tu:'#f4ecd8',ar:['dress','#f4ecd8','#e8c45a'],skirt:['long','#f4ecd8'],pa:'#c99067',bo:'#c9a24a',it:'ankh',acc:['collar']},desc:'Última reina del Egipto ptolemaico (69–30 a. C.).',feats:['Gobernó Egipto cerca de 21 años','Fue la primera de su dinastía en aprender egipcio y hablaba varios idiomas','Se alió con Julio César y con Marco Antonio']},
+ {id:'pet_gengis',name:'Gengis Kan',rarity:'mítico',origin:'estepa',act:'bow',icon:'🏹',look:{sk:SK.mt,beard:['fu','#1a1a1a'],hd:['furcone','#2346a8','#8a6a3a'],tu:'#2346a8',ar:['deel','#2346a8','#e8a33a'],pa:'#3a2a1a',bo:'#5a3a22',it:'recurve'},desc:'Fundador del Imperio mongol (c. 1162–1227).',feats:['Unificó a las tribus mongolas en 1206','Su imperio llegó a ser el mayor imperio terrestre continuo de la historia','Creó el yam, un sistema de postas a caballo']},
+ {id:'pet_lautaro',name:'Lautaro',rarity:'mítico',origin:'america',act:'thrust',icon:'🌄',look:{sk:SK.b,hair:['long','#111111'],hd:['trarilonco','#c0392b'],tu:'#1c1c1c',ar:['poncho','#1c1c1c','#c0392b'],pa:SK.b,bo:SK.b,cape:'#3a2a1a',it:'lance'},desc:'Toqui mapuche (c. 1534–1557), héroe de la Guerra de Arauco.',feats:['Venció a Pedro de Valdivia en la batalla de Tucapel (1553)','Aprendió las tácticas españolas y las usó en su contra','Es símbolo de la resistencia mapuche']},
+ {id:'pet_fenix',name:'Fénix',rarity:'mítico',origin:'bestiario',act:'flare',cr:'phoenix',icon:'🐦‍🔥',look:{c1:'#ff6a2a',c2:'#ffd35a'},desc:'El ave mítica que renace de sus propias cenizas.',feats:['Heródoto ya la describía en el siglo V a. C.','Según la tradición, renace cada 500 años','Es símbolo de renacimiento desde Egipto hasta Roma']}
+];
+for(const p of PETS){p.type='companero';if(p.rarity==='legendario'||p.rarity==='mítico'){p.only=true;p.chest=true}}
+const PET_BY=Object.fromEntries(PETS.map(p=>[p.id,p]));
+CATALOG.push(...CH_CATALOG,...PETS);
+if(!IS_WEB)for(const c of CH_CATALOG.concat(PETS))CAT_BY_ID[c.id]=c;
+const CH_DROPS=CH_CATALOG.filter(c=>!c.noDrop).concat(PETS);
+
+/* ================= motor de sprites (estilo anime chibi) ================= */
+function shd(hex,f){if(!hex||hex[0]!=='#'||hex.length!==7)return hex;const n=parseInt(hex.slice(1),16);let r=n>>16,g=(n>>8)&255,b=n&255;const t=f<0?0:255,p=Math.abs(f);r=Math.round((t-r)*p+r);g=Math.round((t-g)*p+g);b=Math.round((t-b)*p+b);return'#'+((1<<24)|(r<<16)|(g<<8)|b).toString(16).slice(1)}
+const STEEL='#dde2e8',GOLD='#e2b54a',WOOD='#8a5a2b';
+const REST_ROT={spear:25,lance:25,naginata:25,banner:30,musket:25,longsword:16,katana:16,macestar:12,macuahuitl:12};
+function itemArt(k){switch(k){
+ case'gladius':return`<path d="M-.95-1.3V-9.6L0-11.4l.95 1.8V-1.3Z" fill="${STEEL}"/><path d="M0-10.4V-1.6" stroke="#aab2bd" stroke-width=".35"/><rect x="-2.3" y="-1.7" width="4.6" height="1.15" rx=".5" fill="${GOLD}"/><rect x="-.6" y="-.6" width="1.2" height="2.2" fill="#6b4423"/><circle cy="1.9" r=".85" fill="${GOLD}"/>`;
+ case'longsword':return`<path d="M-.85-1.4V-13.4L0-15.4l.85 2V-1.4Z" fill="${STEEL}"/><path d="M0-14V-1.6" stroke="#aab2bd" stroke-width=".3"/><rect x="-2.8" y="-1.8" width="5.6" height="1.1" rx=".5" fill="#8a8f96"/><rect x="-.6" y="-.7" width="1.2" height="3.2" fill="#3a2a1a"/><circle cy="2.9" r=".9" fill="#8a8f96"/>`;
+ case'katana':return`<path d="M-.6-1.2C-1.2-6-.6-10.6 1.6-14.6l.7.3C.4-10.4-.1-6 .5-1.2Z" fill="#eef2f6"/><ellipse cy="-.9" rx="1.6" ry=".55" fill="#2a2a2a"/><rect x="-.55" y="-.5" width="1.1" height="3.4" fill="#2b2b3a"/>`;
+ case'wakizashi':return`<path d="M-.55-1.1C-1-4.4-.6-7.4 1.1-9.8l.6.25C.3-7.2-.1-4.4.45-1.1Z" fill="#eef2f6"/><ellipse cy="-.9" rx="1.3" ry=".5" fill="#2a2a2a"/><rect x="-.5" y="-.5" width="1" height="2.4" fill="#2b2b3a"/>`;
+ case'spear':return`<rect x="-.45" y="-17" width=".9" height="25" rx=".4" fill="${WOOD}"/><path d="M0-21.6l1.6 4.6-1.6.9-1.6-.9Z" fill="${STEEL}"/>`;
+ case'lance':return`<rect x="-.38" y="-20" width=".76" height="28" rx=".38" fill="#c9b27a"/><path d="M0-23.4l1 3.4H-1Z" fill="#cfd5db"/><path d="M-.6-19.4h1.2" stroke="#c0392b" stroke-width=".8"/>`;
+ case'naginata':return`<rect x="-.45" y="-14" width=".9" height="22" rx=".4" fill="#3a2a1a"/><path d="M-.5-14V-15.4C-.6-18.6.6-20.8 2.6-22.2c-.4 2.4-.8 4.8-2 8.2Z" fill="${STEEL}"/><rect x="-.8" y="-14.4" width="1.6" height=".8" fill="${GOLD}"/>`;
+ case'axe':return`<rect x="-.5" y="-11" width="1" height="14.5" rx=".5" fill="${WOOD}"/><path d="M.4-11.2C3.6-12.4 5.6-10.6 5.4-7.2 5.2-5.4 3.4-5.2.4-6.6Z" fill="${STEEL}"/>`;
+ case'cutlass':return`<path d="M-.8-1.2Q-1.4-6 1.4-10.8l.9.4Q.4-6 .9-1.2Z" fill="${STEEL}"/><path d="M-1.6-1.2Q-2.4 1.2-.6 2.6M-1.6-1.2H1.4" stroke="${GOLD}" stroke-width=".6" fill="none"/><rect x="-.5" y="-.8" width="1" height="2.8" fill="#3a2a1a"/>`;
+ case'rapier':return`<path d="M-.3-1.2V-14.6L0-15.6l.3 1V-1.2Z" fill="${STEEL}"/><path d="M-2.2-.9Q0-3 2.2-.9" stroke="${GOLD}" stroke-width=".6" fill="none"/><rect x="-.5" y="-.8" width="1" height="2.8" fill="#3a2a1a"/><circle cy="2.4" r=".8" fill="${GOLD}"/>`;
+ case'sica':return`<path d="M-.6-1.1C-.7-4.4.6-6.8 3.1-7.8l.3.6C1.2-5.8.4-3.8.6-1.1Z" fill="${STEEL}"/><rect x="-1.6" y="-1.4" width="3.2" height=".9" fill="#6b4423"/><rect x="-.5" y="-.6" width="1" height="2.3" fill="#6b4423"/>`;
+ case'khopesh':return`<path d="M-.6-1.1V-6.2C-.4-9.4 1.6-10.8 4.2-10.4 5.4-10 5.2-8.6 4.2-8.8 2.4-9 1-7.8.7-5.8V-1.1Z" fill="#d6a84a"/><rect x="-.6" y="-1.2" width="1.2" height="3" fill="#2a2a2a"/>`;
+ case'bow':return`<path d="M.5-9.6Q5.8 0 .5 9.6" stroke="#7a4a22" stroke-width="1.3" fill="none" stroke-linecap="round"/><path d="M.5-9.6V9.6" stroke="#e8e2d0" stroke-width=".35"/>`;
+ case'recurve':return`<path d="M1.6-8.6Q-.6-9.4.8-6.6Q4.6 0 .8 6.6Q-.6 9.4 1.6 8.6" stroke="#5a3a1a" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M1.4-8.4V8.4" stroke="#e8e2d0" stroke-width=".3"/>`;
+ case'staff':return`<rect x="-.55" y="-12.5" width="1.1" height="25" rx=".5" fill="${WOOD}"/><rect x="-.75" y="-12.5" width="1.5" height="1.6" fill="${GOLD}"/><rect x="-.75" y="10.9" width="1.5" height="1.6" fill="${GOLD}"/>`;
+ case'vitis':return`<path d="M0 2.6V-8.4" stroke="#6b4b2a" stroke-width=".95" stroke-linecap="round"/><circle cy="-8.6" r=".9" fill="#6b4b2a"/>`;
+ case'club':return`<path d="M-.8 2.4L-1.9-9.4Q0-12.8 1.9-9.4L.8 2.4Z" fill="#7a5230"/><circle cx="-.9" cy="-7" r=".55" fill="#5a3a20"/><circle cx=".8" cy="-4.4" r=".5" fill="#5a3a20"/>`;
+ case'dumbbell':return`<rect x="-4.6" y="-.45" width="9.2" height=".9" fill="#9aa3ad"/><rect x="-5.4" y="-2" width="1.8" height="4" rx=".4" fill="#2b2f3a"/><rect x="3.6" y="-2" width="1.8" height="4" rx=".4" fill="#2b2f3a"/>`;
+ case'wraps':return`<circle r="2" fill="#f4f4f4"/><path d="M-1.6-.6h3.2M-1.6.6h3.2" stroke="#cfd5db" stroke-width=".35"/>`;
+ case'firefist':return`<circle r="2.1" fill="#ff7a2a"/><path class="flm" d="M-1.6-1Q-.8-5.4 0-3.2Q.8-6 1.6-1Z" fill="#ffd35a"/>`;
+ case'shuriken':return`<path d="M0-2.4L.6-.6 2.4 0 .6.6 0 2.4-.6.6-2.4 0-.6-.6Z" fill="#9aa3ad"/>`;
+ case'scroll':return`<rect x="-3" y="-1.3" width="6" height="2.6" rx=".4" fill="#efe2bf"/><rect x="-3.6" y="-1.6" width="1" height="3.2" rx=".5" fill="#c9a24a"/><rect x="2.6" y="-1.6" width="1" height="3.2" rx=".5" fill="#c9a24a"/><path d="M-1.8-.4h3.4M-1.8.5h2.6" stroke="#9a8a6a" stroke-width=".3"/>`;
+ case'ankh':return`<path d="M0 3V-4.4M-2-3.2H2" stroke="${GOLD}" stroke-width="1" fill="none"/><ellipse cy="-6" rx="1.3" ry="1.7" stroke="${GOLD}" stroke-width=".9" fill="none"/>`;
+ case'banner':return`<rect x="-.4" y="-21" width=".8" height="25" fill="#7a5230"/><path d="M.4-20.6H9.4L8.2-17.8 9.4-15H.4Z" fill="#f4f4f4"/><path d="M4.4-19.2 5.3-17.8 4.4-16.4 3.5-17.8Z" fill="${GOLD}"/>`;
+ case'musket':return`<rect x="-.55" y="-15.5" width="1.1" height="15" fill="#3a3f4a"/><path d="M-1-1H1L1.6 4.6H-1.6Z" fill="#6b4423"/>`;
+ case'spyglass':return`<rect x="-.6" y="-6.4" width="1.2" height="7" rx=".4" fill="#c9a24a"/><rect x="-.8" y="-6.8" width="1.6" height="1.4" rx=".4" fill="#6b4423"/>`;
+ case'macuahuitl':{let s=`<rect x="-1.4" y="-11.6" width="2.8" height="12.2" rx="1" fill="#7a5230"/>`;for(let y=-10.8;y<-1;y+=2.2)s+=`<path d="M-1.4 ${y.toFixed(1)}l-1 .6 1 .6ZM1.4 ${y.toFixed(1)}l1 .6-1 .6Z" fill="#1a1a1a"/>`;return s+`<rect x="-.6" y=".4" width="1.2" height="2.4" fill="#5a3a20"/>`}
+ case'macestar':return`<rect x="-.5" y="-9" width="1" height="12" fill="${WOOD}"/><path d="M0-12.6l1 1.6 1.8-.2-.8 1.6.8 1.6-1.8-.2-1 1.6-1-1.6-1.8.2.8-1.6-.8-1.6 1.8.2Z" fill="${GOLD}"/>`;
+}return''}
+function shieldArt(t,c1,c2,L){switch(t){
+ case'scutum':return`<rect x="11" y="19.4" width="7.6" height="13.6" rx="1.8" fill="${c1}" stroke="${c2}" stroke-width=".7"/><path d="M12.6 21.6h4.4M12.6 30.8h4.4" stroke="${c2}" stroke-width=".6"/><circle cx="14.8" cy="26.2" r="1.7" fill="${c2}"/>`;
+ case'aspis':return`<circle cx="14.6" cy="25.8" r="6.5" fill="${c1}" stroke="${c2}" stroke-width="1"/>${L.lambda?`<path d="M12.2 28.8 14.6 22.4 17 28.8" stroke="${c2}" stroke-width="1.2" fill="none"/>`:`<circle cx="14.6" cy="25.8" r="2" fill="${shd(c1,-.2)}"/>`}`;
+ case'round':return`<circle cx="14.6" cy="26" r="6.2" fill="${c1}" stroke="#6b4423" stroke-width=".8"/><path d="M8.6 26h12M14.6 20v12" stroke="${c2}" stroke-width=".9"/><circle cx="14.6" cy="26" r="1.5" fill="#9aa3ad"/>`;
+ case'kite':return`<path d="M11 19.8h7.6v7.4Q18.6 31 14.8 34.6 11 31 11 27.2Z" fill="${c1}" stroke="${c2}" stroke-width=".7"/><path d="M14.8 20.4v13M11.6 24.4h6.4" stroke="${c2}" stroke-width="1"/>`;
+ case'oval':return`<ellipse cx="14.6" cy="26.2" rx="4.4" ry="7.4" fill="${c1}" stroke="${c2}" stroke-width=".7"/><ellipse cx="14.6" cy="26.2" rx="1.3" ry="2" fill="${c2}"/>`;
+ case'parmula':return`<rect x="11.6" y="22" width="6.4" height="7.4" rx="1" fill="${c1}" stroke="${c2}" stroke-width=".7"/><circle cx="14.8" cy="25.7" r="1.1" fill="${c2}"/>`;
+ case'chimalli':return`<circle cx="14.6" cy="25.4" r="5.6" fill="${c1}" stroke="${c2}" stroke-width=".9"/><circle cx="14.6" cy="25.4" r="2.6" fill="none" stroke="${c2}" stroke-width=".7"/><path d="M11 30.4l-.6 3.6M13 31.2l-.2 3.8M15 31.4v3.8M17 31l.4 3.6" stroke="#4cc38a" stroke-width=".9"/>`;
+}return''}
+function armorArt(L,x,w,sk){const a=L.ar||[];const t=a[0],c=a[1]||L.tu,c2=a[2]||GOLD;const dk=shd(c,-.32);switch(t){
+ case'musc':return`<rect x="${x+.5}" y="18.8" width="${w-1}" height="10.4" rx="3" fill="${c}"/><path d="M${x+1.6} 22.2q${w/4-.4} 1.8 ${w/2-1.6} 0q${w/4-.4} 1.8 ${w/2-1.6} 0M${x+w/2} 23.4v4" stroke="${dk}" stroke-width=".5" fill="none"/>`;
+ case'seg':return`<rect x="${x+.4}" y="18.8" width="${w-.8}" height="10.8" rx="2.6" fill="${c}"/>${[21.2,23.6,26,28.2].map(y=>`<path d="M${x+.6} ${y}h${w-1.2}" stroke="${dk}" stroke-width=".55"/>`).join('')}<path d="M${x+w/2} 18.8v2.4" stroke="${dk}" stroke-width=".5"/>`;
+ case'chain':{let s=`<rect x="${x+.3}" y="18.7" width="${w-.6}" height="11.4" rx="2.8" fill="${c}"/>`;for(let yy=20;yy<29.5;yy+=1.6)for(let xx=x+1.2;xx<x+w-.6;xx+=1.6)s+=`<circle cx="${xx.toFixed(1)}" cy="${yy.toFixed(1)}" r=".33" fill="${dk}"/>`;return s}
+ case'plate':return`<rect x="${x+.3}" y="18.7" width="${w-.6}" height="11.6" rx="3" fill="${c}"/><rect x="${x+1.2}" y="19.6" width="1.6" height="8" rx=".8" fill="${shd(c,.35)}"/><path d="M${x+.4} 25h${w-.8}" stroke="${dk}" stroke-width=".5"/>`;
+ case'leather':return`<rect x="${x+.6}" y="19.2" width="${w-1.2}" height="9.8" rx="2.6" fill="${c}"/><path d="M${x+1} 19.6L${x+w-1} 28.6" stroke="${shd(c,-.35)}" stroke-width="1"/>`;
+ case'lamellar':{let s=`<rect x="${x+.3}" y="18.7" width="${w-.6}" height="11.2" rx="2.6" fill="${c}"/>`;for(let yy=20.4;yy<29.5;yy+=1.8)s+=`<path d="M${x+.5} ${yy.toFixed(1)}h${w-1}" stroke="${shd(c,.3)}" stroke-width=".45" stroke-dasharray="1.2 .5"/>`;return s+`<path d="M${x+.5} 20.2h${w-1}" stroke="${c2}" stroke-width=".7"/>`}
+ case'linen':case'dress':return`<rect x="${x+.4}" y="18.8" width="${w-.8}" height="10.8" rx="2.8" fill="${c}"/><rect x="${x+.4}" y="24.2" width="${w-.8}" height="1.3" fill="${c2}"/><path d="M${x+1.4} 19.4v3.4M${x+w-1.4} 19.4v3.4" stroke="${shd(c,-.18)}" stroke-width=".5"/>`;
+ case'robe':return`<path d="M${x+w/2-2.4} 18.6l2.4 4.2 2.4-4.2" stroke="${c}" stroke-width="1.2" fill="none"/>`;
+ case'kimono':case'gi':return`<path d="M${x+w-2.4} 18.6L${x+2} 28.6" stroke="${c}" stroke-width="1.4"/><path d="M${x+2.2} 18.6L${x+w/2+.6} 23.4" stroke="${shd(L.tu,-.2)}" stroke-width="1"/>`;
+ case'haori':return`<rect x="${x-.4}" y="18.6" width="3" height="12.6" rx="1.2" fill="${c}"/><rect x="${x+w-2.6}" y="18.6" width="3" height="12.6" rx="1.2" fill="${c}"/>`;
+ case'toga':return`<path d="M${x+w-1} 18.6L${x+.4} 29.2L${x+.4} 32H${x+3}L${x+w} 21Z" fill="${c}"/><path d="M${x+w-1} 18.6L${x+.4} 29.2" stroke="${c2}" stroke-width=".9"/>`;
+ case'coat':return`<rect x="${x+w/2-1.8}" y="18.6" width="3.6" height="10.8" fill="${c2}"/><path d="M${x+w/2-1.8} 18.6l-1.2 4 1.2 1.2M${x+w/2+1.8} 18.6l1.2 4-1.2 1.2" stroke="${shd(c,-.2)}" stroke-width=".7" fill="none"/>${[21,23.4,25.8].map(y=>`<circle cx="${x+w/2+2.6}" cy="${y}" r=".4" fill="${GOLD}"/>`).join('')}<path d="M${x} 29.6h${w}l-.4 6.4h-${w-.8}Z" fill="${c}"/>`;
+ case'tabard':return`<rect x="${x+1}" y="18.8" width="${w-2}" height="13" rx="1" fill="${c}"/><path d="M${x+w/2} 20.4v7M${x+w/2-2.6} 23h5.2" stroke="${c2}" stroke-width="1"/>`;
+ case'bare':return`<path d="M${x+1.6} 22.4q${w/4-.4} 1.6 ${w/2-1.6} 0q${w/4-.4} 1.6 ${w/2-1.6} 0" stroke="${shd(sk,-.25)}" stroke-width=".5" fill="none"/>`;
+ case'tank':return`<rect x="${x+.6}" y="18.6" width="${w-1.2}" height="11" rx="2.6" fill="${L.tu}"/>`;
+ case'poncho':return`<path d="M${x-1.4} 18.8H${x+w+1.4}L${x+w+2.4} 29.6H${x-2.4}Z" fill="${c}"/><path d="M${x-1.8} 25.4H${x+w+1.8}" stroke="${c2}" stroke-width="1.2" stroke-dasharray="1.2 .8"/><path d="M${x-2.1} 27.6H${x+w+2.1}" stroke="${c2}" stroke-width=".6"/>`;
+ case'unku':{let s=`<rect x="${x+.2}" y="18.6" width="${w-.4}" height="13" rx="2.6" fill="${c}"/>`;for(let i=0;i<4;i++)for(let j=0;j<2;j++)s+=`<rect x="${(x+1+i*2.1).toFixed(1)}" y="${22+j*1.6}" width="1.5" height="1.3" fill="${(i+j)%2?c2:'#1a1a1a'}"/>`;return s}
+ case'deel':return`<path d="M${x+w/2+.4} 18.6Q${x+w-1} 22 ${x+w-.6} 27.2" stroke="${c2}" stroke-width="1.3" fill="none"/><rect x="${x}" y="27.6" width="${w}" height="1.8" fill="${c2}"/>`;
+ case'jaguarsuit':return[[2,21],[5,20.2],[7.6,22],[3.4,24.6],[6.4,25.6],[2,27.6],[7.4,28]].map(([a,b])=>`<circle cx="${(x+a).toFixed(1)}" cy="${b}" r=".75" fill="${c2}"/>`).join('');
+}return''}
+function skirtArt(L,x,w){if(!L.skirt)return'';const[t,c]=L.skirt;switch(t){
+ case'pteruges':{let s='';const n=Math.floor(w/2);for(let i=0;i<n;i++)s+=`<rect x="${(x+.3+i*2).toFixed(1)}" y="30.2" width="1.7" height="4.8" rx=".5" fill="${c}"/>`;return s}
+ case'kilt':return`<path d="M${x} 29.8H${x+w}l.9 5.2H${x-.9}Z" fill="${c}"/>`;
+ case'long':return`<path d="M${x} 28.4H${x+w}l2.6 15.2H${x-2.6}Z" fill="${c}"/><path d="M${x+w/2} 30v13" stroke="${shd(c,-.15)}" stroke-width=".4"/>`;
+ case'hakama':return`<path d="M${x-.2} 29.4H${x+w+.2}l1.4 13H${x-1.6}Z" fill="${c}"/><path d="M${x+w/2} 31v11" stroke="${shd(c,-.25)}" stroke-width=".4"/>`;
+ case'mawashi':return`<rect x="${x-.2}" y="28" width="${w+.4}" height="3.8" rx="1" fill="${c}"/><path d="M${x+w-2} 31.6v3.4" stroke="${c}" stroke-width="1.6"/>`;
+}return''}
+/* cabeza anime: ojos grandes con brillo, mechones, rubor. Se dibuja a escala normal y se agranda 1,25× desde el cuello */
+function eyeArt(L){const ir=L.eye||'#2b1a12';return`<ellipse cx="22.8" cy="11.55" rx="1.12" ry="1.55" fill="${ir}"/><ellipse cx="22.8" cy="12.2" rx=".8" ry=".7" fill="${shd(ir,.25)}"/><circle cx="23.2" cy="10.9" r=".46" fill="#fff"/><circle cx="22.5" cy="12.3" r=".22" fill="#fff" opacity=".85"/><path d="M21.45 10.05Q22.8 9.3 24.3 9.9" stroke="#1a1010" stroke-width=".65" fill="none" stroke-linecap="round"/>`}
+function hairBack(h){if(!h)return'';const[s,c]=h;switch(s){
+ case'long':return`<path d="M14.6 9.4Q12.6 15.6 13.8 21.4L15.6 20 16.4 21.8 18.4 20.6Q17.2 15.4 18.4 10Z" fill="${c}"/>`;
+ case'pony':return`<path d="M15.2 8.8Q10.6 9.4 10.4 15.4L11.8 14.4 11.6 17.6 13 16.2 13.6 19.4Q14.2 13.8 16 11.6Z" fill="${c}"/><circle cx="15.2" cy="9.6" r=".8" fill="#c0392b"/>`;
+ case'braid':return[12,14.6,17.2,19.8].map(y=>`<ellipse cx="15.2" cy="${y}" rx="1.4" ry="1.5" fill="${c}"/>`).join('');
+ case'bob':return`<path d="M14 15.6Q13.4 8 16 7Q15.6 12 17.6 16.2Z" fill="${c}"/>`;
+ case'curly':return`<circle cx="15.6" cy="13.8" r="1.8" fill="${c}"/>`;
+}return''}
+function hairTop(h){if(!h)return'';const[s,c]=h;if(s==='bald')return'';
+ const bangs=`<path d="M21.2 7.2L22.6 10.4 22.4 7.4ZM23 7.6L25 10 24.2 7.6ZM19.4 7.4L20.4 10 20.8 7.4Z" fill="${c}"/>`;
+ const base=`<path d="M14.6 12.6Q13.8 5.8 20 5.6Q25 5.6 25.6 9.4Q22.8 7.6 19.8 8.6Q18.4 10.2 17.8 13.6Q15.4 14.8 14.6 12.6Z" fill="${c}"/><path d="M14.8 11.6L13.6 14.6 15.6 13.2ZM15.4 8L13.4 8.6 15 9.8Z" fill="${c}"/>${bangs}<path d="M18.2 10.4Q18.4 13.2 19.2 14.4L18.2 14.2Z" fill="${c}"/>`;
+ switch(s){
+  case'curly':return base+[[15.4,8.8],[17.2,6.6],[19.8,5.6],[22.6,5.8],[24.6,7.4],[14.8,11.4]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.7" fill="${c}"/>`).join('');
+  case'topknot':return base+`<ellipse cx="18.4" cy="5.2" rx="1.7" ry="1.2" fill="${c}"/><rect x="17.6" y="5.6" width="1.6" height="1" fill="${c}"/>`;
+  case'bob':return`<path d="M14.2 13Q13.6 5.4 20 5.2Q25.6 5.4 26 9.8L25 9.4 24.6 10.6 23.6 9 22.8 10.4 22.2 8.8Q19.6 9.6 18.8 13.4Z" fill="${c}"/>`;
+  default:return base;
+ }}
+function beardArt(b){if(!b)return'';const[s,c]=b;switch(s){
+ case'full':return`<path d="M18.8 13.2Q19 17.8 22.6 17.8Q25.6 17.4 25.6 14.2Q23.6 15.4 21.4 14.8Q20 14.2 18.8 13.2Z" fill="${c}"/>`;
+ case'long':return`<path d="M18.8 13.2Q18.6 20.6 22.2 21.4Q25.6 19.6 25.6 14.2Q23.6 15.4 21.4 14.8Q20 14.2 18.8 13.2Z" fill="${c}"/>`;
+ case'stache':return`<path d="M22 14Q23.8 13 25.8 14Q24.6 15 22 14.6Z" fill="${c}"/>`;
+ case'fu':return`<path d="M22 14Q23.8 13 25.8 14Q24.6 15 22 14.6Z" fill="${c}"/><path d="M22.4 14.4Q21.8 16.4 22.4 18M25.2 14.6Q25.6 16.6 25 18" stroke="${c}" stroke-width=".6" fill="none"/>`;
+ case'goatee':return`<path d="M22.6 14Q24 13.2 25.6 14Q24.6 14.8 22.6 14.4ZM23.6 15.4Q24.2 17.6 25 15.6Z" fill="${c}"/>`;
+ case'short':return`<path d="M19 13.4Q19.6 17 22.6 17.2Q25.4 16.8 25.6 14.4Q23 15.6 19 13.4Z" fill="${c}" opacity=".5"/>`;
+}return''}
+function gearArt(g,c1,c2,sk,L){const E=eyeArt(L||{});switch(g){
+ case'headband':return`<path d="M14.7 9.4Q20 7.4 25.4 8.8l-.1 1.5Q20 9 14.8 11Z" fill="${c1}"/><path d="M15 10.2q-3 .4-4.6 2.6 2.6-.6 4.6-1.2M15 10.6q-2.4 1.6-3 4 2-1.8 3.2-3" fill="${c1}"/>`;
+ case'trarilonco':return`<path d="M14.6 9.6Q20 8 25.4 9.2l-.1 1.3Q20 9.4 14.7 11Z" fill="${c1}"/><circle cx="21.6" cy="9.4" r=".55" fill="#e8e2d0"/><circle cx="18.4" cy="9.8" r=".55" fill="#e8e2d0"/>`;
+ case'plume':return gearArt('headband',c2,c2,sk,L)+`<path d="M16.6 9.6Q14.8 4.6 16.2 1.6Q17.8 5.2 17.8 9.4Z" fill="${c1}"/><path d="M18.6 9.2Q18.4 4.4 20.4 2.2Q20.8 5.8 19.8 9.2Z" fill="${c1}"/>`;
+ case'galea':return`<path d="M14.3 12.4Q14.1 5.2 20 5Q25.8 5.2 25.7 9.6H24.7V9.4Q20 8.6 15.7 10.4V15.4H14.3Z" fill="${c1}"/><path d="M14.4 9.9Q20 8.6 25.6 9.6" stroke="${shd(c1,-.3)}" stroke-width=".6" fill="none"/><path d="M20.6 9.8H21.8L21.6 16H20.6Z" fill="${shd(c1,-.12)}"/><path d="M15 6.6Q19.8.2 25.2 5.8L23.8 6.9Q19.8 2.8 16.3 7.6Z" fill="${c2}"/>`;
+ case'galea_t':return`<path d="M14.3 12.4Q14.1 5.2 20 5Q25.8 5.2 25.7 9.6H24.7V9.4Q20 8.6 15.7 10.4V15.4H14.3Z" fill="${c1}"/><path d="M14.4 9.9Q20 8.6 25.6 9.6" stroke="${shd(c1,-.3)}" stroke-width=".6" fill="none"/><path d="M20.6 9.8H21.8L21.6 16H20.6Z" fill="${shd(c1,-.12)}"/><path d="M16.2 6.2Q19.8-3.4 23.8 6Z" fill="${c2}"/><path d="M17.4 5.8Q19.8-1 22.6 5.6" stroke="${shd(c2,-.25)}" stroke-width=".4" fill="none"/>`;
+ case'corinthian':return`<path d="M14.2 13.4Q13.8 5 20.2 4.8Q26.2 5 26.2 11.6V15L24.4 17.2 19.2 17.2 14.8 16.6Z" fill="${c1}"/><path d="M21.3 9.9H26V12.9H24.7V15.6H23.3V12.9H21.3Z" fill="${sk}"/>${E}<path d="M14.2 8.8Q15.6 1.2 21.6 1.8Q26.6 2.6 25.8 6.8Q21.4 3.8 17 7.2Q15.6 8.4 15.6 10.6Z" fill="${c2}"/><path d="M14.6 13.6Q16.6 12.6 18.4 13.8" stroke="${shd(c1,-.3)}" stroke-width=".5" fill="none"/>`;
+ case'fish':case'thraex':{const gr=[21.6,22.6,23.6,24.6].map(x=>`<path d="M${x} 9.4V13.8" stroke="${shd(c1,.3)}" stroke-width=".35"/>`).join('');const crest=g==='fish'?`<path d="M15.2 6.4Q18.6-1 25 4.6Q21 3.2 18.6 6.2Z" fill="${c2}"/>`:`<path d="M16 6.2Q16.4.4 21.6.6Q25.8 1 25.8 4.8Q23.4 2.6 20.8 3.6Q18.8 4.4 18.4 6.6Z" fill="${c2}"/>`;return`<path d="M14.2 14.8Q13.8 5.6 20 5.4Q26.4 5.6 26.4 12.2V15.4H14.2Z" fill="${c1}"/><path d="M12.8 14.6H27.2" stroke="${shd(c1,-.25)}" stroke-width="1.2"/><circle cx="23" cy="11.5" r="2.4" fill="#2a2f3a"/>${gr}${crest}`}
+ case'kabuto':return`<path d="M14.6 10.4Q14.8 4.4 20 4.2Q25.2 4.4 25.4 9.4L24.4 9.4Z" fill="${c1}"/><path d="M14.4 9.6H24.6L24.2 10.6 16.6 11.8 12.6 15.8 11.8 13.4Z" fill="${shd(c1,-.18)}"/><path d="M13.6 12.2 16.8 10.8M12.6 14 16.4 11.6" stroke="${c2}" stroke-width=".4"/><path d="M23.6 5.6Q25.2 1.2 28 .4Q26 2.8 24.8 6.4ZM22.4 5Q22.2.2 24.4-1.2Q23.6 2.4 23.6 5.6Z" fill="${c2}"/>`;
+ case'nasal':return`<path d="M14.6 10.6Q14.8 4.4 20 3.8Q25.2 4.4 25.4 9.6Z" fill="${c1}"/><path d="M14.6 9.6Q20 8.6 25.4 9.6V10.6Q20 9.6 14.6 11.2Z" fill="${shd(c1,-.22)}"/><rect x="24.4" y="9.6" width="1.1" height="3.8" rx=".4" fill="${c1}"/>`;
+ case'winged':return gearArt('nasal',c1,c2,sk,L)+`<path d="M16.4 7.6Q11.2 4.4 10.6-.6Q14.4 1.8 17.8 6.2Z" fill="${c2}"/><path d="M15.6 6.4Q12.6 3.8 12.4.8" stroke="${shd(c2,-.2)}" stroke-width=".4" fill="none"/>`;
+ case'pilos':return`<path d="M14.6 10Q15.6 2.4 20 1.2Q24.4 2.4 25.4 9.4Z" fill="${c1}"/><path d="M14.4 9.8Q20 8.6 25.6 9.4" stroke="${shd(c1,-.3)}" stroke-width=".9" fill="none"/><path d="M20 1.4Q17.6-1.6 14.6-.4Q17.6.6 19.6 2Z" fill="${c2}"/>`;
+ case'ninja':return`<circle cx="20" cy="11.6" r="5.6" fill="${c1}"/><rect x="20.8" y="9.8" width="5.4" height="3.2" rx="1.4" fill="${sk}"/>${E}<path d="M14.6 9.8 10.8 8.2 11.4 10.8 14.4 11.4ZM14.6 10.8 11.6 13.8 14.8 12.4Z" fill="${c1}"/>`;
+ case'helm_full':return`<rect x="14.1" y="5.2" width="12" height="12" rx="2.8" fill="${c1}"/><path d="M14.1 9.4H26.1" stroke="${shd(c1,-.22)}" stroke-width=".5"/><rect x="20.8" y="10.6" width="5.3" height="1.2" rx=".5" fill="#141414"/>${[22,23.4,24.8].map(x=>`<circle cx="${x}" cy="14" r=".35" fill="#141414"/>`).join('')}${c2?`<path d="M17 5.4Q15.6 1.4 19.4.6Q18 2.6 18.8 5.2Z" fill="${c2}"/>`:''}`;
+ case'jaguar':return`<path d="M13.6 15.4Q13 4.4 20 3.8Q26.8 4.2 26.8 9L28 9.6 25.8 10.2Q22.6 7.8 19.6 9.4L18 16.8Z" fill="${c1}"/>${[[16,7],[18.6,5.6],[21.6,5.4],[15,11],[16.4,14],[24.2,7]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r=".75" fill="${c2}"/>`).join('')}<path d="M25.6 10l.4 1.1.5-1.2M24 9.8l.4 1.1.5-1.2" fill="#fff"/><path d="M16.8 4.6l-.6-2.6 2.2 1.8Z" fill="${c1}"/>`;
+ case'tricorn':return`<path d="M12.8 9.2Q14 4 20 3.8Q26.2 4 27.6 8.6Q24 7.2 20.6 8Q16 7 12.8 9.2Z" fill="${c1}"/><path d="M13.2 9Q16.2 7.2 20.6 8.2Q24 7.4 27.4 8.6" stroke="${c2}" stroke-width=".6" fill="none"/>`;
+ case'musketeer':return`<ellipse cx="20" cy="8.2" rx="8.6" ry="1.7" fill="${c1}"/><path d="M15.6 8.2Q16 3.4 20.4 3.4Q24.2 3.4 24.4 8.2Z" fill="${c1}"/><path d="M16.2 5.6Q9.6 1.2 8.2 6.4Q12 4.4 16.6 7.4Z" fill="${c2}"/>`;
+ case'laurel':return`<path d="M15 10.8Q19.6 5.2 24.8 8.2" stroke="${shd(c1,-.3)}" stroke-width=".4" fill="none"/>${[[15.2,10.6,-60],[15.8,8.6,-35],[17.2,7,-15],[19,6.2,0],[21,6.1,10],[22.8,6.6,25],[24.4,7.8,45]].map(([x,y,r])=>`<ellipse cx="${x}" cy="${y}" rx="1.4" ry=".65" transform="rotate(${r} ${x} ${y})" fill="${c1}"/>`).join('')}`;
+ case'rostrata':return`<path d="M14.8 9.6Q20 6.6 25.2 8.4V9.6Q20 8.4 14.8 11Z" fill="${c1}"/>${[16.2,18.6,21,23.4].map((x,i)=>`<path d="M${x} ${(9.4-i*.5).toFixed(1)}l.9-2.2.9 2Z" fill="${c1}"/>`).join('')}`;
+ case'khepresh':return`<path d="M14.6 10.8Q13.6 3.6 17.4 2.2Q22.8 1 25.4 5.4Q26 7.8 25.4 9.4L24.6 9.6Z" fill="${c1}"/>${[[17,4.4],[19,3.6],[21.4,3.4],[23.4,4.4],[16.4,6.8],[18.6,6],[21,5.8],[23.4,6.8],[17.6,8.8],[20.2,8.2]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r=".38" fill="${c2}"/>`).join('')}<path d="M25 6.6q1.6-.4 1.4 1.6-.4-.8-1.2-.6Z" fill="${c2}"/>`;
+ case'furhat':return`<path d="M14.6 10Q14.6 3.4 20 3.2Q25.4 3.4 25.4 9.4Z" fill="${c1}"/><rect x="13.8" y="7.8" width="12.4" height="2.6" rx="1.3" fill="${c2}"/>`;
+ case'furcone':return`<path d="M14.8 10Q15.6 4.2 20 1.6Q24.4 4.2 25.2 9.4Z" fill="${c1}"/><rect x="13.8" y="7.8" width="12.4" height="2.6" rx="1.3" fill="${c2}"/><circle cx="20" cy="1.6" r=".8" fill="#c0392b"/>`;
+ case'boeotian':return`<path d="M14.4 11.6Q14.2 4.6 19.6 4.4Q24.2 4.2 25.4 7.4Q23.6 7 22.6 8Q25.2 8.4 25.8 9.8L24.2 9.8Q20 9.2 15.6 11.6Z" fill="${c1}"/><path d="M16.8 5.2Q12.6-1.2 11-.8Q13.6 2.6 15.8 6.4Z" fill="${c2}"/><path d="M20.4 4.6Q21.2-2 24.2-.8Q22 1.8 21.8 4.8Z" fill="${c2}"/>`;
+ case'lion':return`<path d="M12.6 18.6Q11.6 8 15 5.6L16.8 12 16.4 19.4Z" fill="${c2}"/><path d="M13.6 14Q13 4 20 3.6Q26.6 3.8 26.6 8.6L24.4 9Q20.4 7.2 16.8 10.2L16.4 16.6 13.2 17Z" fill="${c1}"/><ellipse cx="24" cy="7" rx="2.8" ry="1.6" fill="${shd(c1,-.12)}"/><circle cx="25.8" cy="6.6" r=".5" fill="#2a1a10"/><path d="M16.2 4.2l-.4-2.2 1.9 1.4Z" fill="${c1}"/><path d="M24.2 8.6l.4.9.5-.9M22.8 8.6l.4.9.5-.9" fill="#fff"/>`;
+ case'mascapaycha':return`<path d="M14.7 9.2Q20 7.4 25.3 8.6v1.4Q20 9 14.8 10.8Z" fill="${c2}"/><rect x="23.8" y="8.4" width="2.4" height="1.6" fill="${c1}"/>${[24,24.7,25.4,26.1].map(x=>`<path d="M${x} 10v.7" stroke="${c1}" stroke-width=".5"/>`).join('')}<path d="M19.4 8.4 18.8 2.4 20.6 8.2Z" fill="#f4f4f4"/><path d="M20.4 8.4l1.4-5.4.4 5.4Z" fill="#1a1a1a"/>`;
+ case'bicorne':return`<path d="M11.4 9.2Q20-2.4 28.8 9.2Q20 6.8 11.4 9.2Z" fill="${c1}"/><path d="M11.8 9Q20 7 28.4 9" stroke="${c2}" stroke-width=".5" fill="none"/><circle cx="21.6" cy="5" r="1.1" fill="#2a4bd0"/><circle cx="21.6" cy="5" r=".65" fill="#f4f4f4"/><circle cx="21.6" cy="5" r=".3" fill="#d0312d"/>`;
+ case'diadem':return`<path d="M14.6 9.2Q20 7.6 25.4 8.6v1.1Q20 8.8 14.6 10.4Z" fill="${c1}"/><path d="M25 8q1.4-1.4 1.6.2-.6 1.2-1.4.8Z" fill="${c1}"/><circle cx="20" cy="8.5" r=".5" fill="#2a7bd5"/>`;
+}return''}
+function bullHead(L){const h=L.hcol||'#6b4423';return`<rect x="18.6" y="15" width="2.8" height="4" fill="${h}"/><ellipse cx="20.4" cy="11.4" rx="5.4" ry="5" fill="${h}"/><ellipse cx="24.8" cy="13.6" rx="3.1" ry="2.5" fill="${shd(h,.3)}"/><circle cx="26.2" cy="13.2" r=".45" fill="#2a1a10"/><circle cx="24.6" cy="13.4" r=".45" fill="#2a1a10"/><path d="M25.6 15.2a1.3 1.3 0 1 1-1.9.2" stroke="${GOLD}" stroke-width=".55" fill="none"/><path d="M17.8 7.6Q14.8 3 17.6.8Q16.8 3.8 19.6 6.6ZM21.6 6.8Q22.8 1.8 26.6 1.6Q23.6 3.6 23.4 7.4Z" fill="#efe6d2"/><ellipse cx="17" cy="10.4" rx="1.8" ry="1" fill="${shd(h,-.2)}" transform="rotate(-20 17 10.4)"/><ellipse cx="22.4" cy="10.4" rx=".85" ry="1.1" fill="#111"/><circle cx="22.7" cy="10" r=".3" fill="#fff"/><path d="M21.4 9l2.2-.5" stroke="#111" stroke-width=".55"/>`}
+function headArt(L){
+ if(L.head==='bull')return bullHead(L);
+ const sk=L.sk||'#e0ac7e';const hd=L.hd||[];
+ const full=['corinthian','ninja','helm_full','fish','thraex'].includes(hd[0]);
+ let s=hairBack(L.hair)+`<rect x="18.7" y="14.6" width="2.8" height="4.4" fill="${sk}"/><circle cx="20" cy="11.6" r="5.3" fill="${sk}"/><ellipse cx="18.4" cy="12.2" rx=".95" ry="1.25" fill="${shd(sk,-.15)}"/>`;
+ if((L.acc||[]).includes('earspool'))s+=`<circle cx="18.4" cy="12.6" r=".9" fill="${GOLD}"/>`;
+ if(!full)s+=`<path d="M25.1 11.8q.9.8.1 1.4" fill="${sk}" stroke="${shd(sk,-.25)}" stroke-width=".3"/>${eyeArt(L)}<ellipse cx="23.6" cy="13.7" rx="1" ry=".45" fill="#ff7a7a" opacity=".35"/><path d="M23.3 14.8q.6.3 1.2 0" stroke="${shd(sk,-.45)}" stroke-width=".4" fill="none" stroke-linecap="round"/>`;
+ s+=beardArt(L.beard);
+ if(L.hair&&!full)s+=hairTop(L.hair);
+ if((L.acc||[]).includes('paint'))s+=`<path d="M21.6 12.8l2.6-.4" stroke="#2a5bd6" stroke-width=".5"/>`;
+ if(hd[0])s+=gearArt(hd[0],hd[1],hd[2],sk,L);
+ return`<g transform="translate(20 18) scale(1.25) translate(-20 -18)">${s}</g>`;
+}
+function accArt(L){let s='';for(const a of L.acc||[]){
+ if(a==='torc')s+=`<path d="M17.6 18.6Q20.4 20.4 23.2 18.4" stroke="${GOLD}" stroke-width=".9" fill="none"/>`;
+ if(a==='collar')s+=`<path d="M15.8 18.6Q20.2 24.2 24.6 18.6Z" fill="${GOLD}"/><path d="M17 19.4Q20.2 22.6 23.4 19.4" stroke="#2a7bd5" stroke-width=".7" fill="none"/>`;
+ if(a==='sash')s+=`<path d="M15.6 28.4h8.8l1.8 4.4-1.4.4-1.2-3.2h-8Z" fill="#e2b54a"/>`;
+ if(a==='phalerae')s+=[[18,22],[20.6,22],[19.3,24.6]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r=".75" fill="${GOLD}"/>`).join('');
+}return s}
+function projArt(act){switch(act){
+ case'bow':return`<g class="pj"><path d="M33 20.2h7" stroke="#7a4a22" stroke-width=".7"/><path d="M40.6 20.2l-1.6-.9v1.8Z" fill="${STEEL}"/><path d="M33 20.2l-.8-.8M33 20.2l-.8.8" stroke="#c0392b" stroke-width=".5"/></g>`;
+ case'throw':return`<g class="pj"><g class="pjr" style="transform-origin:31px 20px"><path d="M31 17.6l.7 1.7 1.7.7-1.7.7-.7 1.7-.7-1.7-1.7-.7 1.7-.7Z" fill="#c9d0d8"/></g></g>`;
+ case'aim':return`<g class="pj"><path d="M48.4 20.2l2.6-1.2v2.4Z" fill="#ffb02e"/><circle cx="51.6" cy="19.6" r="1.8" fill="#d8dde4"/><circle cx="54" cy="18.6" r="1.3" fill="#c4cad2"/></g>`;
+}return''}
+function elephantArt(){const g='#9aa0a8',d='#7d838c';
+ const leg=(x,c,cls)=>`<g class="${cls}" style="transform-origin:${x+1.7}px 37px"><rect x="${x}" y="36" width="3.4" height="9.6" rx="1.4" fill="${c}"/><rect x="${x-.2}" y="44.4" width="3.8" height="1.4" rx=".6" fill="#e8e2d0"/></g>`;
+ return`<g class="el">${leg(-17.6,d,'e2')}${leg(-7.6,d,'e1')}<path d="M-20.2 31.4Q-23 33 -22.4 37" stroke="${d}" stroke-width=".9" fill="none"/><ellipse cx="-11.6" cy="33.4" rx="9.4" ry="6.8" fill="${g}"/><path d="M-17.6 26.8h9.4l.6 6.2h-10.6Z" fill="#6a2c8a"/><path d="M-17.6 33h10.6" stroke="${GOLD}" stroke-width=".8"/>${leg(-15.6,g,'e1')}${leg(-5.8,g,'e2')}<circle cx="-1.6" cy="29" r="5.2" fill="${g}"/><ellipse cx="-4" cy="29.8" rx="3" ry="4.2" fill="${d}"/><g class="tr" style="transform-origin:1.6px 31.4px"><path d="M1.2 30.2Q4.2 33 3.8 38.6Q3.6 41.6 5.4 41.4L5 42.8Q2 43.4 2.2 38.8Q2.4 34.6 .2 32.6Z" fill="${g}"/></g><path d="M1.6 32.8q2.4 1.4 3.2-.4" stroke="#f4efe2" stroke-width="1" fill="none" stroke-linecap="round"/><ellipse cx=".4" cy="27.8" rx=".7" ry=".9" fill="#111"/><circle cx=".6" cy="27.5" r=".25" fill="#fff"/></g>`;
+}
+function humanSVG(L){
+ const sk=L.sk||'#e0ac7e',tu=L.tu||'#8a2b2b',pa=L.pa||sk,bo=L.bo||'#5a3a22';
+ const at=(L.ar&&L.ar[0])||'none';const bulk=L.bulk?1.7:0,tx=15.2-bulk,tw=9.6+2*bulk;
+ const bareA=['bare','tank'].includes(at);
+ const fullArm=['plate','chain','lamellar'].includes(at);
+ const armC=fullArm?L.ar[1]:tu;const handC=at==='plate'?L.ar[1]:sk;
+ const cover=['wraps','firefist'];const acc=L.acc||[];
+ const arm=(sx,back,item,cls)=>{const f=back?(c=>shd(c,-.14)):(c=>c);
+  let s=`<rect x="${sx-1.55}" y="19.2" width="3.1" height="11" rx="1.55" fill="${f(sk)}"/>`;
+  if(!bareA)s+=`<rect x="${sx-1.65}" y="19" width="3.3" height="${fullArm?11.2:6.6}" rx="1.6" fill="${f(armC)}"/>`;
+  if(acc.includes('manica')&&!back)s+=`<rect x="${sx-1.7}" y="19.4" width="3.4" height="9" rx="1.5" fill="#c9ced6"/>${[21,23,25,27].map(y=>`<path d="M${sx-1.6} ${y}h3.2" stroke="#8a929c" stroke-width=".4"/>`).join('')}`;
+  if(acc.includes('epaul')&&!back)s+=`<rect x="${sx-2}" y="18.4" width="4" height="1.6" rx=".7" fill="${GOLD}"/>`;
+  const it=item?`<g class="${cls}"><g transform="translate(${sx} 30.4)${REST_ROT[item]?' rotate('+REST_ROT[item]+')':''}">${itemArt(item)}</g></g>`:'';
+  const hand=`<circle cx="${sx}" cy="30.4" r="1.75" fill="${f(handC)}"/>`;
+  const ch=acc.includes('chains')?`<rect x="${sx-1.9}" y="27.9" width="3.8" height="1.1" rx=".4" fill="#8a929c"/><path d="M${sx+1} 29.1l.5 1.4M${sx+1.5} 30.5l-.4 1.2" stroke="#8a929c" stroke-width=".5"/>`:'';
+  return cover.includes(item)?s+hand+ch+it:s+it+hand+ch;
+ };
+ const leg=(x,c,b,cls)=>`<g class="${cls}"><rect x="${x}" y="30.4" width="3.7" height="12.8" rx="1.6" fill="${c}"/><rect x="${x-.3}" y="42.4" width="5.6" height="3.3" rx="1.3" fill="${b}"/></g>`;
+ const o=[`<ellipse class="shadow" cx="20" cy="46.5" rx="${8+bulk}" ry="1.5"/>`];
+ if(L.extra==='elephant')o.push(elephantArt());
+ o.push('<g class="wh">');
+ if(L.cape)o.push(`<g class="cp"><path d="M16 19h8.4l2.8 17q-6.9 2.4-13.8 0Z" fill="${L.cape}"/></g>`);
+ o.push(`<g class="ab">${arm(17.4,true,L.it2,'it2')}</g>`);
+ o.push(leg(17.6,shd(pa,-.15),shd(bo,-.15),'lb'),leg(19.4,pa,bo,'lf'));
+ o.push(`<g class="bd"><rect x="${tx}" y="18.4" width="${tw}" height="13.6" rx="3.4" fill="${at==='bare'?sk:tu}"/>${armorArt(L,tx,tw,sk)}${L.belt?`<rect x="${tx}" y="28.6" width="${tw}" height="1.8" fill="${L.belt}"/>`:''}${skirtArt(L,tx,tw)}${accArt(L)}</g>`);
+ if(L.sh)o.push(`<g class="sh">${shieldArt(L.sh[0],L.sh[1],L.sh[2],L)}</g>`);
+ o.push(`<g class="hd">${headArt(L)}</g>`);
+ o.push(`<g class="af">${arm(22.6,false,L.it,'it')}</g>`);
+ o.push(projArt(L.act));
+ o.push('</g>');
+ return o.join('');
+}
+function dragonSVG(c1,c2){const d=shd(c1,-.25),l=shd(c1,.18);
+ return`<ellipse class="shadow" cx="20" cy="46.4" rx="11" ry="1.6"/><g class="wh">
+ <g class="tl" style="transform-origin:12px 35px"><path d="M12.6 34.4Q5 36.6 3.4 31.6 2.6 28.4 5.4 27.8 4.8 30.8 7.4 32.2 9.6 33 12.4 31.4Z" fill="${c1}"/><path d="M3.4 27.8l-1.8-2.6 3.4.6Z" fill="${c2}"/></g>
+ <g class="wg" style="transform-origin:19px 29px"><path d="M17.6 29Q11.4 19 15.6 11.4Q17.6 17 21.6 18.6Q22 24 20.6 29Z" fill="${d}"/></g>
+ <g class="q2" style="transform-origin:14px 37px"><rect x="12.6" y="36" width="3.2" height="9" rx="1.5" fill="${d}"/></g>
+ <g class="q4" style="transform-origin:24px 37px"><rect x="22.6" y="36" width="3.2" height="9" rx="1.5" fill="${d}"/></g>
+ <ellipse cx="19" cy="35" rx="8.6" ry="6.2" fill="${c1}"/><ellipse cx="20" cy="37.6" rx="6.4" ry="3.2" fill="${c2}"/>
+ <path d="M12 30.4l1.4-2.4 1 2.4ZM15.4 29.2l1.4-2.6 1 2.6ZM19 28.8l1.4-2.6 1 2.6Z" fill="${c2}"/>
+ <g class="q1" style="transform-origin:15px 38px"><rect x="13.4" y="37" width="3.4" height="8.6" rx="1.6" fill="${c1}"/></g>
+ <g class="q3" style="transform-origin:25px 38px"><rect x="23.4" y="37" width="3.4" height="8.6" rx="1.6" fill="${c1}"/></g>
+ <g class="hc" style="transform-origin:25px 31px"><path d="M23.4 32Q25.6 25 28.6 21.6l3 2.2Q28.8 27.6 27.6 33.4Z" fill="${c1}"/><ellipse cx="31" cy="21" rx="4.8" ry="3.8" fill="${c1}"/><ellipse cx="34.8" cy="22.6" rx="2.6" ry="1.9" fill="${l}"/><path d="M28.4 18.4l-2.6-3.8 3.8 2.6ZM30.6 17.8l-1-4.2 2.6 3.4Z" fill="${c2}"/><ellipse cx="31.6" cy="20.4" rx="1.05" ry="1.35" fill="#111"/><circle cx="31.9" cy="19.9" r=".4" fill="#fff"/><circle cx="36.4" cy="22" r=".35" fill="#111"/>
+  <g class="pj" style="transform-origin:37px 22.6px"><path d="M36.8 22.6Q41 19.6 46.4 21.8Q42.6 22.6 46.6 24.8Q41.4 25.8 36.8 23.4Z" fill="#ffb02e"/><path d="M37 22.8Q40 21.6 43 22.6Q40.4 23.4 37 23.2Z" fill="#fff1a8"/></g></g>
+ <g class="wg" style="transform-origin:20px 29px"><path d="M18.6 29.4Q12.6 17 19.6 9Q20.4 15.6 26.6 17.6Q24.8 23.6 23 29.4Z" fill="${l}"/><path d="M19.6 9.6Q21.4 18 22.4 29" stroke="${d}" stroke-width=".5" fill="none"/></g></g>`;
+}
+function phoenixSVG(c1,c2){
+ return`<ellipse class="shadow" cx="20" cy="46.4" rx="6" ry="1.2"/><g class="wh"><g class="fly">
+ <g class="tl" style="transform-origin:14px 28px"><path d="M14.4 27.6Q6 30 1.4 38.4Q6.4 33.8 10.6 33Q5.6 37.4 4.6 43Q9.6 36 15.6 30.4Z" fill="${c2}"/><path d="M14.4 28.2Q8.6 31.4 6 36.6Q10 33 15 30Z" fill="${c1}"/></g>
+ <g class="wg" style="transform-origin:19px 25px"><path d="M18 25.4Q12 14.6 6.4 13.4Q10.4 18.4 9.4 20.4Q13 21 17.6 27Z" fill="${shd(c1,-.2)}"/></g>
+ <ellipse cx="20.4" cy="27" rx="6.4" ry="4.2" fill="${c1}"/><ellipse cx="21.6" cy="28.6" rx="4.2" ry="2.2" fill="${c2}"/>
+ <circle cx="27" cy="22.6" r="3.4" fill="${c1}"/><path d="M30 22.2l2.8.9-2.6 1.2Z" fill="#ffd35a"/><ellipse cx="28" cy="22" rx=".8" ry="1.05" fill="#111"/><circle cx="28.25" cy="21.6" r=".3" fill="#fff"/>
+ <path d="M25.6 19.6Q24.6 15.4 27 14.2Q26.6 17 28.6 15Q28.2 17.8 29.6 17.4Q28.4 19.4 27.2 19.8Z" fill="${c2}"/>
+ <path d="M19.6 31l-.6 3.4M22 31l.4 3.4" stroke="#c9822a" stroke-width=".8"/>
+ <g class="wg" style="transform-origin:21px 25px"><path d="M20 25.6Q15.6 11.6 8.8 8.4Q14 14.8 12.8 17.2Q17 18.2 21.6 26.8Z" fill="${c1}"/><path d="M20.2 25Q16.6 15.4 11.6 11.4" stroke="${c2}" stroke-width=".6" fill="none"/></g>
+ <g class="pj" style="transform-origin:21px 26px"><circle cx="21" cy="26" r="11" fill="none" stroke="${c2}" stroke-width="1.2"/></g></g></g>`;
+}
+function kitsuneSVG(c1,c2){
+ const tails=[...Array(9)].map((_,i)=>{const a=-80+i*14;return`<g transform="rotate(${a})"><path d="M0 0Q-2.8-6 0-12.6Q2.8-6 0 0Z" fill="${c1}" stroke="${shd(c1,-.18)}" stroke-width=".3"/><path d="M0-9.8Q-1.1-11.2 0-12.6Q1.1-11.2 0-9.8Z" fill="${c2}"/></g>`}).join('');
+ return`<ellipse class="shadow" cx="20" cy="46.4" rx="10" ry="1.5"/><g class="wh">
+ <g class="tl" style="transform-origin:13px 35px"><g transform="translate(13 35)">${tails}</g></g>
+ <g class="q2" style="transform-origin:15px 38px"><rect x="14" y="37.4" width="2.2" height="8" rx="1" fill="${shd(c1,-.12)}"/></g>
+ <g class="q4" style="transform-origin:24px 38px"><rect x="23" y="37.4" width="2.2" height="8" rx="1" fill="${shd(c1,-.12)}"/></g>
+ <ellipse cx="19.6" cy="37" rx="7.4" ry="4.2" fill="${c1}"/>
+ <g class="q1" style="transform-origin:16px 39px"><rect x="15" y="38.4" width="2.3" height="7.6" rx="1" fill="${c1}"/><rect x="14.8" y="44.2" width="2.8" height="1.6" rx=".6" fill="${c2}"/></g>
+ <g class="q3" style="transform-origin:25px 39px"><rect x="24" y="38.4" width="2.3" height="7.6" rx="1" fill="${c1}"/><rect x="23.8" y="44.2" width="2.8" height="1.6" rx=".6" fill="${c2}"/></g>
+ <g class="hc" style="transform-origin:25px 34px"><path d="M23.4 35Q25.4 30 28 28.4L30 31Q28 33 27.4 37Z" fill="${c1}"/><ellipse cx="29.6" cy="29" rx="4" ry="3.3" fill="${c1}"/><path d="M31.6 29.2l4.4 1.2-4 1.4Z" fill="${c1}"/><circle cx="35.9" cy="30.4" r=".5" fill="#111"/><path d="M27 27l-.6-4.6 2.8 3.2ZM29.6 26.4l.8-4.6 1.4 4Z" fill="${c1}"/><path d="M27.3 26.4l-.3-2.4 1.4 1.6Z" fill="${c2}"/><ellipse cx="30.4" cy="28.6" rx=".8" ry="1" fill="#2a1a10"/><circle cx="30.6" cy="28.2" r=".3" fill="#fff"/><path d="M28.4 31.4q1.6 1 3.4.4" stroke="${c2}" stroke-width=".6" fill="none"/></g>
+ <g class="pj"><circle class="o1" cx="10" cy="24" r="1.8" fill="#6fd0ff"/><circle class="o2" cx="20" cy="20" r="1.6" fill="#9be3ff"/><circle class="o3" cx="30" cy="20" r="1.8" fill="#6fd0ff"/></g></g>`;
+}
+function krakenSVG(c1,c2){
+ const tent=[13,16,19,22,25,28].map((x,i)=>`<g class="tn" style="transform-origin:${x}px 31px;animation-delay:${(-i*.18).toFixed(2)}s"><path d="M${x-1.4} 30Q${x-2.4} 37 ${x+(i%2?1.6:-1.6)} 42.6Q${x+(i%2?3.4:.2)} 45.4 ${x+(i%2?4:-.4)} 43Q${x+(i%2?2.4:-.6)} 42.6 ${x+(i%2?2.6:.4)} 40Q${x+1.4} 35 ${x+1.4} 30Z" fill="${i%2?shd(c1,-.12):c1}"/></g>`).join('');
+ return`<ellipse class="shadow" cx="20" cy="46.4" rx="10" ry="1.6"/><g class="wh">${tent}
+ <path d="M11 30Q10 14.4 20.4 14Q30.6 14.4 29.6 30Q20 33.4 11 30Z" fill="${c1}"/><circle cx="14.6" cy="20.6" r="1.4" fill="${c2}" opacity=".7"/><circle cx="25.6" cy="18.4" r="1.1" fill="${c2}" opacity=".7"/><circle cx="17.6" cy="16.6" r=".9" fill="${c2}" opacity=".7"/>
+ <ellipse cx="17" cy="25" rx="2.4" ry="2.8" fill="#fff"/><ellipse cx="24" cy="25" rx="2.4" ry="2.8" fill="#fff"/><circle cx="17.8" cy="25.6" r="1.3" fill="#1a1030"/><circle cx="24.8" cy="25.6" r="1.3" fill="#1a1030"/><circle cx="18.2" cy="25.1" r=".45" fill="#fff"/><circle cx="25.2" cy="25.1" r=".45" fill="#fff"/><ellipse cx="14.6" cy="28" rx="1.2" ry=".5" fill="#ff8ab6" opacity=".5"/><ellipse cx="26.4" cy="28" rx="1.2" ry=".5" fill="#ff8ab6" opacity=".5"/>
+ <path d="M19.4 28.6q1.4 1 2.8 0" stroke="#1a1030" stroke-width=".6" fill="none"/></g>`;
+}
+function petClass(p){const L=p.look||{};return'pt'+(p.cr?' cr cr-'+p.cr:'')+(L.it2&&p.act==='swing'?' dual':'')+(L.extra?' ex-'+L.extra:'')}
+function petSVG(p,state){const L=p.look||{};let inner,vb='0 0 40 48';
+ if(p.cr==='dragon')inner=dragonSVG(L.c1,L.c2);else if(p.cr==='phoenix')inner=phoenixSVG(L.c1,L.c2);else if(p.cr==='kitsune')inner=kitsuneSVG(L.c1,L.c2);else if(p.cr==='kraken')inner=krakenSVG(L.c1,L.c2);
+ else{inner=humanSVG(Object.assign({act:p.act},L));if(L.extra==='elephant')vb='-23 0 63 48'}
+ return`<svg class="${petClass(p)} ${state||''}" viewBox="${vb}" aria-hidden="true">${inner}</svg>`;
+}
+
+/* ================= marcos ================= */
+function frameSVG(id){const P=(a,r)=>{const t=a*Math.PI/180;return[(60+r*Math.sin(t)).toFixed(2),(60-r*Math.cos(t)).toFixed(2)]};
+ const ring=(r,c,w,x='')=>`<circle cx="60" cy="60" r="${r}" fill="none" stroke="${c}" stroke-width="${w}" ${x}/>`;let s='';
+ switch(id){
+  case'mk_laurel':for(const sd of[-1,1])for(let k=0;k<10;k++){const a=180+sd*(22+k*14);const r=50+(k%2?2.6:-2.6);const[x,y]=P(a,r);s+=`<ellipse cx="${x}" cy="${y}" rx="6.4" ry="2.6" transform="rotate(${(a+(sd<0?-90:90)+(k%2?24:-24)).toFixed(1)} ${x} ${y})" fill="${k%2?'#5f9a3a':'#86c45a'}"/>`}s+=`<path d="M52 106l8 6 8-6-3 9-5-3-5 3Z" fill="#c0392b"/>`;break;
+  case'mk_hierro':s=ring(50,'#5d6570',9)+ring(54.6,'#3b4048',1.6)+ring(45.4,'#8a929c',1.2);for(let k=0;k<12;k++){const[x,y]=P(k*30,50);s+=`<circle cx="${x}" cy="${y}" r="2.3" fill="#c3c9d0" stroke="#3b4048" stroke-width=".6"/>`}break;
+  case'mk_bambu':s=ring(50,'#7fae4a',7)+ring(50,'#a6d36c',1.4);for(let k=0;k<16;k++){const[a,b]=P(k*22.5,45.6),[c,d]=P(k*22.5,54.4);s+=`<path d="M${a} ${b}L${c} ${d}" stroke="#3f6a22" stroke-width="2"/>`}for(const a of[40,140,220,320]){const[x,y]=P(a,57);s+=`<ellipse cx="${x}" cy="${y}" rx="6" ry="2" transform="rotate(${a-60} ${x} ${y})" fill="#5f9a3a"/>`}break;
+  case'mk_llamas':s=ring(49,'#ff7a1a',4);for(let k=0;k<16;k++)s+=`<g transform="rotate(${k*22.5} 60 60)"><path class="fl" style="animation-delay:${(-k*.13).toFixed(2)}s" d="M55.6 12.4Q54.4 4 60-2.4Q61.2 5 64.4 12.4Z" fill="#ff7a1a"/><path class="fl" style="animation-delay:${(-k*.17).toFixed(2)}s" d="M58 12.4Q57.8 7 60 3.4Q61 8 62 12.4Z" fill="#ffd35a"/></g>`;break;
+  case'mk_escarcha':s=ring(50,'#9fdcff',4)+ring(54,'#dff4ff',1);for(let k=0;k<8;k++)s+=`<g transform="rotate(${k*45+22.5} 60 60)"><path d="M60-2l3.2 9.6-3.2 4.4-3.2-4.4Z" fill="#dff4ff"/><path d="M60 12V-1" stroke="#9fdcff" stroke-width=".7"/></g>`;for(let k=0;k<8;k++){const[x,y]=P(k*45,50);s+=`<path class="tw" style="animation-delay:${(-k*.4).toFixed(1)}s" d="M${x} ${(+y-3).toFixed(1)}l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8Z" fill="#fff"/>`}break;
+  case'mk_egeo':s=ring(50,'#1f5fbf',9)+`<g class="rot">${ring(50,'#e9f6ff',2.4,'stroke-dasharray="7 6"')}</g>`+ring(55,'#7fb6ff',1.2)+ring(45,'#7fb6ff',1.2);break;
+  case'mk_runico':{const R=['M-2-3v6M-2-3l4 2M-2 0l4 2','M-2 3V-3l4 3-4 3','M0-3v6M-3-1l3 2 3-2','M-2-3l4 6M2-3l-4 6','M-2-3v6M2-3v6M-2 0h4','M0-3v6M0-3l3 2'];s=`<g class="rot">${ring(48,'#2a2140',8)}${ring(52.6,'#e7c46a',1.6)}${ring(43.4,'#e7c46a',1.6)}`;for(let k=0;k<12;k++){const[x,y]=P(k*30,48);s+=`<path transform="translate(${x} ${y}) rotate(${k*30})" d="${R[k%R.length]}" stroke="#e7c46a" stroke-width="1" fill="none" stroke-linecap="round"/>`}s+='</g>';break}
+  case'mk_coliseo':s=ring(49,'#d9c7a0',13)+ring(55.6,'#b8a37a',1.2)+ring(42.4,'#b8a37a',1.2);for(let k=0;k<18;k++)s+=`<g transform="rotate(${k*20} 60 60)"><path d="M57.6 15.6V12.2a2.4 2.4 0 0 1 4.8 0V15.6Z" fill="#5a4a32"/></g>`;break;
+  case'mk_faraon':s=ring(50,'#e2b54a',10)+ring(50,'#2346a8',10,'stroke-dasharray="5.24 5.24"')+ring(55.6,'#e2b54a',1.4)+ring(44.4,'#e2b54a',1.4)+`<circle cx="60" cy="8" r="4.2" fill="#e2463a"/><path d="M42 9q9-6 13.4-.6M78 9q-9-6-13.4-.6" stroke="#e2b54a" stroke-width="2.6" fill="none"/>`;break;
+  case'mk_prisma':s='<g class="rot">';for(let k=0;k<12;k++){const[a,b]=P(k*30,50),[c,d]=P(k*30+30.5,50);s+=`<path d="M${a} ${b}A50 50 0 0 1 ${c} ${d}" stroke="hsl(${k*30} 90% 64%)" stroke-width="7" fill="none"/>`}s+='</g>'+ring(55,'#ffffff',.8,'opacity=".6"');for(let k=0;k<6;k++){const[x,y]=P(k*60+15,57);s+=`<path class="tw" style="animation-delay:${(-k*.3).toFixed(1)}s" d="M${x} ${(+y-3.4).toFixed(1)}l.9 2.5 2.5.9-2.5.9-.9 2.5-.9-2.5-2.5-.9 2.5-.9Z" fill="#fff"/>`}break;
+  case'mk_eclipse':s=`<g class="pulse">`;for(let k=0;k<24;k++){const[a,b]=P(k*15,55),[c,d]=P(k*15,k%2?60:64);s+=`<path d="M${a} ${b}L${c} ${d}" stroke="#ffd36b" stroke-width="1.6" stroke-linecap="round"/>`}s+='</g>'+ring(50,'#140c24',9)+ring(55,'#ffd36b',1.8)+ring(45.6,'#ffd36b',.8,'opacity=".7"');break;
+ }
+ return`<svg class="frm" viewBox="-4 -4 128 128" aria-hidden="true">${s}</svg>`;
+}
+
+/* ================= cofres ================= */
+const CH_COL={raro:['#5a3b22','#4f8ef7','#a9cbff'],epico:['#36254f','#b583ff','#e2ccff'],legendario:['#4a2a14','#f5b83d','#ffe7a6'],mitico:['#1a1030','#ff5a8a','#ffd1e0']};
+function chestSVG(t,cls){const[w,m,l]=CH_COL[t];const gem=t==='legendario'||t==='mitico';
+ const rays=[...Array(12)].map((_,i)=>{const a=i*Math.PI/6;return`<path d="M50 42L${(50+64*Math.sin(a-.11)).toFixed(1)} ${(42-64*Math.cos(a-.11)).toFixed(1)}L${(50+64*Math.sin(a+.11)).toFixed(1)} ${(42-64*Math.cos(a+.11)).toFixed(1)}Z" fill="${l}" opacity=".32"/>`}).join('');
+ return`<svg class="chest ch-${t} ${cls||''}" viewBox="0 0 100 92" aria-hidden="true"><g class="rays" style="transform-origin:50px 42px">${rays}</g>
+ <ellipse cx="50" cy="86" rx="38" ry="4" fill="rgba(0,0,0,.35)"/><rect x="12" y="44" width="76" height="40" rx="5" fill="${w}"/><path d="M12 57h76M12 71h76" stroke="${shd(w,-.3)}" stroke-width="1.2"/>
+ <rect x="20" y="44" width="8" height="40" fill="${m}"/><rect x="72" y="44" width="8" height="40" fill="${m}"/><rect x="12" y="44" width="76" height="4" fill="${shd(m,-.2)}"/>
+ <g class="glow" opacity="0"><ellipse cx="50" cy="44" rx="34" ry="5" fill="${l}"/></g>
+ <g class="lid" style="transform-origin:12px 44px"><path d="M12 46V32Q50 8 88 32V46Z" fill="${shd(w,.12)}"/><path d="M20 46V27.6Q24 25.6 28 23.8V46ZM72 46V23.8Q76 25.6 80 27.6V46Z" fill="${m}"/><path d="M12 32Q50 8 88 32" stroke="${m}" stroke-width="2.4" fill="none"/>${gem?`<path d="M50 16l4.4 4.4-4.4 4.4-4.4-4.4Z" fill="${l}"/>`:''}</g>
+ <rect x="43" y="38" width="14" height="16" rx="2.4" fill="${m}"/><circle cx="50" cy="44.6" r="2" fill="${shd(w,-.45)}"/><path d="M48.9 45.6h2.2l.7 4.2h-3.6Z" fill="${shd(w,-.45)}"/>
+ ${t==='mitico'?'<path class="tw" d="M16 18l1 2.8 2.8 1-2.8 1-1 2.8-1-2.8-2.8-1 2.8-1Z" fill="#fff"/><path class="tw" style="animation-delay:-.6s" d="M86 10l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8Z" fill="#fff"/><path class="tw" style="animation-delay:-1.1s" d="M92 40l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8Z" fill="#fff"/>':''}</svg>`;
+}
+
+/* ================= fondos de página ================= */
+const svgUri=s=>`url("data:image/svg+xml,${encodeURIComponent(s)}")`;
+const ARAUCARIA=svgUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 170" preserveAspectRatio="xMidYMax slice"><path d="M0 120L40 80 70 100 110 60 150 95 190 55 240 100 280 70 330 105 370 75 400 95V170H0Z" fill="#1a3340"/><path d="M110 60l-10 10h20ZM190 55l-12 12h24ZM280 70l-10 10h20Z" fill="#cfe3ea"/>${[[40,40],[120,25],[205,45],[300,30],[372,50]].map(([x,t])=>`<g transform="translate(${x} ${t})"><rect x="-1.6" y="10" width="3.2" height="140" fill="#06100b"/><path d="M-34 18q34-16 68 0q-34-6-68 0ZM-26 6q26-12 52 0q-26-5-52 0ZM-16-4q16-8 32 0q-16-3-32 0ZM-30 30q30-12 60 0q-30-5-60 0Z" fill="#06100b"/></g>`).join('')}<path d="M0 150Q100 138 200 148T400 146V170H0Z" fill="#06100b"/></svg>`);
+const FIORDO=svgUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 170" preserveAspectRatio="xMidYMax slice"><path d="M0 110L60 40 110 90 170 30 230 95 300 35 360 85 400 60V170H0Z" fill="#2b4a66"/><path d="M60 40l-14 16h28ZM170 30l-16 18h32ZM300 35l-15 17h30Z" fill="#e8f2fa"/><path d="M0 130L50 95 120 135 200 90 270 140 340 100 400 130V170H0Z" fill="#132a40"/><rect y="148" width="400" height="22" fill="#0b1c2c"/><path d="M0 154h400M40 160h300" stroke="#3b6a8f" stroke-width="1" opacity=".5"/></svg>`);
+const TEMPLO=svgUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 170" preserveAspectRatio="xMidYMax slice"><circle cx="300" cy="90" r="40" fill="#ffb35a" opacity=".55"/><g fill="#1a0d12"><path d="M90 70L200 40 310 70Z"/><rect x="92" y="70" width="216" height="10"/>${[100,130,160,190,220,250,280].map(x=>`<rect x="${x+2}" y="82" width="12" height="62"/>`).join('')}<rect x="84" y="144" width="232" height="8"/><rect x="74" y="152" width="252" height="18"/><rect y="160" width="400" height="10"/></g></svg>`);
+const VOLCAN=svgUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 170" preserveAspectRatio="xMidYMax slice"><g fill="#6b6f78" opacity=".35"><circle cx="196" cy="30" r="14"/><circle cx="214" cy="18" r="12"/><circle cx="232" cy="8" r="10"/></g><path d="M60 170L180 52H220L340 170Z" fill="#1a0f12"/><path d="M180 52H220L212 62Q200 56 188 62Z" fill="#ff6a2a"/><path d="M196 60Q190 90 182 120M206 62Q214 96 226 130" stroke="#ff7a2a" stroke-width="2" fill="none" opacity=".8"/><path d="M0 150Q120 135 220 150T400 140V170H0Z" fill="#0d0708"/></svg>`);
+const DUNAS=svgUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 170" preserveAspectRatio="xMidYMax slice"><circle cx="110" cy="80" r="46" fill="#ffcf6b" opacity=".7"/><path d="M220 140L270 70 320 140ZM290 140L330 86 370 140Z" fill="#7a4a1c"/><path d="M270 70L320 140H290Z" fill="#5a3412"/><path d="M0 140Q90 115 180 138T400 128V170H0Z" fill="#a8702a"/><path d="M0 155Q120 140 240 156T400 150V170H0Z" fill="#7a5020"/></svg>`);
+const FONDO_BG={
+ arena:`radial-gradient(120% 60% at 50% 0%,rgba(255,170,80,.32),transparent 60%),radial-gradient(90% 40% at 50% 105%,rgba(190,120,60,.4),transparent 70%),linear-gradient(180deg,#22160c,#120c07)`,
+ bosque:`${ARAUCARIA} bottom center/100% auto no-repeat,radial-gradient(80% 50% at 70% 10%,rgba(120,200,255,.18),transparent 70%),linear-gradient(180deg,#0b1a26,#0e2230 55%,#0a1712)`,
+ dojo:`radial-gradient(40% 30% at 20% 20%,rgba(255,180,90,.25),transparent 70%),radial-gradient(40% 30% at 80% 22%,rgba(255,180,90,.22),transparent 70%),repeating-linear-gradient(90deg,#24160c 0 26px,#1a0f07 26px 28px),#1a0f07`,
+ fiordo:`${FIORDO} bottom center/100% auto no-repeat,linear-gradient(180deg,#0a1626,#132c48 60%,#0b1c2c)`,
+ dunas:`${DUNAS} bottom center/100% auto no-repeat,linear-gradient(180deg,#2a1608,#5a3412 60%,#7a5020)`,
+ templo:`${TEMPLO} bottom center/100% auto no-repeat,linear-gradient(180deg,#1a0a1e,#5a1e2a 50%,#b5532a 85%,#1a0d12)`,
+ volcan:`${VOLCAN} bottom center/100% auto no-repeat,radial-gradient(70% 40% at 50% 80%,rgba(255,90,30,.35),transparent 70%),linear-gradient(180deg,#120608,#2a0d0c 60%,#0d0708)`,
+ nebulosa:`radial-gradient(1.2px 1.2px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 70% 20%,#fff,transparent),radial-gradient(1.4px 1.4px at 40% 70%,#fff,transparent),radial-gradient(1px 1px at 85% 60%,#fff,transparent),radial-gradient(1.2px 1.2px at 10% 85%,#fff,transparent),radial-gradient(60% 40% at 25% 30%,rgba(255,90,170,.35),transparent 70%),radial-gradient(60% 45% at 75% 65%,rgba(90,140,255,.35),transparent 70%),radial-gradient(40% 30% at 60% 20%,rgba(150,90,255,.3),transparent 70%),#07051a`,
+ aurora:`linear-gradient(115deg,transparent 20%,rgba(62,207,142,.38) 35%,transparent 48%,rgba(150,90,255,.32) 62%,transparent 76%),radial-gradient(1px 1px at 15% 20%,#fff,transparent),radial-gradient(1px 1px at 60% 12%,#fff,transparent),radial-gradient(1px 1px at 85% 30%,#fff,transparent),linear-gradient(180deg,#040b16,#0a1a2a 70%,#06101a)`
+};
+
+/* ================= estilos del módulo ================= */
+(function(){const css=`
+.pt{overflow:visible;display:block}.pt g{transform-box:view-box}.pt .shadow{fill:rgba(0,0,0,.3)}
+.pt .lb{transform-origin:19.4px 31px}.pt .lf{transform-origin:21.2px 31px}.pt .ab{transform-origin:17.4px 20.2px}.pt .af{transform-origin:22.6px 20.2px}
+.pt .it{transform-origin:22.6px 30.4px}.pt .it2{transform-origin:17.4px 30.4px}.pt .wh{transform-origin:20px 46px}.pt .hd{transform-origin:20px 18px}.pt .cp{transform-origin:20px 19px}.pt .sh{transform-origin:15px 26px}
+.pt .pj{opacity:0}.pt.cr-phoenix .fly{transform-origin:20px 26px}
+@keyframes pk-leg{0%,100%{transform:rotate(24deg)}50%{transform:rotate(-24deg)}}
+@keyframes pk-arm{0%,100%{transform:rotate(-16deg)}50%{transform:rotate(16deg)}}
+@keyframes pk-bob{0%,50%,100%{transform:translateY(0)}25%,75%{transform:translateY(-.9px)}}
+@keyframes pk-br{0%,100%{transform:translateY(0)}50%{transform:translateY(-.6px)}}
+@keyframes pk-cape{0%,100%{transform:rotate(2deg)}50%{transform:rotate(9deg)}}
+@keyframes pk-hdb{0%,100%{transform:rotate(0)}50%{transform:rotate(-3deg)}}
+.pt.walk .lf{animation:pk-leg .64s ease-in-out infinite}.pt.walk .lb{animation:pk-leg .64s ease-in-out -.32s infinite}
+.pt.walk .af{animation:pk-arm .64s ease-in-out -.32s infinite}.pt.walk .ab{animation:pk-arm .64s ease-in-out infinite}
+.pt.walk .wh{animation:pk-bob .64s linear infinite}.pt.walk .cp{animation:pk-cape .64s ease-in-out infinite}
+.pt.idle .wh{animation:pk-br 2.6s ease-in-out infinite}.pt.idle .cp{animation:pk-cape 3s ease-in-out infinite}.pt.idle .hd{animation:pk-hdb 3.4s ease-in-out infinite}
+@keyframes pk-leg2{0%,100%{transform:rotate(40deg)}50%{transform:rotate(-40deg)}}
+@keyframes pk-arm2{0%,100%{transform:rotate(-46deg)}50%{transform:rotate(36deg)}}
+@keyframes pk-runb{0%,50%,100%{transform:translateY(0) rotate(7deg)}25%,75%{transform:translateY(-1.6px) rotate(7deg)}}
+.pt.act-run .lf{animation:pk-leg2 .38s linear infinite}.pt.act-run .lb{animation:pk-leg2 .38s linear -.19s infinite}
+.pt.act-run .af{animation:pk-arm2 .38s linear -.19s infinite}.pt.act-run .ab{animation:pk-arm2 .38s linear infinite}
+.pt.act-run .wh{animation:pk-runb .38s linear infinite}.pt.act-run .cp{animation:pk-cape .38s linear infinite}
+@keyframes pk-swA{0%,100%{transform:rotate(-10deg)}30%{transform:rotate(-200deg)}48%,62%{transform:rotate(-60deg)}}
+@keyframes pk-swI{0%,100%{transform:rotate(0)}30%{transform:rotate(20deg)}48%,62%{transform:rotate(150deg)}}
+@keyframes pk-guard{0%,100%{transform:rotate(-25deg)}50%{transform:rotate(-45deg)}}
+@keyframes pk-lunge{0%,100%{transform:none}48%,62%{transform:translateX(1.5px) rotate(4deg)}}
+.pt.act-swing .af{animation:pk-swA 1.1s cubic-bezier(.5,0,.3,1) infinite}.pt.act-swing .it{animation:pk-swI 1.1s cubic-bezier(.5,0,.3,1) infinite}
+.pt.act-swing .ab{animation:pk-guard 1.1s ease-in-out infinite}.pt.act-swing .wh{animation:pk-lunge 1.1s ease-in-out infinite}
+.pt.dual.act-swing .ab{animation:pk-swA 1.1s cubic-bezier(.5,0,.3,1) -.55s infinite}.pt.dual.act-swing .it2{animation:pk-swI 1.1s cubic-bezier(.5,0,.3,1) -.55s infinite}
+@keyframes pk-thA{0%,100%{transform:rotate(-25deg)}35%{transform:translateX(-1.5px) rotate(-70deg)}50%,64%{transform:translateX(3px) rotate(-92deg)}}
+@keyframes pk-thI{0%,100%{transform:rotate(0)}35%{transform:rotate(125deg)}50%,64%{transform:rotate(157deg)}}
+.pt.act-thrust .af{animation:pk-thA 1.2s ease-in-out infinite}.pt.act-thrust .it{animation:pk-thI 1.2s ease-in-out infinite}.pt.act-thrust .ab{animation:pk-guard 1.2s ease-in-out infinite}
+@keyframes pk-lift{0%,100%{transform:rotate(0)}40%,60%{transform:rotate(-172deg)}}
+.pt.act-lift .af,.pt.act-lift .ab{animation:pk-lift 1.5s ease-in-out infinite}
+@keyframes pk-push{0%,100%{transform:translate(-11px,0) rotate(64deg)}50%{transform:translate(-11px,0) rotate(72deg)}}
+@keyframes pk-pushA{0%,100%{transform:rotate(-64deg)}50%{transform:rotate(-58deg)}}
+.pt.act-pushup .wh{animation:pk-push 1.1s ease-in-out infinite}.pt.act-pushup .af,.pt.act-pushup .ab{animation:pk-pushA 1.1s ease-in-out infinite}
+@keyframes pk-spinI{to{transform:rotate(360deg)}}
+.pt.act-spin .af{transform:rotate(-70deg)}.pt.act-spin .it{animation:pk-spinI .5s linear infinite}.pt.act-spin .ab{transform:rotate(-30deg)}
+@keyframes pk-bowA{0%,100%{transform:rotate(-5deg)}25%,80%{transform:rotate(-90deg)}}
+@keyframes pk-bowI{0%,100%{transform:rotate(0)}25%,80%{transform:rotate(90deg)}}
+@keyframes pk-bowB{0%,100%{transform:rotate(5deg)}25%{transform:rotate(-88deg)}50%,58%{transform:translateX(-2.4px) rotate(-82deg)}62%,80%{transform:rotate(-88deg)}}
+@keyframes pk-arrow{0%,58%{opacity:0;transform:translateX(0)}60%{opacity:1;transform:translateX(0)}88%{opacity:1;transform:translateX(26px)}90%,100%{opacity:0;transform:translateX(26px)}}
+.pt.act-bow .af{animation:pk-bowA 1.8s ease-in-out infinite}.pt.act-bow .it{animation:pk-bowI 1.8s ease-in-out infinite}.pt.act-bow .ab{animation:pk-bowB 1.8s ease-in-out infinite}.pt.act-bow .pj{animation:pk-arrow 1.8s linear infinite}
+@keyframes pk-punA{0%,40%,100%{transform:rotate(-30deg)}15%{transform:rotate(-94deg)}}
+@keyframes pk-punB{0%,50%,100%{transform:rotate(-30deg)}65%{transform:rotate(-94deg)}}
+.pt.act-punch .af{animation:pk-punA .8s ease-out infinite}.pt.act-punch .ab{animation:pk-punB .8s ease-out infinite}.pt.act-punch .wh{animation:pk-bob .4s linear infinite}
+@keyframes pk-thrA{0%,100%{transform:rotate(-10deg)}35%{transform:rotate(-210deg)}50%{transform:rotate(-70deg)}}
+@keyframes pk-star{0%,48%{opacity:0;transform:translate(0,0)}50%{opacity:1;transform:translate(0,0)}85%{opacity:1;transform:translate(24px,2px)}86%,100%{opacity:0;transform:translate(24px,2px)}}
+.pt.act-throw .af{animation:pk-thrA 1.2s ease-in infinite}.pt.act-throw .pj{animation:pk-star 1.2s linear infinite}.pt.act-throw .pjr{animation:pk-spinI .25s linear infinite}
+@keyframes pk-jump{0%,100%{transform:translateY(0)}20%{transform:translateY(.8px)}45%{transform:translateY(-8px)}70%{transform:translateY(0)}}
+@keyframes pk-stompL{0%,100%{transform:rotate(0)}30%,42%{transform:rotate(-62deg)}52%{transform:rotate(0)}}
+@keyframes pk-stompW{0%,48%,100%{transform:translateY(0)}30%{transform:rotate(-6deg)}54%{transform:translateY(1px)}}
+.pt.act-stomp .lf{animation:pk-stompL 1.3s ease-in infinite}.pt.act-stomp .wh{animation:pk-stompW 1.3s ease-in infinite}.pt.act-stomp .af,.pt.act-stomp .ab{transform:rotate(-40deg)}
+@keyframes pk-flex{0%,100%{transform:rotate(-10deg)}30%,70%{transform:rotate(-140deg)}50%{transform:rotate(-128deg)}}
+.pt.act-flex .af,.pt.act-flex .ab{animation:pk-flex 1.6s ease-in-out infinite}.pt.act-flex .wh{animation:pk-br .8s ease-in-out infinite}
+@keyframes pk-sal{0%,100%{transform:rotate(-10deg)}20%,80%{transform:rotate(-158deg)}}
+@keyframes pk-salI{0%,100%{transform:rotate(0)}20%,80%{transform:rotate(158deg)}}
+.pt.act-salute .af{animation:pk-sal 2.4s ease-in-out infinite}.pt.act-salute .it{animation:pk-salI 2.4s ease-in-out infinite}.pt.act-salute .cp{animation:pk-cape 1.2s ease-in-out infinite}
+@keyframes pk-pt{0%,100%{transform:rotate(-10deg)}25%,75%{transform:rotate(-95deg)}}
+@keyframes pk-ptI{0%,100%{transform:rotate(0)}25%,75%{transform:rotate(185deg)}}
+.pt.act-point .af{animation:pk-pt 2.2s ease-in-out infinite}.pt.act-point .it{animation:pk-ptI 2.2s ease-in-out infinite}.pt.act-point .hd{animation:pk-hdb 1.1s ease-in-out infinite}
+@keyframes pk-rd{0%,100%{transform:rotate(-10deg)}25%,75%{transform:rotate(-55deg)}}
+@keyframes pk-rdH{0%,100%{transform:rotate(0)}40%,60%{transform:rotate(7deg)}}
+.pt.act-read .af{animation:pk-rd 2.6s ease-in-out infinite}.pt.act-read .hd{animation:pk-rdH 2.6s ease-in-out infinite}
+@keyframes pk-ban{0%,100%{transform:rotate(-10deg)}20%,80%{transform:rotate(-160deg)}}
+@keyframes pk-banI{0%,100%{transform:rotate(0)}20%,80%{transform:rotate(130deg)}40%{transform:rotate(118deg)}60%{transform:rotate(142deg)}}
+.pt.act-banner .af{animation:pk-ban 2.4s ease-in-out infinite}.pt.act-banner .it{animation:pk-banI 2.4s ease-in-out infinite}
+@keyframes pk-aim{0%,100%{transform:rotate(-10deg)}25%,80%{transform:rotate(-90deg)}}
+@keyframes pk-aimI{0%,100%{transform:rotate(0)}25%,80%{transform:rotate(155deg)}}
+@keyframes pk-smoke{0%,52%{opacity:0;transform:translateX(0)}55%{opacity:1}80%{opacity:0;transform:translateX(5px)}100%{opacity:0}}
+.pt.act-aim .af{animation:pk-aim 2.2s ease-in-out infinite}.pt.act-aim .it{animation:pk-aimI 2.2s ease-in-out infinite}.pt.act-aim .ab{animation:pk-aim 2.2s ease-in-out infinite}.pt.act-aim .pj{animation:pk-smoke 2.2s linear infinite}
+@keyframes pk-q{0%,100%{transform:rotate(18deg)}50%{transform:rotate(-18deg)}}
+.pt.cr.walk .q1,.pt.cr.walk .q4,.pt.walk .e1{animation:pk-q .6s ease-in-out infinite}.pt.cr.walk .q2,.pt.cr.walk .q3,.pt.walk .e2{animation:pk-q .6s ease-in-out -.3s infinite}
+@keyframes pk-flap{0%,100%{transform:rotate(0)}50%{transform:rotate(-22deg)}}
+.pt.cr .wg{animation:pk-flap 1.6s ease-in-out infinite}.pt.cr-phoenix .wg{animation:pk-flap .55s ease-in-out infinite}
+@keyframes pk-tail{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(6deg)}}
+.pt.cr .tl,.pt .tr{animation:pk-tail 1.4s ease-in-out infinite}
+@keyframes pk-hover{0%,100%{transform:translateY(0)}50%{transform:translateY(-2.4px)}}
+.pt.cr-phoenix .fly{animation:pk-hover 1.4s ease-in-out infinite}
+@keyframes pk-tn{0%,100%{transform:rotate(-9deg)}50%{transform:rotate(9deg)}}
+.pt.cr-kraken .tn{animation:pk-tn 1.1s ease-in-out infinite}.pt.cr.walk .wh{animation:pk-bob .6s linear infinite}
+@keyframes pk-fireH{0%,100%{transform:rotate(0)}25%,75%{transform:rotate(-10deg)}}
+@keyframes pk-fire{0%,22%{opacity:0;transform:scaleX(.2)}30%,70%{opacity:1;transform:scaleX(1)}78%,100%{opacity:0;transform:scaleX(1.2)}}
+.pt.act-fire .hc{animation:pk-fireH 1.8s ease-in-out infinite}.pt.act-fire .pj{animation:pk-fire 1.8s ease-in-out infinite}
+@keyframes pk-flare{0%{opacity:0;transform:scale(.3)}40%{opacity:.9}100%{opacity:0;transform:scale(1.5)}}
+.pt.act-flare .pj{animation:pk-flare 1.2s ease-out infinite}.pt.act-flare .wg{animation:pk-flap .3s ease-in-out infinite}
+@keyframes pk-orb{0%{opacity:0;transform:translateY(4px)}30%,70%{opacity:1}100%{opacity:0;transform:translateY(-8px)}}
+.pt.act-orbs .pj{opacity:1}.pt.act-orbs .pj circle{opacity:0}.pt.act-orbs .o1{animation:pk-orb 1.6s ease-in-out infinite}.pt.act-orbs .o2{animation:pk-orb 1.6s ease-in-out -.5s infinite}.pt.act-orbs .o3{animation:pk-orb 1.6s ease-in-out -1s infinite}.pt.act-orbs .tl{animation:pk-tail .5s ease-in-out infinite}
+.pt.act-wave .tn{animation:pk-tn .35s ease-in-out infinite}.pt.act-wave .wh{animation:pk-jump 1.2s ease-in-out infinite}
+@keyframes pk-trunk{0%,100%{transform:rotate(0)}40%,60%{transform:rotate(-80deg)}}
+.pt[class*="act-"] .tr{animation:pk-trunk 2s ease-in-out infinite}
+@keyframes pk-flm{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.35)}}
+.pt .flm{transform-box:fill-box;transform-origin:50% 100%;animation:pk-flm .4s ease-in-out infinite}
+#pets{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 2px);height:56px;pointer-events:none;z-index:40;overflow:hidden}
+.pet{position:absolute;bottom:0;left:0;height:46px;will-change:transform}.pet svg{height:100%;width:auto}.pet.flip svg{transform:scaleX(-1)}
+.pet.r-l svg{filter:drop-shadow(0 0 2px rgba(245,184,61,.6))}.pet.r-m svg{filter:drop-shadow(0 0 3px rgba(255,90,138,.8))}
+body.has-pets{padding-bottom:120px!important}
+.pet-ic svg.pt{height:40px;width:auto}.icon .chest{width:38px;height:auto}.icon .frm{width:40px;height:40px}
+.frm{display:block;overflow:visible}.frm g{transform-box:view-box}.frm .rot{transform-origin:60px 60px;animation:auRot 30s linear infinite}.frm .pulse{transform-origin:60px 60px;animation:auPulse 2s ease-in-out infinite alternate}
+.frm .fl{transform-box:fill-box;transform-origin:50% 100%;animation:frFl .7s ease-in-out infinite alternate}@keyframes frFl{from{transform:scaleY(.75)}to{transform:scaleY(1.15)}}
+.tw{animation:tw 1.6s ease-in-out infinite}@keyframes tw{0%,100%{opacity:.15}50%{opacity:1}}
+.embwrap{position:relative;isolation:isolate;background:none;border:0;padding:0;color:inherit;display:block;cursor:pointer}
+.embwrap>.frm{position:absolute;left:50%;top:50%;width:150%;height:auto;aspect-ratio:1;transform:translate(-50%,-50%);z-index:-1;pointer-events:none}
+.ava{position:relative;isolation:isolate;width:var(--sz);height:var(--sz);flex:none;display:grid;place-items:center}
+.ava>.frm{position:absolute;left:50%;top:50%;width:142%;height:142%;transform:translate(-50%,-50%);z-index:1;pointer-events:none}
+.ava-in{width:100%;height:100%;border-radius:50%;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 30% 25%,color-mix(in oklab,var(--rc,#8a93ad) 40%,var(--surface-3)),var(--surface-2));border:2px solid color-mix(in oklab,var(--rc,#8a93ad) 60%,transparent)}
+.ava-in>.emb{width:66%;height:auto;animation:none}.ava-in>.pt{height:84%;width:auto;margin-top:12%}.ava-emo{font-size:calc(var(--sz)*.5);line-height:1}
+.embwrap::before,.ava::before{content:"";position:absolute;inset:-14%;border-radius:50%;z-index:-2;pointer-events:none;opacity:0}
+@keyframes auRot{to{transform:rotate(360deg)}}@keyframes auPulse{from{transform:scale(.92);opacity:.65}to{transform:scale(1.06);opacity:1}}
+.au-viento::before{opacity:1;background:conic-gradient(from 0deg,transparent 0 10%,rgba(220,240,255,.45) 18%,transparent 30% 50%,rgba(220,240,255,.4) 62%,transparent 75%);-webkit-mask:radial-gradient(closest-side,transparent 58%,#000 70%,transparent 100%);mask:radial-gradient(closest-side,transparent 58%,#000 70%,transparent 100%);animation:auRot 3s linear infinite}
+.au-ignea::before{opacity:1;background:radial-gradient(closest-side,rgba(255,140,40,.6),rgba(255,80,20,.22) 60%,transparent 76%);animation:auPulse .9s ease-in-out infinite alternate}
+.au-ignea>.emb,.au-ignea .ava-in{filter:drop-shadow(0 0 8px rgba(255,120,30,.85))}
+.au-glacial::before{opacity:1;background:radial-gradient(closest-side,rgba(140,220,255,.55),rgba(80,160,255,.2) 60%,transparent 76%);animation:auPulse 2s ease-in-out infinite alternate}
+.au-glacial>.emb,.au-glacial .ava-in{filter:drop-shadow(0 0 8px rgba(120,210,255,.9))}
+.au-trueno::before{opacity:1;background:radial-gradient(closest-side,rgba(170,190,255,.55),transparent 72%);animation:auFlash 3s infinite}
+.au-trueno>.emb,.au-trueno .ava-in{animation:auFlashF 3s infinite}
+@keyframes auFlash{0%,7%,15%,62%,67%,100%{opacity:.12}8%,12%,64%{opacity:1}10%{opacity:.25}}
+@keyframes auFlashF{0%,7%,15%,62%,67%,100%{filter:drop-shadow(0 0 4px rgba(150,170,255,.4))}8%,12%,64%{filter:drop-shadow(0 0 14px #c8d4ff) brightness(1.3)}}
+.au-sombra::before{opacity:1;background:radial-gradient(closest-side,rgba(110,40,200,.6),rgba(40,10,80,.32) 60%,transparent 76%);animation:auPulse 2.2s ease-in-out infinite alternate}
+.au-sombra>.emb,.au-sombra .ava-in{filter:drop-shadow(0 0 10px rgba(130,60,255,.75))}
+.au-prisma::before{opacity:1;inset:-8%;background:conic-gradient(#ff5a8a,#f5b83d,#3ecf8e,#55a6ff,#b583ff,#ff5a8a);filter:blur(10px);animation:auRot 4s linear infinite}
+.au-olimpo::before{opacity:1;inset:-24%;background:repeating-conic-gradient(rgba(255,215,110,.6) 0 4deg,transparent 4deg 15deg);-webkit-mask:radial-gradient(closest-side,#000 38%,transparent 100%);mask:radial-gradient(closest-side,#000 38%,transparent 100%);animation:auRot 14s linear infinite}
+.au-olimpo>.emb,.au-olimpo .ava-in{filter:drop-shadow(0 0 10px rgba(255,210,100,.85))}
+.sheet-x{position:relative;z-index:3}
+.hero-lema{font-style:italic;color:var(--fg-2);font-size:13.5px;margin-top:4px}
+body.has-bg{background:transparent!important}
+body.has-bg::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none}
+body.has-bg :is(.card,.kpi,.icard,.dex,.stat,.chcard){background:color-mix(in oklab,var(--surface) 86%,transparent);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+@keyframes bgDrift{0%,100%{transform:scale(1.08) translate(0,0)}50%{transform:scale(1.12) translate(-1.5%,1%)}}
+@keyframes bgShimmer{0%,100%{transform:translateX(-4%) skewX(-4deg);opacity:.9}50%{transform:translateX(4%) skewX(4deg);opacity:1}}
+body.bg-nebulosa::after{animation:bgDrift 40s ease-in-out infinite}body.bg-aurora::after{inset:-10%;animation:bgShimmer 14s ease-in-out infinite}
+#fxl{position:fixed;inset:0;pointer-events:none;z-index:70;overflow:hidden}
+.fxp{position:absolute;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;animation:fxp .85s cubic-bezier(.2,.7,.4,1) forwards}
+@keyframes fxp{from{transform:translate(0,0) rotate(0) scale(1);opacity:1}to{transform:translate(var(--dx),var(--dy)) rotate(var(--r)) scale(.4);opacity:0}}
+.fx-chispas{background:#ffd35a;box-shadow:0 0 6px #ff9a2a;width:4px;height:4px}.fx-petalos{background:#ffb7d0;border-radius:80% 0 80% 0;width:8px;height:6px}.fx-confeti{border-radius:1px;width:5px;height:8px}.fx-estrellas{background:none;color:#ffe28a;font-size:13px;width:auto;height:auto;text-shadow:0 0 6px #ffcf4a}
+.chest{display:block;overflow:visible}.chest g{transform-box:view-box}.chest .rays{opacity:0}
+.chest.shake{animation:chShake .5s ease-in-out infinite}@keyframes chShake{0%,100%{transform:rotate(0)}25%{transform:rotate(-4deg)}75%{transform:rotate(4deg)}}
+.chest.idle{animation:chIdle 2.8s ease-in-out infinite}@keyframes chIdle{0%,84%,100%{transform:rotate(0)}88%{transform:rotate(-5deg)}92%{transform:rotate(5deg)}96%{transform:rotate(-2deg)}}
+.chest.open .lid{transform:translate(-2px,-8px) rotate(-26deg)}.chest.open .glow{opacity:1}.chest.open .rays{opacity:1;animation:auRot 8s linear infinite}
+.chest.ch-mitico{filter:drop-shadow(0 0 12px rgba(255,90,138,.65))}.chest.ch-legendario{filter:drop-shadow(0 0 8px rgba(245,184,61,.5))}
+.chest.chbig{width:190px;height:auto}.chest.small{width:86px;height:auto}
+.chgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}@media (max-width:540px){.chgrid{grid-template-columns:repeat(2,1fr)}}
+.chcard{background:var(--surface);border:1px solid color-mix(in oklab,var(--rc) 45%,var(--line));border-radius:14px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.chcard .chest{width:74px;height:auto}.chcard.empty .chest{filter:grayscale(1) brightness(.45)}.chcard b{font-size:13px}.chcard small{color:var(--fg-3)}
+.pity{display:flex;gap:10px;flex-wrap:wrap}.pity .pbar{flex:1;min-width:150px}.pity .pbar span{font-size:12px;color:var(--fg-3)}.pity .track{height:7px;border-radius:4px;background:var(--surface-3);overflow:hidden;margin-top:4px}.pity .track i{display:block;height:100%;border-radius:4px}
+.chest-stage{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.ch-tap{background:none;border:0;padding:0}
+.ch-item{width:124px;height:124px;border-radius:26px;display:grid;place-items:center;font-size:62px;line-height:1;background:radial-gradient(circle at 30% 25%,color-mix(in oklab,var(--rc) 45%,var(--surface-3)),var(--surface-2));border:2px solid var(--rc);box-shadow:0 0 50px color-mix(in oklab,var(--rc) 55%,transparent);animation:pop .55s cubic-bezier(.2,1.4,.4,1)}
+.ch-item .pt{height:100px;width:auto}.ch-item .ava{--sz:74px}.ch-item .chest{width:96px}
+.ch-dots{display:flex;gap:5px}.ch-dots i{width:7px;height:7px;border-radius:50%;background:var(--line-2)}.ch-dots i.on{background:var(--accent)}
+.ch-sum{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;width:100%}
+.ch-sum .t{background:var(--surface-2);border:1px solid color-mix(in oklab,var(--rc) 50%,var(--line));border-radius:12px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11.5px;line-height:1.2;text-align:center}
+.lema-q{font-style:italic;font-size:15px;color:var(--fg);max-width:30ch;line-height:1.35}
+.fd-sw{width:100%;height:100%;border-radius:12px;background-size:cover!important}
+.pet-stage{width:100%;display:grid;place-items:center;padding:10px 0 4px;border-radius:16px;background:radial-gradient(60% 70% at 50% 60%,color-mix(in oklab,var(--rc) 28%,transparent),transparent)}
+.pet-big{height:150px!important;width:auto}
+.feats-list{text-align:left;margin:0;padding-left:20px;display:flex;flex-direction:column;gap:5px;color:var(--fg-2);font-size:14px;align-self:stretch}
+.dex-group{display:flex;flex-direction:column;gap:8px;margin-top:16px}.dex-gt{margin:0;font-family:var(--f-display);font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.dex .pet-ic{width:52px;height:52px}.dex .pet-ic svg.pt{height:46px}
+.pf-card{position:relative;border:1px solid var(--line-2);border-radius:20px;padding:18px;overflow:hidden;isolation:isolate;background:linear-gradient(160deg,var(--surface-2),var(--surface))}
+.pf-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,9,18,.15) 20%,rgba(6,9,18,.6));z-index:-1}
+.pf-head{display:flex;gap:22px;align-items:center;flex-wrap:wrap;padding:10px 4px 0 10px}
+.pf-name{font-size:clamp(30px,8vw,44px);margin:2px 0 4px;overflow-wrap:anywhere}
+.pf-lema{font-style:italic;color:var(--fg);opacity:.85;margin-top:8px;max-width:42ch}
+.pf-rank{display:flex;align-items:center;gap:12px;margin-top:18px;padding:12px;border-radius:14px;background:color-mix(in oklab,var(--bg) 62%,transparent);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.pf-rank>.emb{width:54px;height:60px;flex:none;animation:none}
+.pf-bar{height:8px;border-radius:5px;background:var(--surface-3);overflow:hidden;margin:6px 0 4px}.pf-bar span{display:block;height:100%;background:linear-gradient(90deg,var(--accent-2),var(--accent))}
+.pf-pets{display:flex;gap:16px;justify-content:center;margin-top:12px}.pf-pet{background:none;border:0;padding:0;height:72px}.pf-pet .pt{height:72px;width:auto}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+.stat span{display:block;font-size:12px;color:var(--fg-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.stat b{font-family:var(--f-display);font-size:24px;font-weight:700}
+.wk-bars{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;align-items:end;height:130px}
+.wk-bar{display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;min-width:0}
+.wk-bar i{display:block;width:100%;border-radius:6px 6px 2px 2px;background:var(--accent);min-height:3px}.wk-bar small{font-size:10px;color:var(--fg-3);white-space:nowrap}.wk-bar em{font-style:normal;font-size:10.5px;color:var(--fg-2)}
+.badges{display:flex;flex-wrap:wrap;gap:8px}.badge-i{background:none;border:0;padding:0}
+.pp-seg{flex-wrap:wrap}
+.pp-opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:8px}
+.pp-opt{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;min-height:108px}
+.pp-opt.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset;background:color-mix(in oklab,var(--accent) 12%,var(--surface-2))}
+.pp-opt small{font-size:11.5px;line-height:1.2}.pp-prev{width:58px;height:58px;display:grid;place-items:center;font-size:30px}
+.pp-prev .pt{height:56px;width:auto}.pp-prev .ava{--sz:44px}.pp-prev .chest{width:54px}
+@media (prefers-reduced-motion:reduce){.pt,.pt *,.frm *,.chest,.chest *,body.has-bg::after,.embwrap::before,.ava::before,.embwrap>.emb,.ava-in{animation:none!important}}
+`;const st=document.createElement('style');st.textContent=css+Object.entries(FONDO_BG).map(([k,v])=>`body.bg-${k}::after,.pfbg-${k}{background:${v}}`).join('\n');document.head.appendChild(st)})();
+
+/* ================= estado ================= */
+const CHEST_Q=[];
+function ensureChestState(){if(!S)return;S.equip=S.equip||{};const E=S.equip;E.pets=E.pets||[];for(const k of['avatar','marco','fondo','aura','fx','lema'])if(E[k]===undefined)E[k]=null;S.chestCycle=S.chestCycle||0;S.streakChests=S.streakChests||{};S.stats=S.stats||{missions:0,objectives:0};S.stats.chests=S.stats.chests||0;S.stats.chestTier=S.stats.chestTier||{}}
+function owned(rid){return!!(S&&S.inventory.some(i=>i.rid===rid&&i.status==='active'))}
+function nickOf(){return IS_WEB?((S.profile&&S.profile.nick)||''):(S.nick||'')}
+const byRar=(a,b)=>RARITIES.indexOf((cref(b.rid)||b).rarity)-RARITIES.indexOf((cref(a.rid)||a).rarity);
+function rollW(list){let x=Math.random();for(const[r,w]of list){if(x<w)return r;x-=w}return list[list.length-1][0]}
+
+/* ================= otorgar y abrir cofres ================= */
+function awardChest(tier,source,direct){
+ ensureChestState();S.chestCycle++;const n=S.chestCycle;let t=tier,pity=false;
+ if(n%30===0&&t!=='mitico'){t='mitico';pity=true}else if(n%10===0&&CH_TIERS.indexOf(t)<2){t='legendario';pity=true}
+ const r=giveItem(cref('chest_'+t),source);if(pity)r.pity=true;
+ if(!direct)CHEST_Q.push(r);return r;
+}
+function pickChestItem(rar,taken){
+ const pool=[];for(const c of CH_DROPS){if(c.rarity!==rar)continue;if(UNIQ_DEX.includes(c.type)&&(S.pokedex[c.id]||taken.has(c.id)))continue;pool.push({c,w:c.type==='companero'?1.4:c.type==='item'?1.5:1})}
+ return wpick(Math.random,pool,p=>p.w).c;
+}
+function openChest(iid){
+ if(typeof needReady==='function'&&!needReady())return;ensureChestState();
+ const inv=S.inventory.find(i=>i.iid===iid&&i.status==='active'&&i.type==='cofre');if(!inv)return;
+ let tier=inv.rid.slice(6);const fort=(S.effects||[]).find(e=>e.type==='fortune'&&!e.consumed);let extraMyth=false;
+ if(fort){fort.consumed=true;const k=CH_TIERS.indexOf(tier);if(k<3)tier=CH_TIERS[k+1];else extraMyth=true}
+ const spec=CH_SPEC[tier];const t=today();const label='Cofre '+CH_NAME[tier];
+ const pp=Math.round((spec.pp[0]+Math.random()*(spec.pp[1]-spec.pp[0]))/5)*5;addLedger(t,pp,'cofre',label);
+ const taken=new Set();const items=[];
+ spec.slots.forEach((sl,i)=>{let rar=typeof sl==='string'?sl:rollW(sl);if(extraMyth&&i===0)rar='mítico';const c=pickChestItem(rar,taken);taken.add(c.id);items.push(giveItem(c,label))});
+ items.sort((a,b)=>RARITIES.indexOf(a.rarity)-RARITIES.indexOf(b.rarity));
+ inv.status='used';inv.used=t;S.stats.chests++;S.stats.chestTier[tier]=(S.stats.chestTier[tier]||0)+1;
+ const best=items[items.length-1];
+ if(tier!=='raro'||RARITIES.indexOf(best.rarity)>=4)addFeat({date:t,kind:'cofre',title:`Cofre ${CH_NAME[tier]} abierto`,desc:items.map(x=>x.name).join(' · '),pts:pp,rarity:best.rarity,reward:{rid:best.rid,name:best.name,icon:best.icon,rarity:best.rarity,type:best.type}});
+ UI.chest={tier,pp,items,stage:-1,fortune:!!fort};
+ openSheet(chestStageHTML());afterChange([]);
+}
+function setSheet(html){const s=$('#sheet .sheet');if($('#sheet').hidden||!s)return openSheet(html);s.innerHTML=`<button class="sheet-x" data-act="close" aria-label="Cerrar">✕</button>${html}`;s.scrollTop=0}
+function bigArt(ref){if(!ref)return'✨';switch(ref.type){
+ case'companero':return petSVG(ref,'act-'+ref.act);
+ case'cofre':return chestSVG(ref.tier,'idle');
+ case'marco':return`<div class="ava" style="--sz:74px">${frameSVG(ref.id)}<div class="ava-in">${D?emblem(D.level):''}</div></div>`;
+ case'fondo':return`<div class="fd-sw pfbg-${ref.id.slice(3)}"></div>`;
+ case'aura':return`<div class="ava au-${ref.id.slice(3)}" style="--sz:74px"><div class="ava-in">${D?emblem(D.level):''}</div></div>`;
+ case'lema':return'<span style="font-size:52px">❝</span>';
+}return esc(ref.icon||'✨')}
+function chestStageHTML(){const C=UI.chest;const n=C.items.length;
+ if(C.stage<0)return`<div class="chest-stage"><div class="eyebrow">Cofre ${CH_NAME[C.tier]}${C.fortune?' · mejorado por la Fortuna':''}</div><button class="ch-tap" data-act="ch-next" aria-label="Abrir el cofre">${chestSVG(C.tier,'chbig shake')}</button><p class="muted">Toca el cofre para abrirlo</p></div><button class="btn block" data-act="ch-next">Abrir</button>`;
+ if(C.stage<=n){const it=C.stage===0?{name:`+${fmt(C.pp)} PP`,icon:'✨',rarity:'común',type:'pp'}:C.items[C.stage-1];const ref=it.type==='pp'?null:cref(it.rid);
+  const dots=[...Array(n+1)].map((_,i)=>`<i class="${i===C.stage?'on':''}"></i>`).join('');
+  const extra=ref&&ref.type==='companero'?`<span class="chip">${esc(ORIGIN_NAME[ref.origin]||'')}</span>`:'';
+  return`<div class="chest-stage">${chestSVG(C.tier,'small open')}<div class="ch-item bd-${RK[it.rarity]||'c'}">${it.type==='pp'?'✨':bigArt(ref)}</div><h3 style="transform:none">${esc(it.name)}</h3><div class="row" style="justify-content:center">${it.type==='pp'?'<span class="chip">Puntos de progreso</span>':rarChip(it.rarity)+`<span class="chip">${esc(TYPE_NAME[it.type]||'')}</span>`+extra}</div>${ref?`<p class="muted">${esc(ref.type==='lema'?'«'+ref.name+'» · '+ref.desc:ref.desc||'')}</p>`:''}<div class="ch-dots">${dots}</div></div><button class="btn block" data-act="ch-next">${C.stage<n?`Siguiente (${C.stage+1}/${n+1})`:'Ver todo'}</button>`}
+ const tiles=[`<div class="t bd-c"><span class="icon bd-c">✨</span><b class="num">+${fmt(C.pp)} PP</b></div>`].concat(C.items.map(it=>{const ref=cref(it.rid)||it;return`<div class="t bd-${RK[it.rarity]||'c'}">${icon(ref)}<b>${esc(it.name)}</b><small class="rar rar-${RK[it.rarity]}">${esc(it.rarity)}</small></div>`})).join('');
+ return`<div class="chest-stage">${chestSVG(C.tier,'small open')}<h3 style="transform:none">Cofre ${CH_NAME[C.tier]}</h3><div class="ch-sum">${tiles}</div></div><div class="row"><button class="btn ghost grow" data-act="ch-inv">Ir al inventario</button><button class="btn grow" data-act="ch-done">Listo</button></div>`;
+}
+function chestRevealHTML(r,x){const tier=r.rid.slice(6);const src=x.title||r.source||'';
+ return`<div class="reveal bd-${RK[r.rarity]}"><div class="eyebrow">${esc(src)}</div>${chestSVG(tier,'chbig shake')}<h3>¡Cofre ${CH_NAME[tier]}!</h3>${r.pity?'<p class="st st-good">Garantizado por tu contador de cofres</p>':''}<p class="muted">${esc(CH_SPEC[tier].txt)}</p></div><div class="row"><button class="btn ghost grow" data-act="close">Guardar</button><button class="btn grow" data-act="ch-open" data-iid="${r.iid}">Abrir ahora</button></div>`;
+}
+function petRevealHTML(r,x){const p=PET_BY[r.rid];
+ return`<div class="reveal bd-${RK[p.rarity]}"><div class="eyebrow">${esc(x.title||r.source||'Nuevo compañero')}</div><div class="pet-stage">${petSVG(p,'act-'+p.act+' pet-big')}</div><h3>${esc(p.name)}</h3><div class="row" style="justify-content:center">${rarChip(p.rarity)}<span class="chip">${esc(ORIGIN_NAME[p.origin])}</span></div><p class="muted">${esc(p.desc)}</p></div><div class="row"><button class="btn ghost grow" data-act="close">Seguir</button>${r.iid?`<button class="btn grow" data-act="ch-eq" data-iid="${r.iid}" data-ctx="rev">Llevar en pantalla</button>`:''}</div>`;
+}
+
+/* ================= equipar ================= */
+const SLOT_OF={marco:'marco',fondo:'fondo',aura:'aura',efecto:'fx',lema:'lema',icono:'avatar'};
+function isEquipped(i){const E=(S&&S.equip)||{};if(i.type==='companero')return(E.pets||[]).includes(i.rid);const s=SLOT_OF[i.type];return!!s&&E[s]===i.rid}
+function toggleEquip(iid){ensureChestState();const i=S.inventory.find(x=>x.iid===iid&&x.status==='active');if(!i)return;const E=S.equip;let msg='';
+ if(i.type==='companero'){if(E.pets.includes(i.rid)){E.pets=E.pets.filter(x=>x!==i.rid);msg='Compañero guardado.'}else{E.pets.push(i.rid);if(E.pets.length>2)E.pets.shift();msg='¡Compañero en pantalla!'}}
+ else{const s=SLOT_OF[i.type];if(!s)return;E[s]=E[s]===i.rid?null:i.rid;msg=E[s]?'Equipado.':'Quitado.'}
+ toast(msg,'good');persist();render();
+}
+
+/* ================= hojas de inventario y Pokédex ================= */
+function cosmeticSheet(i){const ref=cref(i.rid)||{name:i.rid,rarity:'común'};const on=isEquipped(i);const t=i.type;
+ let body=`<div class="reveal bd-${RK[ref.rarity]||'c'}" style="padding:0">${t==='companero'?`<div class="pet-stage">${petSVG(ref,'act-'+ref.act+' pet-big')}</div>`:`<div class="ch-item" style="animation:none">${bigArt(ref)}</div>`}<h3>${esc(t==='lema'?'Lema de perfil':ref.name)}</h3><div class="row" style="justify-content:center">${rarChip(ref.rarity)}<span class="chip">${esc(TYPE_NAME[t])}</span>${t==='companero'?`<span class="chip">${esc(ORIGIN_NAME[ref.origin])}</span>`:''}${on?'<span class="st st-good">Equipado</span>':''}</div></div>`;
+ if(t==='lema')body+=`<p class="lema-q" style="align-self:center;text-align:center">«${esc(ref.name)}»</p>`;
+ body+=`<p class="muted" style="text-align:center">${esc(ref.desc||'')}</p>`;
+ if(t==='companero')body+=`<div class="eyebrow">Mayores logros</div><ul class="feats-list">${(ref.feats||[]).map(f=>`<li>${esc(f)}</li>`).join('')}</ul>`;
+ body+=`<p class="faint" style="text-align:center;font-size:13px">Obtenido el ${niceDate(i.got)} · ${esc(i.source||'')}</p>`;
+ const lbl={companero:on?'Guardar (sacar de la pantalla)':'Llevar en pantalla',marco:on?'Quitar marco':'Equipar marco',fondo:on?'Quitar fondo':'Usar este fondo',aura:on?'Quitar aura':'Equipar aura',efecto:on?'Quitar efecto':'Equipar efecto',lema:on?'Quitar lema':'Usar como lema',icono:on?'Volver al emblema':'Usar como ícono'}[t];
+ let acts=`<button class="btn ${on?'ghost':''} block" data-act="ch-eq" data-iid="${i.iid}" data-ctx="inv">${lbl}</button>`;
+ if(t==='companero')acts+=`<button class="btn ghost block" data-act="ch-avatar" data-rid="${i.rid}">${S.equip&&S.equip.avatar===i.rid?'Dejar de usar como ícono':'Usar como ícono de perfil'}</button>`;
+ if(t==='efecto')acts+=`<button class="btn ghost block" data-act="ch-fxtest" data-k="${i.rid.slice(3)}">Probar efecto</button>`;
+ openSheet(body+acts);
+}
+function chestInvSheet(i){const tier=i.rid.slice(6);const active=i.status==='active';
+ openSheet(`<div class="reveal bd-${RK[CH_RAR[tier]]}">${chestSVG(tier,'chbig idle')}<h3>Cofre ${CH_NAME[tier]}</h3>${rarChip(CH_RAR[tier])}<p class="muted">${esc(CH_SPEC[tier].txt)}</p><p class="faint" style="font-size:13px">Obtenido el ${niceDate(i.got)} · ${esc(i.source||'')}</p></div>${active?`<button class="btn block" data-act="ch-open" data-iid="${i.iid}">Abrir</button>`:'<p class="lock-note">Ya lo abriste.</p>'}`);
+}
+function cintaSheet(i){const ref=cref(i.rid);openSheet(`<div class="reveal bd-c" style="padding:0"><div class="ch-item" style="animation:none">${esc(ref.icon)}</div><h3>${esc(ref.name)}</h3></div><p class="muted" style="text-align:center">${esc(ref.desc)}</p><div class="row"><button class="btn grow" data-act="use-item" data-iid="${i.iid}" data-arg="ayer">Proteger ayer</button><button class="btn ghost grow" data-act="use-item" data-iid="${i.iid}" data-arg="hoy">Proteger hoy</button></div>`)}
+function dexPetCard(p){const k=!!S.pokedex[p.id];const no='#'+String(CATALOG.indexOf(p)+1).padStart(3,'0');
+ return`<button class="dex ${k?'':'unk'} bd-${RK[p.rarity]}" data-act="dex" data-rid="${p.id}" ${k?'':`aria-label="${esc(no)} sin descubrir, rareza ${esc(p.rarity)}"`}><span class="no">${no}</span>${p.only?'<span class="cnt" title="Exclusivo de cofres">🧰</span>':''}<span class="icon pet-ic bd-${RK[p.rarity]}">${petSVG(p,'')}</span><b>${k?esc(p.name):'???'}</b><small class="rar rar-${RK[p.rarity]}">${esc(p.rarity)}</small></button>`}
+function chestDexSheet(c){const k=S.pokedex[c.id];const where=c.chest?(c.type==='cofre'?'Sale de misiones, objetivos, ascensos, rachas y la semana de constancia.':`Exclusivo de cofres. Búscalo en cofres ${{común:'raros','poco común':'raros',raro:'raros o épicos',épico:'épicos o legendarios',legendario:'legendarios o míticos',mítico:'míticos (y a veces legendarios)'}[c.rarity]}.`):'Sale en recompensas de misiones, objetivos y en cofres.';
+ const stage=c.type==='companero'?`<div class="pet-stage" ${k?'':'style="filter:brightness(0) opacity(.55)"'}>${petSVG(c,(k?'act-'+c.act:'')+' pet-big')}</div>`:`<div class="ch-item" style="animation:none;${k?'':'filter:brightness(0) opacity(.5)'}">${bigArt(c)}</div>`;
+ const no='#'+String(CATALOG.indexOf(c)+1).padStart(3,'0');
+ if(!k){openSheet(`<div class="reveal bd-${RK[c.rarity]||'c'}">${stage}<h3>${no} · ???</h3><div class="row" style="justify-content:center">${rarChip(c.rarity)}<span class="chip">${esc(TYPE_NAME[c.type]||'')}</span>${c.type==='companero'?`<span class="chip">${esc(ORIGIN_NAME[c.origin])}</span>`:''}</div><p class="muted">${esc(where)}</p></div>`);return}
+ openSheet(`<div class="reveal bd-${RK[c.rarity]||'c'}">${stage}<div class="eyebrow">${no} · ${esc(TYPE_NAME[c.type]||'')}</div><h3>${esc(c.type==='lema'?'«'+c.name+'»':c.name)}</h3><div class="row" style="justify-content:center">${rarChip(c.rarity)}${c.type==='companero'?`<span class="chip">${esc(ORIGIN_NAME[c.origin])}</span>`:''}${c.only&&c.chest?'<span class="chip">Exclusivo de cofres</span>':''}</div><p class="muted">${esc(c.desc||'')}</p>${c.type==='companero'?`<div class="eyebrow">Mayores logros</div><ul class="feats-list">${c.feats.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>`:''}<p class="faint num" style="font-size:13px">Primera vez: ${longDate(k.first)} · obtenido ${k.count} ${k.count===1?'vez':'veces'}</p></div>`);
+}
+
+/* ================= perfil ================= */
+function avatarHTML(size){const E=(S&&S.equip)||{};const a=E.avatar&&cref(E.avatar);let inner;
+ if(a&&a.type==='companero')inner=petSVG(a,'idle');else if(a)inner=`<span class="ava-emo">${esc(a.icon)}</span>`;else inner=emblem(D.level);
+ return`<div class="ava${E.aura?' au-'+E.aura.slice(3):''}" style="--sz:${size}px">${E.marco?frameSVG(E.marco):''}<div class="ava-in bd-${a?RK[a.rarity]:'c'}">${inner}</div></div>`;
+}
+function vPerfilShow(){
+ ensureChestState();compute();const E=S.equip;const L=D.level;const lo=THRESH[L],hi=L<MAXL?THRESH[L+1]:THRESH[L];const pct=L<MAXL?clamp((D.total-lo)/(hi-lo)*100,0,100):100;
+ const nick=nickOf();const tit=curTitle();const dis=effectOn('dishonor',today());const lema=E.lema&&cref(E.lema);
+ const bestStreak=Math.max(0,...Object.values(D.perDay).map(p=>p.streak||0));
+ let reps=0;for(const Lg of Object.values(LOGS))for(const[k,e]of Object.entries(Lg.ex||{})){const X=exDef(k);if(X&&X.metric==='reps')reps+=+e.reps||0}
+ const dex=dexEntries();const dexGot=dex.filter(e=>S.pokedex[e.rid]).length;const petsOwned=PETS.filter(p=>S.pokedex[p.id]).length;
+ const since=(IS_WEB&&S.profile&&S.profile.created)||S.created||today();
+ const exIds=IS_WEB?tracked():CORE;
+ const recs=exIds.map(e=>{const X=exDef(e);if(!X)return'';let v,u='';if(X.metric==='reps')v=D.best[e]||0;else if(X.metric==='secs'){v=D.best[e]||0;u=' s'}else if(X.metric==='load'){v=exMaxField(e,'kg');u=' kg'}else{v=exMaxField(e,'km');u=' km'}return`<div class="stat"><span>${esc(X.short||X.name)}</span><b class="num">${v?fmt1(v)+u:'—'}</b></div>`}).join('');
+ const mon0=mondayOf(today());const weeks=[];for(let w=7;w>=0;w--){const m=addDays(mon0,-7*w),end=addDays(m,6);let p=0;for(let k=0;k<7;k++){const d=addDays(m,k);if(D.perDay[d])p+=D.perDay[d].pts}for(const e of S.ledger||[])if(e.d>=m&&e.d<=end&&e.kind!=='archivo')p+=e.pts;weeks.push({m,p:Math.max(0,Math.round(p))})}
+ const mx=Math.max(1,...weeks.map(w=>w.p));
+ const bars=weeks.map((w,i)=>`<div class="wk-bar" title="Semana del ${niceDate(w.m)}: ${fmt(w.p)} PP"><em class="num">${w.p?fmt(w.p):''}</em><i style="height:${Math.max(2,w.p/mx*76).toFixed(1)}%;${i===7?'':'opacity:.55'}"></i><small>${niceDate(w.m)}</small></div>`).join('');
+ const top=S.feats.slice().sort((a,b)=>featValue(b)-featValue(a)).slice(0,5);
+ const insAll=CATALOG.filter(c=>c.type==='insignia');const ins=insAll.filter(c=>S.pokedex[c.id]).sort((a,b)=>RARITIES.indexOf(b.rarity)-RARITIES.indexOf(a.rarity));
+ const pets=E.pets.map(id=>PET_BY[id]).filter(p=>p&&owned(p.id));
+ const stat=(l,v)=>`<div class="stat"><span>${l}</span><b class="num">${v}</b></div>`;
+ return`<section class="pf-card ${E.fondo?'pfbg-'+E.fondo.slice(3):''}">
+  <div class="pf-head">${avatarHTML(104)}<div style="min-width:0;flex:1"><div class="eyebrow">Perfil del jugador</div><h1 class="display pf-name">${nick?esc(nick):'<span class="faint">Sin nombre</span>'}</h1>${tit?`<div class="title-chip ${dis?'dis':''}">${dis?'Título oculto por deshonra':'«'+esc(tit)+'»'}</div>`:''}${lema?`<p class="pf-lema">«${esc(lema.name)}»</p>`:''}<p class="faint" style="font-size:12.5px;margin-top:8px">En la liga desde el ${longDate(since)}</p></div></div>
+  <div class="pf-rank">${emblem(L)}<div style="flex:1;min-width:0"><div class="row" style="justify-content:space-between;gap:8px"><b class="display" style="font-size:22px">${levelName(L)}</b><span class="num">${fmt(D.total)} PP</span></div><div class="pf-bar"><span style="width:${pct}%"></span></div><small class="faint num">${L<MAXL?`Faltan ${fmt(hi-D.total)} PP para ${levelName(L+1)}`:'Estás en la cima'}</small></div></div>
+  ${pets.length?`<div class="pf-pets">${pets.map(p=>`<button class="pf-pet" data-act="pp-pet" data-rid="${p.id}" aria-label="${esc(p.name)}">${petSVG(p,'idle')}</button>`).join('')}</div>`:''}
+  <div class="row" style="margin-top:14px"><button class="btn grow" data-act="pp-edit">Personalizar perfil</button></div>
+ </section>
+ <div class="kpis"><div class="kpi"><span>Racha actual</span><b class="num">${D.streakNow} ${D.streakNow===1?'día':'días'}</b></div><div class="kpi"><span>Mejor racha</span><b class="num">${bestStreak} ${bestStreak===1?'día':'días'}</b></div><div class="kpi"><span>Días entrenados</span><b class="num">${D.dates.length}</b></div></div>
+ <section class="sec"><div class="sec-head"><h2 class="sec-title">Estadísticas</h2></div><div class="stat-grid">${stat('PP totales',fmt(D.total))}${stat('Repeticiones',fmt(reps))}${stat('Misiones',fmt(S.stats.missions||0))}${stat('Objetivos',fmt(S.stats.objectives||0))}${stat('Cofres abiertos',fmt(S.stats.chests||0))}${stat('Compañeros',petsOwned+'/'+PETS.length)}${stat('Pokédex',dexGot+'/'+dex.length)}${stat('Hazañas',fmt(S.feats.length))}</div></section>
+ <section class="sec"><div class="sec-head"><h2 class="sec-title">Mejores marcas</h2><span class="sec-note">Tu mejor día en cada ejercicio</span></div><div class="stat-grid">${recs}</div></section>
+ <section class="sec"><div class="sec-head"><h2 class="sec-title">Progreso</h2><span class="sec-note">PP ganados por semana</span></div><div class="card"><div class="wk-bars">${bars}</div></div></section>
+ <section class="sec"><div class="sec-head"><h2 class="sec-title">Mejores hazañas</h2><button class="btn ghost sm" data-act="tab" data-v="hazanas">Ver todas</button></div>${top.length?`<div class="card"><div class="tl">${top.map(f=>`<div class="feat">${featIcon(f)}<div style="min-width:0"><b>${esc(f.title)}</b><small>${niceDate(f.date)}${f.reward&&f.reward.name?' · '+esc(f.reward.name):''}</small></div><div class="v"><span class="num">${fmt(featValue(f))}</span><br><span class="faint" style="font-size:11px">pts de hazaña</span></div></div>`).join('')}</div></div>`:'<div class="empty">Tus hazañas aparecerán aquí.</div>'}</section>
+ <section class="sec"><div class="sec-head"><h2 class="sec-title">Insignias</h2><span class="sec-note num">${ins.length}/${insAll.length}</span></div>${ins.length?`<div class="badges">${ins.map(c=>`<button class="badge-i" data-act="dex" data-rid="${c.id}" title="${esc(c.name)}" aria-label="${esc(c.name)}">${icon(c)}</button>`).join('')}</div>`:'<div class="empty">Todavía no tienes insignias.</div>'}</section>`;
+}
+const PP_TABS=[['nombre','Nombre'],['icono','Ícono'],['marco','Marco'],['fondo','Fondo'],['aura','Aura'],['efecto','Efecto'],['lema','Lema'],['titulo','Título'],['pets','Compañeros']];
+function ppOptions(tab){const act=S.inventory.filter(i=>i.status==='active');const E=S.equip;const opt=(slot,v,on,prev,name,rar)=>`<button class="pp-opt ${on?'on':''} bd-${RK[rar]||'c'}" data-act="pp-set" data-slot="${slot}" data-v="${v}" aria-pressed="${on}"><span class="pp-prev">${prev}</span><small>${esc(name)}</small></button>`;
+ const list=type=>act.filter(i=>i.type===type).map(i=>cref(i.rid)).filter(Boolean).sort((a,b)=>RARITIES.indexOf(b.rarity)-RARITIES.indexOf(a.rarity));
+ switch(tab){
+  case'icono':{const seen=new Set();const items=[];for(const c of list('icono').concat(list('companero'),CATALOG.filter(c=>c.type==='insignia'&&S.pokedex[c.id]))){if(!seen.has(c.id)){seen.add(c.id);items.push(c)}}
+   return opt('avatar','',!E.avatar,`<span class="ava" style="--sz:44px"><span class="ava-in">${emblem(D.level)}</span></span>`,'Emblema de rango','común')+items.map(c=>opt('avatar',c.id,E.avatar===c.id,c.type==='companero'?petSVG(c,''):esc(c.icon),c.name,c.rarity)).join('')}
+  case'marco':return opt('marco','',!E.marco,'—','Sin marco','común')+list('marco').map(c=>opt('marco',c.id,E.marco===c.id,`<span class="ava" style="--sz:40px">${frameSVG(c.id)}<span class="ava-in"></span></span>`,c.name,c.rarity)).join('');
+  case'fondo':return opt('fondo','',!E.fondo,'—','Fondo de la liga','común')+list('fondo').map(c=>opt('fondo',c.id,E.fondo===c.id,`<span class="fd-sw pfbg-${c.id.slice(3)}"></span>`,c.name,c.rarity)).join('');
+  case'aura':return opt('aura','',!E.aura,'—','Sin aura','común')+list('aura').map(c=>opt('aura',c.id,E.aura===c.id,`<span class="ava au-${c.id.slice(3)}" style="--sz:36px"><span class="ava-in"></span></span>`,c.name,c.rarity)).join('');
+  case'efecto':return opt('fx','',!E.fx,'—','Sin efecto','común')+list('efecto').map(c=>opt('fx',c.id,E.fx===c.id,esc(c.icon),c.name,c.rarity)).join('');
+  case'lema':return opt('lema','',!E.lema,'—','Sin lema','común')+list('lema').map(c=>opt('lema',c.id,E.lema===c.id,'❝','«'+c.name+'»',c.rarity)).join('');
+  case'titulo':return opt('titulo','',!S.title,'—','Sin título','común')+list('titulo').map(c=>opt('titulo',c.id,S.title===c.id,'🏷️',c.name,c.rarity)).join('');
+  case'pets':return list('companero').map(c=>opt('pets',c.id,E.pets.includes(c.id),petSVG(c,''),c.name,c.rarity)).join('');
+ }return''}
+function customizeSheet(){ensureChestState();const tab=UI.ppTab||'icono';
+ let body;if(tab==='nombre')body=`<label class="fl">Nombre de jugador<input type="text" id="pp-nick" maxlength="24" value="${esc(nickOf())}" placeholder="Cómo quieres que te vean"></label><button class="btn block" data-act="pp-nick">Guardar nombre</button>`;
+ else{const o=ppOptions(tab);body=o?`${tab==='pets'?'<p class="sec-note">Elige hasta 2 compañeros para que caminen por tu pantalla.</p>':''}<div class="pp-opts">${o}</div>`:'<div class="empty">Todavía no tienes de estos. Salen en cofres.</div>'}
+ setSheet(`<h3>Personalizar perfil</h3><div class="seg pp-seg" role="group" aria-label="Categoría">${PP_TABS.map(([k,l])=>`<button data-act="pp-tab" data-v="${k}" aria-pressed="${tab===k}">${l}</button>`).join('')}</div>${body}`);
+}
+function ppSet(slot,v){ensureChestState();const E=S.equip;v=v||null;
+ if(slot==='titulo'){if(v&&effectOn('dishonor',today())){toast('Deshonrado: no puedes equipar títulos por ahora.','bad');return}S.title=v}
+ else if(slot==='pets'){if(E.pets.includes(v))E.pets=E.pets.filter(x=>x!==v);else{E.pets.push(v);if(E.pets.length>2)E.pets.shift()}}
+ else E[slot]=v;
+ persist();render();customizeSheet();
+}
+
+/* ================= compañeros en pantalla ================= */
+const PETS_RT={list:[],raf:0,last:0,key:''};
+function syncPets(){
+ const want=((S&&S.equip&&S.equip.pets)||[]).filter(id=>PET_BY[id]&&owned(id)).slice(0,2);let layer=document.getElementById('pets');
+ if(!want.length){if(layer)layer.remove();PETS_RT.list=[];PETS_RT.key='';document.body.classList.remove('has-pets');if(PETS_RT.raf){cancelAnimationFrame(PETS_RT.raf);PETS_RT.raf=0}return}
+ if(!layer){layer=document.createElement('div');layer.id='pets';layer.setAttribute('aria-hidden','true');document.body.appendChild(layer);PETS_RT.key=''}
+ document.body.classList.add('has-pets');const key=want.join(',');if(key===PETS_RT.key)return;PETS_RT.key=key;
+ layer.innerHTML='';const W=layer.clientWidth||innerWidth;
+ PETS_RT.list=want.map((id,i)=>{const p=PET_BY[id];const el=document.createElement('div');el.className='pet r-'+RK[p.rarity];el.innerHTML=petSVG(p,RM?'idle':'walk');layer.appendChild(el);return{id,p,el,svg:el.firstElementChild,x:W*(.15+.5*i),dir:i%2?-1:1,speed:15+Math.random()*8,state:'walk',until:performance.now()+3000+Math.random()*5000}});
+ for(const q of PETS_RT.list)q.el.style.transform=`translateX(${q.x.toFixed(1)}px)`;
+ if(!RM&&!PETS_RT.raf){PETS_RT.last=performance.now();PETS_RT.raf=requestAnimationFrame(petLoop)}
+}
+function petLoop(now){
+ const layer=document.getElementById('pets');if(!layer||!PETS_RT.list.length){PETS_RT.raf=0;return}
+ const dt=Math.min(.1,(now-PETS_RT.last)/1000);PETS_RT.last=now;const W=layer.clientWidth;
+ for(const q of PETS_RT.list){const pw=q.el.offsetWidth||40;const base=petClass(q.p);
+  if(now>q.until){if(q.state==='walk'){if(Math.random()<.72){q.state='act';q.svg.setAttribute('class',base+' act-'+q.p.act);q.until=now+2600+Math.random()*1600}else{q.state='idle';q.svg.setAttribute('class',base+' idle');q.until=now+1400+Math.random()*1600}}else{q.state='walk';if(Math.random()<.35)q.dir*=-1;q.svg.setAttribute('class',base+' walk');q.until=now+5000+Math.random()*7000}}
+  if(q.state==='walk'||(q.state==='act'&&q.p.act==='run')){q.x+=q.dir*(q.state==='act'?q.speed*3.2:q.speed)*dt;if(q.x<4){q.x=4;q.dir=1}if(q.x>W-pw-4){q.x=Math.max(4,W-pw-4);q.dir=-1}}
+  q.el.style.transform=`translateX(${q.x.toFixed(1)}px)`;q.el.classList.toggle('flip',q.dir<0);
+ }
+ PETS_RT.raf=requestAnimationFrame(petLoop);
+}
+
+/* ================= efectos de pantalla ================= */
+const FX={kind:null};
+function fxAt(x,y,kind,n){if(RM||!kind)return;let l=document.getElementById('fxl');if(!l){l=document.createElement('div');l.id='fxl';l.setAttribute('aria-hidden','true');document.body.appendChild(l)}
+ const cols=['#ff5a8a','#f5b83d','#55a6ff','#3ecf8e','#b583ff','#ffffff'];const N=n||{chispas:9,petalos:7,confeti:14,estrellas:8}[kind]||8;
+ for(let i=0;i<N;i++){const s=document.createElement('i');s.className='fxp fx-'+kind;const a=Math.random()*Math.PI*2,d=18+Math.random()*(n?120:40);s.style.left=x+'px';s.style.top=y+'px';s.style.setProperty('--dx',(Math.cos(a)*d).toFixed(1)+'px');s.style.setProperty('--dy',(Math.sin(a)*d+(kind==='petalos'?30:0)).toFixed(1)+'px');s.style.setProperty('--r',((Math.random()*540-270)|0)+'deg');if(kind==='confeti')s.style.background=cols[i%cols.length];if(kind==='estrellas')s.textContent='✦';l.appendChild(s);setTimeout(()=>s.remove(),900)}}
+function fxBurst(force){const k=FX.kind||(force?'confeti':null);if(k)fxAt(innerWidth/2,innerHeight*.38,k,k==='confeti'?40:26)}
+document.addEventListener('pointerdown',e=>{if(FX.kind)fxAt(e.clientX,e.clientY,FX.kind)},{passive:true});
+function applyCosmetics(){const b=document.body;const E=(S&&S.equip)||{};
+ for(const c of Array.from(b.classList))if(c.startsWith('bg-'))b.classList.remove(c);
+ const fd=E.fondo&&owned(E.fondo)?E.fondo.slice(3):null;b.classList.toggle('has-bg',!!fd);if(fd)b.classList.add('bg-'+fd);
+ FX.kind=E.fx&&owned(E.fx)?E.fx.slice(3):null;syncPets();
+}
+function clearCosmetics(){const b=document.body;for(const c of Array.from(b.classList))if(c.startsWith('bg-'))b.classList.remove(c);b.classList.remove('has-bg','has-pets');FX.kind=null;const l=document.getElementById('pets');if(l)l.remove();PETS_RT.list=[];PETS_RT.key=''}
+
+/* ================= envolturas del juego base ================= */
+(function(){
+ const _completeMission=completeMission;
+ completeMission=function(day,m,date){const r=_completeMission(day,m,date);
+  if(m.pts&&effectOn('horn',date)){addLedger(date,m.pts,'mision','Cuerno de guerra: '+m.title);if(r)r.pts=(r.pts||0)+m.pts}
+  if(m.key!=='debt'){const x=Math.random();let t=null;if(m.diff===1&&x<.04)t='raro';else if(m.diff===2&&x<.12)t='raro';else if(m.diff===3)t=x<.08?'epico':x<.38?'raro':null;else if(m.diff>=4)t=x<.02?'mitico':x<.14?'legendario':x<.6?'epico':null;if(t)awardChest(t,'Misión «'+m.title+'»')}
+  return r};
+ const _claimObjective=claimObjective;
+ claimObjective=function(id){const t=today();const day=S&&S.days[t];const o=S&&S.objectives.find(x=>x.id===id);
+  if(READY&&o&&objReady(o)&&!(day&&day.objClaimed)){let tier=RAR_TIER[o.rarity]||'raro';if(tier==='legendario'&&Math.random()<.04)tier='mitico';awardChest(tier,'Objetivo cumplido')}
+  return _claimObjective(id)};
+ const _weeklyChest=weeklyChest;
+ weeklyChest=function(sun){const r=_weeklyChest(sun);if(r){const mon=addDays(sun,-6);let n=0;for(let k=0;k<7;k++)if(hasSession(LOGS[addDays(mon,k)]))n++;awardChest(n>=7?'legendario':n>=6?'epico':'raro',`Constancia semanal (${n}/7)`)}return r};
+ const _checkRank=checkRank;
+ checkRank=function(){const before=S.maxLevel;const cel=_checkRank();
+  if(cel)for(let i=before+1;i<=cel.level;i++){const tu=i%3===0||i===MAXL;const T=tierOf(i);cel.reveals.push(awardChest(tu?'legendario':T<=1?'raro':T<=5?'epico':'legendario','Ascenso a '+levelName(i),true));if(i===12||i===MAXL)cel.reveals.push(awardChest('mitico','Ascenso a '+levelName(i),true))}
+  return cel};
+ const _applyPenalty=applyPenalty;
+ applyPenalty=function(m,d){if(effectOn('aegis',today())){addScar({date:d,title:m.title,penalty:'Bloqueada por el Corazón de Fénix',blocked:true});return'Corazón de Fénix: penalización bloqueada.'}return _applyPenalty(m,d)};
+ const STREAK_CH={3:'raro',7:'epico',14:'legendario',30:'mitico',60:'mitico',100:'mitico'};
+ const _afterChange=afterChange;
+ afterChange=function(reveals=[]){if(S&&READY){ensureChestState();const C=compute();for(const[n,t]of Object.entries(STREAK_CH))if(C.streakNow>=+n&&!S.streakChests[n]){S.streakChests[n]=today();awardChest(t,`Racha de ${n} días`)}}
+  return _afterChange((reveals||[]).concat(CHEST_Q.splice(0)))};
+ const _startGame=startGame;
+ startGame=function(){if(S){ensureChestState();if(!S.chestWelcome){S.chestWelcome=today();awardChest('raro','Cofre de bienvenida')}}return _startGame()};
+ const _nextReveal=nextReveal;
+ nextReveal=function(){if(!$('#sheet').hidden||!UI.reveals.length)return _nextReveal();const x=UI.reveals[0];const r=x&&x.reward;
+  if(r&&r.type==='cofre'&&r.iid&&r.rid){UI.reveals.shift();openSheet(chestRevealHTML(r,x));fxBurst(false);return}
+  if(r&&r.type==='companero'&&PET_BY[r.rid]){UI.reveals.shift();openSheet(petRevealHTML(r,x));fxBurst(true);return}
+  const out=_nextReveal();if(r)fxBurst(RARITIES.indexOf(r.rarity)>=4);return out};
+ const _icon=icon;
+ icon=function(ref,rar){if(ref&&ref.type){const k=RK[rar||ref.rarity]||'c';
+  if(ref.type==='companero'&&PET_BY[ref.id||ref.rid])return`<span class="icon pet-ic bd-${k}">${petSVG(PET_BY[ref.id||ref.rid],'')}</span>`;
+  if(ref.type==='cofre'&&(ref.tier||ref.rid))return`<span class="icon bd-${k}">${chestSVG(ref.tier||(ref.rid||'').slice(6),'')}</span>`;
+  if(ref.type==='marco'&&ref.id)return`<span class="icon bd-${k}">${frameSVG(ref.id)}</span>`;
+  if(ref.type==='fondo'&&ref.id)return`<span class="icon bd-${k}" style="padding:4px"><span class="fd-sw pfbg-${ref.id.slice(3)}"></span></span>`}
+  return _icon(ref,rar)};
+ const _invCard=invCard;
+ invCard=function(i){let h=_invCard(i);if(COSMETIC.includes(i.type)&&i.status==='active'&&isEquipped(i))h=h.replace(/<\/span><\/button>$/,'<span class="st st-good">Equipado</span></span></button>');if(i.type==='lema'){const r=cref(i.rid);if(r)h=h.replace(`<b>${esc(r.name)}</b>`,`<b>«${esc(r.name)}»</b>`)}return h};
+ const _invSheet=invSheet;
+ invSheet=function(iid){const i=S.inventory.find(x=>x.iid===iid);if(!i)return;if(i.type==='cofre')return chestInvSheet(i);if(COSMETIC.includes(i.type))return cosmeticSheet(i);if(i.rid==='cx_cinta'&&i.status==='active')return cintaSheet(i);return _invSheet(iid)};
+ const _dexSheet=dexSheet;
+ dexSheet=function(rid){const c=cref(rid);if(c&&(c.chest||c.type==='companero'))return chestDexSheet(c);return _dexSheet(rid)};
+ const _useItem=useItem;
+ useItem=function(iid,arg){const i=S.inventory.find(x=>x.iid===iid&&x.status==='active');if(!i||!i.rid.startsWith('cx_'))return _useItem(iid,arg);
+  if(typeof needReady==='function'&&!needReady())return;const t=today();const day=ensureDay(t);const ref=cref(i.rid)||{};let msg='';
+  const pp=a=>{addLedger(t,a,'item',ref.name);msg=`+${a} PP`};
+  switch(i.rid){
+   case'cx_barra':pp(30);break;case'cx_batido':pp(45);break;case'cx_cantimplora':pp(90);break;case'cx_tonico':pp(300);break;
+   case'cx_tiza':if(effectOn('chalk',t)){toast('Ya tienes tiza activa hoy.');return}S.effects.push({type:'chalk',from:t,to:t});msg='Tiza activa: ×1,1 hoy';break;
+   case'cx_cinta':{if(!arg){cintaSheet(i);return}const d=arg==='hoy'?t:addDays(t,-1);if(hasSession(LOGS[d])){toast('Ese día ya tiene entrenamiento.');return}if(S.freezeDays.includes(d)){toast('Ese día ya está protegido.');return}S.freezeDays.push(d);msg=`Racha protegida para ${arg==='hoy'?'hoy':'ayer'}`;break}
+   case'cx_vendas':giveItem(cref('itm_escudo'),ref.name);msg='+1 Escudo de Rango';break;
+   case'cx_egida':giveItem(cref('itm_escudo'),ref.name);giveItem(cref('itm_escudo'),ref.name);msg='+2 Escudos de Rango';break;
+   case'cx_pergamino2':day.extraChanges=(day.extraChanges||0)+2;msg='+2 cambios de objetivo hoy';break;
+   case'cx_dado2':{const keep=day.offers.filter(m=>day.accepted.includes(m.id));if(keep.length>=5){toast('Ya aceptaste todas.');return}day.rerolls=(day.rerolls||0)+1;const fresh=genOffers(t,day.rerolls,keep.map(m=>m.key)).slice(0,5-keep.length);day.offers=keep.concat(fresh).sort((a,b)=>(b.forced?1:0)-(a.forced?1:0)||a.diff-b.diff);msg='Nuevas misiones sobre la mesa';break}
+   case'cx_elixir2':if(effectOn('boost2',t)){toast('Ya tienes poder ×2 activo hoy.');return}S.effects.push({type:'boost2',from:t,to:t});msg='Poder ×2 activo hoy';break;
+   case'cx_ambrosia':S.effects.push({type:'boost2',from:t,to:addDays(t,2)});msg='Poder ×2 durante 3 días';break;
+   case'cx_estandarte':S.effects.push({type:'banner',from:t,to:addDays(t,2)});msg='×1,5 durante 3 días';break;
+   case'cx_cuerno':if(effectOn('horn',t)){toast('El cuerno ya sonó hoy.');return}S.effects.push({type:'horn',from:t,to:t});msg='Misiones ×2 PP hoy';break;
+   case'cx_fortuna':if((S.effects||[]).some(e=>e.type==='fortune'&&!e.consumed)){toast('Ya tienes una Fortuna esperando.');return}S.effects.push({type:'fortune',from:t,to:null});msg='Tu próximo cofre sube de nivel';break;
+   case'cx_corazon':S.effects.push({type:'aegis',from:t,to:addDays(t,6)});msg='Inmune a castigos por 7 días';break;
+   case'cx_reloj':{const neg=['fatigue','nostreak','dishonor','sealed','curse'];const act=(S.effects||[]).filter(e=>neg.includes(e.type)&&!e.consumed&&(!e.to||e.to>=t));if(act.length){act.forEach(e=>e.consumed=true);msg='Castigos borrados'}else{const fine=(S.ledger||[]).slice().reverse().find(e=>e.kind==='penalizacion'&&e.pts<0&&diffDays(e.d,t)<=7&&!e.refunded);if(!fine){toast('No tienes castigos ni multas recientes.');return}fine.refunded=true;addLedger(t,-fine.pts,'item','Reloj de Cronos: multa devuelta');msg=`Multa devuelta: +${-fine.pts} PP`}break}
+   case'cx_llave_oro':case'cx_llave_cel':case'cx_llave_vacio':{const tier={cx_llave_oro:'epico',cx_llave_cel:'legendario',cx_llave_vacio:'mitico'}[i.rid];i.status='used';i.used=t;const r=giveItem(cref('chest_'+tier),ref.name);closeSheetSilent();openChest(r.iid);return}
+   default:return _useItem(iid,arg);
+  }
+  i.status='used';i.used=t;closeSheetSilent();toast(msg,'good');afterChange([]);
+ };
+ const _vInv=VIEWS.inventario;
+ VIEWS.inventario=function(){ensureChestState();const act=S.inventory.filter(i=>i.status==='active');const cyc=S.chestCycle;const toL=10-(cyc%10),toM=30-(cyc%30);
+  const cards=CH_TIERS.map(t=>{const l=act.filter(i=>i.rid==='chest_'+t);return`<div class="chcard ${l.length?'':'empty'} bd-${RK[CH_RAR[t]]}">${chestSVG(t,l.length?'idle':'')}<b>Cofre ${CH_NAME[t]}</b><small class="num">${l.length?'×'+l.length:'Ninguno'}</small>${l.length?`<button class="btn sm" data-act="ch-open" data-iid="${l[0].iid}">Abrir</button>`:''}</div>`}).join('');
+  const pets=act.filter(i=>i.type==='companero').sort(byRar);const cos=act.filter(i=>COSMETIC.includes(i.type)&&i.type!=='companero').sort(byRar);
+  return`<section class="sec" style="margin-top:0"><div class="sec-head"><h2 class="sec-title">Cofres</h2><span class="sec-note">${fmt(S.stats.chests||0)} abiertos</span></div><div class="chgrid">${cards}</div>
+   <div class="card pity"><div class="pbar"><span class="num">Legendario garantizado en ${toL} ${toL===1?'cofre':'cofres'}</span><div class="track"><i style="width:${(cyc%10)*10}%;background:var(--r-l)"></i></div></div><div class="pbar"><span class="num">Mítico garantizado en ${toM} ${toM===1?'cofre':'cofres'}</span><div class="track"><i style="width:${((cyc%30)/30*100).toFixed(1)}%;background:var(--r-m)"></i></div></div></div>
+   <p class="sec-note">Salen de misiones ★★ o más, objetivos, la semana de constancia, ascensos y rachas de 3, 7, 14, 30, 60 y 100 días.</p></section>
+  <section class="sec"><div class="sec-head"><h2 class="sec-title">Compañeros</h2><span class="sec-note">${pets.length}/${PETS.length} · hasta 2 en pantalla</span></div>${pets.length?`<div class="inv">${pets.map(invCard).join('')}</div>`:'<div class="empty">Todavía no tienes compañeros. Los raros y épicos salen en cualquier parte; los legendarios y míticos, solo en cofres.</div>'}</section>
+  <section class="sec"><div class="sec-head"><h2 class="sec-title">Personalización</h2><span class="sec-note">Marcos, fondos, auras, efectos, lemas e íconos</span></div>${cos.length?`<div class="inv">${cos.map(invCard).join('')}</div>`:'<div class="empty">Abre cofres para conseguir marcos, fondos y efectos exclusivos.</div>'}</section>`+_vInv()};
+ const _vDex=VIEWS.pokedex;
+ VIEWS.pokedex=function(){const h=_vDex();if(UI.pokeF!=='companero')return h;
+  const grid=ORIGINS.map(([k,label])=>{const list=PETS.filter(p=>p.origin===k);if(!list.length)return'';const got=list.filter(p=>S.pokedex[p.id]).length;return`<div class="dex-group"><div class="sec-head"><h3 class="dex-gt">${label}</h3><span class="sec-note num">${got}/${list.length}</span></div><div class="dex-grid">${list.map(dexPetCard).join('')}</div></div>`}).join('');
+  return h.replace(/<div class="dex-grid">[\s\S]*<\/div><\/section>\s*$/,`<p class="sec-note">Organizados por origen. Los legendarios y míticos (🧰) salen solo en cofres.</p>${grid}</section>`)};
+ const _vIni=VIEWS.inicio;
+ VIEWS.inicio=function(){let h=_vIni();const E=(S&&S.equip)||{};
+  h=h.replace(/(<section class="hero">\s*)(<svg class="emb"[\s\S]*?<\/svg>)/,(m,a,b)=>`${a}<button class="embwrap${E.aura&&owned(E.aura)?' au-'+E.aura.slice(3):''}" data-act="tab" data-v="perfil" aria-label="Ver tu perfil">${E.marco&&owned(E.marco)?frameSVG(E.marco):''}${b}</button>`);
+  const l=E.lema&&cref(E.lema);if(l)h=h.replace(/(<h1 class="display rank-name">[\s\S]*?<\/h1>)/,m=>`${m}<p class="hero-lema">«${esc(l.name)}»</p>`);
+  return h};
+ const _render=render;
+ render=function(){_render();if(S&&BOOTED&&(!IS_WEB||S.profile))applyCosmetics();else clearCosmetics()};
+ if(typeof renderLanding==='function'){const _rl=renderLanding;renderLanding=function(){clearCosmetics();return _rl()}}
+ if(typeof renderOnboarding==='function'){const _ro=renderOnboarding;renderOnboarding=function(){clearCosmetics();return _ro()}}
+ const _rh=renderHeader;
+ renderHeader=function(){_rh();if(!IS_WEB&&S.nick){const el=$('#hdr-sub');el.textContent=S.nick+' · '+el.textContent}};
+ // pestañas
+ if(IS_WEB){const i=TABS.findIndex(t=>t[0]==='perfil');if(i>=0)TABS[i]=['ajustes','Ajustes'];VIEWS.ajustes=VIEWS.perfil;VALID.add('ajustes')}
+ TABS.splice(1,0,['perfil','Perfil']);VIEWS.perfil=vPerfilShow;VALID.add('perfil');
+})();
+
+/* ================= eventos del módulo ================= */
+document.addEventListener('click',ev=>{const b=ev.target.closest('[data-act]');if(!b)return;
+ switch(b.dataset.act){
+  case'ch-open':openChest(b.dataset.iid);break;
+  case'ch-next':{const C=UI.chest;if(!C)return;C.stage++;setSheet(chestStageHTML());const it=C.stage>0&&C.stage<=C.items.length?C.items[C.stage-1]:null;if(it&&RARITIES.indexOf(it.rarity)>=4)fxBurst(true);else if(C.stage===0)fxBurst(false);break}
+  case'ch-done':UI.chest=null;closeSheet();break;
+  case'ch-inv':UI.chest=null;closeSheetSilent();go('inventario');break;
+  case'ch-eq':{toggleEquip(b.dataset.iid);if(b.dataset.ctx==='rev')closeSheet();else{const i=S.inventory.find(x=>x.iid===b.dataset.iid);if(i)cosmeticSheet(i)}break}
+  case'ch-avatar':ensureChestState();S.equip.avatar=S.equip.avatar===b.dataset.rid?null:b.dataset.rid;persist();render();closeSheetSilent();toast(S.equip.avatar?'Ícono de perfil actualizado.':'Volviste al emblema de rango.','good');break;
+  case'ch-fxtest':{const r=b.getBoundingClientRect();fxAt(r.left+r.width/2,r.top,b.dataset.k,24);break}
+  case'pp-edit':UI.ppTab=UI.ppTab||'icono';customizeSheet();break;
+  case'pp-tab':UI.ppTab=b.dataset.v;customizeSheet();break;
+  case'pp-set':ppSet(b.dataset.slot,b.dataset.v);break;
+  case'pp-nick':{const v=($('#pp-nick').value||'').trim().slice(0,24);if(IS_WEB){if(!v){toast('Escribe un nombre.','bad');return}S.profile.nick=v}else S.nick=v;persist();render();toast('Nombre guardado.','good');customizeSheet();break}
+  case'pp-pet':{const p=PET_BY[b.dataset.rid];const svg=b.querySelector('svg');if(!p||!svg)return;svg.setAttribute('class',petClass(p)+' act-'+p.act);clearTimeout(b._t);b._t=setTimeout(()=>svg.setAttribute('class',petClass(p)+' idle'),3200);break}
+ }
+});
+
 boot();
