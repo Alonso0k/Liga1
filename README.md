@@ -27,6 +27,14 @@ Sin `config.js` configurado, la página funciona en modo demo (datos solo en el 
 - **50 compañeros chibi vivos**: generales, guerreros, héroes y dioses de Europa y Asia (Zeus, Odín, Amaterasu, Ra, Julio César, Aquiles, Guan Yu…). Caminan, se suben y se sientan en las tarjetas, trepan los bordes, duermen, hablan, se pueden arrastrar y lanzar, y celebran tus premios. Los raros y épicos salen en cualquier parte; los legendarios y míticos, solo en cofres.
 - **Perfil**: nombre, ícono, marco, fondo, aura, título, lema, estadísticas, progreso semanal, mejores hazañas e insignias.
 
+## Avatar
+
+- Figura de colección de vinilo propia de la liga, sobre su base de exhibición. Parte como Adán: flacucho y con una hojita.
+- **8 físicos** que siguen tu rango: Flacucho, Delgado, En forma, Atlético, Fornido, Musculoso, Coloso y Semidiós.
+- **252 piezas** en 20 espacios: peinados, tintes, barbas, gorros y cascos, lentes, ropa, armaduras, pantalones, calzado, capas, armas y objetos para cada mano, collares, tatuajes de brazo y pecho, 14 mascotas, gestos animados, frases, efectos y escenarios.
+- Las piezas salen en todas partes: misiones, objetivos, ascensos, rachas, semana de constancia y cofres. Cada nivel que subes trae una pieza segura. Las míticas salen solo en cofres.
+- Tu avatar puede salir a caminar por la pantalla junto a tus compañeros, y puedes usarlo como ícono de perfil.
+
 ## Privacidad
 
 - Los datos de cada jugador (cuerpo, bancos, registros, inventario) solo los puede leer su dueño.
